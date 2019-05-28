@@ -1,0 +1,230 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="erpdbModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="InputCodes">
+          <Key>
+            <PropertyRef Name="InputCodeId" />
+          </Key>
+          <Property Name="InputCodeId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="OutputCodeId" Type="int" />
+          <Property Name="InputCodeNo" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="InputMaterialDesc" Type="varchar" MaxLength="1000" />
+          <Property Name="InputQuantity" Type="int" Nullable="false" />
+          <Property Name="SplitQuantity" Type="int" Nullable="false" />
+          <Property Name="PartTypeId" Type="int" Nullable="false" />
+          <Property Name="BASFChallanNo" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="CreateDate" Type="datetime" />
+          <Property Name="EditDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="OutputCodes">
+          <Key>
+            <PropertyRef Name="OutputCodeId" />
+          </Key>
+          <Property Name="OutputCodeId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ProjectName" Type="varchar" MaxLength="500" />
+          <Property Name="OutputCodeNo" Type="varchar" MaxLength="20" Nullable="false" />
+          <Property Name="OutputMaterialDesc" Type="varchar" MaxLength="1000" />
+          <Property Name="OutputQuantity" Type="int" Nullable="false" />
+          <Property Name="CreateDate" Type="datetime" />
+          <Property Name="EditDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="PartTypes">
+          <Key>
+            <PropertyRef Name="PartTypeId" />
+          </Key>
+          <Property Name="PartTypeId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PartTypeName" Type="varchar" MaxLength="200" />
+          <Property Name="CreateDate" Type="datetime" />
+          <Property Name="EditDate" Type="datetime" />
+        </EntityType>
+        <Association Name="fk_outputcode_id">
+          <End Role="OutputCodes" Type="Self.OutputCodes" Multiplicity="0..1" />
+          <End Role="InputCodes" Type="Self.InputCodes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OutputCodes">
+              <PropertyRef Name="OutputCodeId" />
+            </Principal>
+            <Dependent Role="InputCodes">
+              <PropertyRef Name="OutputCodeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_parttype_id">
+          <End Role="PartTypes" Type="Self.PartTypes" Multiplicity="1" />
+          <End Role="InputCodes" Type="Self.InputCodes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PartTypes">
+              <PropertyRef Name="PartTypeId" />
+            </Principal>
+            <Dependent Role="InputCodes">
+              <PropertyRef Name="PartTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="erpdbModelStoreContainer">
+          <EntitySet Name="InputCodes" EntityType="Self.InputCodes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="OutputCodes" EntityType="Self.OutputCodes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PartTypes" EntityType="Self.PartTypes" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="fk_outputcode_id" Association="Self.fk_outputcode_id">
+            <End Role="OutputCodes" EntitySet="OutputCodes" />
+            <End Role="InputCodes" EntitySet="InputCodes" />
+          </AssociationSet>
+          <AssociationSet Name="fk_parttype_id" Association="Self.fk_parttype_id">
+            <End Role="PartTypes" EntitySet="PartTypes" />
+            <End Role="InputCodes" EntitySet="InputCodes" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="erpdbModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="erpdbEntities" annotation:LazyLoadingEnabled="true" >
+          <EntitySet Name="InputCodes" EntityType="erpdbModel.InputCode" />
+          <EntitySet Name="OutputCodes" EntityType="erpdbModel.OutputCode" />
+          <EntitySet Name="PartTypes" EntityType="erpdbModel.PartType" />
+          <AssociationSet Name="fk_outputcode_id" Association="erpdbModel.fk_outputcode_id">
+            <End Role="OutputCode" EntitySet="OutputCodes" />
+            <End Role="InputCode" EntitySet="InputCodes" />
+          </AssociationSet>
+          <AssociationSet Name="fk_parttype_id" Association="erpdbModel.fk_parttype_id">
+            <End Role="PartType" EntitySet="PartTypes" />
+            <End Role="InputCode" EntitySet="InputCodes" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="InputCode">
+          <Key>
+            <PropertyRef Name="InputCodeId" />
+          </Key>
+          <Property Name="InputCodeId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="InputCodeNo" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="InputMaterialDesc" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Name="InputQuantity" Type="Int32" Nullable="false" />
+          <Property Name="SplitQuantity" Type="Int32" Nullable="false" />
+          <Property Name="PartTypeId" Type="Int32" Nullable="false" />
+          <Property Name="BASFChallanNo" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="CreateDate" Type="DateTime" Precision="3" />
+          <Property Name="EditDate" Type="DateTime" Precision="3" />
+          <Property Name="OutputCodeId" Type="Int32" />
+          <NavigationProperty Name="OutputCode" Relationship="erpdbModel.fk_outputcode_id" FromRole="InputCode" ToRole="OutputCode" />
+          <NavigationProperty Name="PartType" Relationship="erpdbModel.fk_parttype_id" FromRole="InputCode" ToRole="PartType" />
+        </EntityType>
+        <EntityType Name="OutputCode">
+          <Key>
+            <PropertyRef Name="OutputCodeId" />
+          </Key>
+          <Property Name="OutputCodeId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProjectName" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="OutputCodeNo" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="OutputMaterialDesc" Type="String" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Name="OutputQuantity" Type="Int32" Nullable="false" />
+          <Property Name="CreateDate" Type="DateTime" Precision="3" />
+          <Property Name="EditDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="InputCodes" Relationship="erpdbModel.fk_outputcode_id" FromRole="OutputCode" ToRole="InputCode" />
+        </EntityType>
+        <EntityType Name="PartType">
+          <Key>
+            <PropertyRef Name="PartTypeId" />
+          </Key>
+          <Property Name="PartTypeId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PartTypeName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="CreateDate" Type="DateTime" Precision="3" />
+          <Property Name="EditDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="InputCodes" Relationship="erpdbModel.fk_parttype_id" FromRole="PartType" ToRole="InputCode" />
+        </EntityType>
+        <Association Name="fk_outputcode_id">
+          <End Type="erpdbModel.OutputCode" Role="OutputCode" Multiplicity="0..1" />
+          <End Type="erpdbModel.InputCode" Role="InputCode" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OutputCode">
+              <PropertyRef Name="OutputCodeId" />
+            </Principal>
+            <Dependent Role="InputCode">
+              <PropertyRef Name="OutputCodeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="fk_parttype_id">
+          <End Type="erpdbModel.PartType" Role="PartType" Multiplicity="1" />
+          <End Type="erpdbModel.InputCode" Role="InputCode" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PartType">
+              <PropertyRef Name="PartTypeId" />
+            </Principal>
+            <Dependent Role="InputCode">
+              <PropertyRef Name="PartTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="erpdbModelStoreContainer" CdmEntityContainer="erpdbEntities" >
+          <EntitySetMapping Name="InputCodes">
+            <EntityTypeMapping TypeName="erpdbModel.InputCode">
+              <MappingFragment StoreEntitySet="InputCodes">
+                <ScalarProperty Name="OutputCodeId" ColumnName="OutputCodeId" />
+                <ScalarProperty Name="EditDate" ColumnName="EditDate" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="BASFChallanNo" ColumnName="BASFChallanNo" />
+                <ScalarProperty Name="PartTypeId" ColumnName="PartTypeId" />
+                <ScalarProperty Name="SplitQuantity" ColumnName="SplitQuantity" />
+                <ScalarProperty Name="InputQuantity" ColumnName="InputQuantity" />
+                <ScalarProperty Name="InputMaterialDesc" ColumnName="InputMaterialDesc" />
+                <ScalarProperty Name="InputCodeNo" ColumnName="InputCodeNo" />
+                <ScalarProperty Name="InputCodeId" ColumnName="InputCodeId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="OutputCodes">
+            <EntityTypeMapping TypeName="erpdbModel.OutputCode">
+              <MappingFragment StoreEntitySet="OutputCodes">
+                <ScalarProperty Name="EditDate" ColumnName="EditDate" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="OutputQuantity" ColumnName="OutputQuantity" />
+                <ScalarProperty Name="OutputMaterialDesc" ColumnName="OutputMaterialDesc" />
+                <ScalarProperty Name="OutputCodeNo" ColumnName="OutputCodeNo" />
+                <ScalarProperty Name="ProjectName" ColumnName="ProjectName" />
+                <ScalarProperty Name="OutputCodeId" ColumnName="OutputCodeId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PartTypes">
+            <EntityTypeMapping TypeName="erpdbModel.PartType">
+              <MappingFragment StoreEntitySet="PartTypes">
+                <ScalarProperty Name="EditDate" ColumnName="EditDate" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="PartTypeName" ColumnName="PartTypeName" />
+                <ScalarProperty Name="PartTypeId" ColumnName="PartTypeId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
