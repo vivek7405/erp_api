@@ -5,6 +5,38 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="erpdbModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="ChallanDeductions">
+          <Key>
+            <PropertyRef Name="ChallanDeductionId" />
+          </Key>
+          <Property Name="ChallanDeductionId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="OutputCode" Type="int" />
+          <Property Name="ChallanProductId" Type="int" />
+          <Property Name="OutQuantity" Type="int" />
+          <Property Name="CreateDate" Type="datetime" />
+          <Property Name="EditDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="ChallanDetails">
+          <Key>
+            <PropertyRef Name="ChallanId" />
+          </Key>
+          <Property Name="ChallanId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ChallanNo" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="ChallanDate" Type="datetime" />
+          <Property Name="CreateDate" Type="datetime" />
+          <Property Name="EditDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="ChallanProducts">
+          <Key>
+            <PropertyRef Name="ChallanProductId" />
+          </Key>
+          <Property Name="ChallanProductId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ChallanId" Type="int" />
+          <Property Name="ProductId" Type="int" />
+          <Property Name="InputQuantity" Type="int" />
+          <Property Name="CreateDate" Type="datetime" />
+          <Property Name="EditDate" Type="datetime" />
+        </EntityType>
         <EntityType Name="InputCodes">
           <Key>
             <PropertyRef Name="InputCodeId" />
@@ -32,6 +64,16 @@
           <Property Name="CreateDate" Type="datetime" />
           <Property Name="EditDate" Type="datetime" />
         </EntityType>
+        <EntityType Name="OutStocks">
+          <Key>
+            <PropertyRef Name="OutputCode" />
+          </Key>
+          <Property Name="OutputCode" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="VendorChallanNo" Type="int" />
+          <Property Name="OutputQuantity" Type="int" />
+          <Property Name="CreateDate" Type="datetime" />
+          <Property Name="EditDate" Type="datetime" />
+        </EntityType>
         <EntityType Name="PartTypes">
           <Key>
             <PropertyRef Name="PartTypeId" />
@@ -41,6 +83,86 @@
           <Property Name="CreateDate" Type="datetime" />
           <Property Name="EditDate" Type="datetime" />
         </EntityType>
+        <EntityType Name="ProductDetails">
+          <Key>
+            <PropertyRef Name="ProductId" />
+          </Key>
+          <Property Name="ProductId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="InputCode" Type="varchar" MaxLength="50" />
+          <Property Name="ProductName" Type="varchar" MaxLength="1000" Nullable="false" />
+          <Property Name="SplitQuantity" Type="int" />
+          <Property Name="CreateDate" Type="datetime" />
+          <Property Name="EditDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="VendorChallans">
+          <Key>
+            <PropertyRef Name="VendorChallanNo" />
+          </Key>
+          <Property Name="VendorChallanNo" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="VendorChallanDate" Type="datetime" />
+          <Property Name="CreateDate" Type="datetime" />
+          <Property Name="EditDate" Type="datetime" />
+        </EntityType>
+        <Association Name="FK__ChallanDe__Chall__41EDCAC5">
+          <End Role="ChallanProducts" Type="Self.ChallanProducts" Multiplicity="0..1" />
+          <End Role="ChallanDeductions" Type="Self.ChallanDeductions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ChallanProducts">
+              <PropertyRef Name="ChallanProductId" />
+            </Principal>
+            <Dependent Role="ChallanDeductions">
+              <PropertyRef Name="ChallanProductId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ChallanDe__Outpu__40F9A68C">
+          <End Role="OutStocks" Type="Self.OutStocks" Multiplicity="0..1" />
+          <End Role="ChallanDeductions" Type="Self.ChallanDeductions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OutStocks">
+              <PropertyRef Name="OutputCode" />
+            </Principal>
+            <Dependent Role="ChallanDeductions">
+              <PropertyRef Name="OutputCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ChallanPr__Chall__2BFE89A6">
+          <End Role="ChallanDetails" Type="Self.ChallanDetails" Multiplicity="0..1" />
+          <End Role="ChallanProducts" Type="Self.ChallanProducts" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ChallanDetails">
+              <PropertyRef Name="ChallanId" />
+            </Principal>
+            <Dependent Role="ChallanProducts">
+              <PropertyRef Name="ChallanId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ChallanPr__Produ__2CF2ADDF">
+          <End Role="ProductDetails" Type="Self.ProductDetails" Multiplicity="0..1" />
+          <End Role="ChallanProducts" Type="Self.ChallanProducts" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductDetails">
+              <PropertyRef Name="ProductId" />
+            </Principal>
+            <Dependent Role="ChallanProducts">
+              <PropertyRef Name="ProductId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__OutStocks__Vendo__3E1D39E1">
+          <End Role="VendorChallans" Type="Self.VendorChallans" Multiplicity="0..1" />
+          <End Role="OutStocks" Type="Self.OutStocks" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="VendorChallans">
+              <PropertyRef Name="VendorChallanNo" />
+            </Principal>
+            <Dependent Role="OutStocks">
+              <PropertyRef Name="VendorChallanNo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="fk_outputcode_id">
           <End Role="OutputCodes" Type="Self.OutputCodes" Multiplicity="0..1" />
           <End Role="InputCodes" Type="Self.InputCodes" Multiplicity="*" />
@@ -66,9 +188,35 @@
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="erpdbModelStoreContainer">
+          <EntitySet Name="ChallanDeductions" EntityType="Self.ChallanDeductions" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ChallanDetails" EntityType="Self.ChallanDetails" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ChallanProducts" EntityType="Self.ChallanProducts" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="InputCodes" EntityType="Self.InputCodes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OutputCodes" EntityType="Self.OutputCodes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="OutStocks" EntityType="Self.OutStocks" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="PartTypes" EntityType="Self.PartTypes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ProductDetails" EntityType="Self.ProductDetails" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="VendorChallans" EntityType="Self.VendorChallans" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK__ChallanDe__Chall__41EDCAC5" Association="Self.FK__ChallanDe__Chall__41EDCAC5">
+            <End Role="ChallanProducts" EntitySet="ChallanProducts" />
+            <End Role="ChallanDeductions" EntitySet="ChallanDeductions" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ChallanDe__Outpu__40F9A68C" Association="Self.FK__ChallanDe__Outpu__40F9A68C">
+            <End Role="OutStocks" EntitySet="OutStocks" />
+            <End Role="ChallanDeductions" EntitySet="ChallanDeductions" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ChallanPr__Chall__2BFE89A6" Association="Self.FK__ChallanPr__Chall__2BFE89A6">
+            <End Role="ChallanDetails" EntitySet="ChallanDetails" />
+            <End Role="ChallanProducts" EntitySet="ChallanProducts" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ChallanPr__Produ__2CF2ADDF" Association="Self.FK__ChallanPr__Produ__2CF2ADDF">
+            <End Role="ProductDetails" EntitySet="ProductDetails" />
+            <End Role="ChallanProducts" EntitySet="ChallanProducts" />
+          </AssociationSet>
+          <AssociationSet Name="FK__OutStocks__Vendo__3E1D39E1" Association="Self.FK__OutStocks__Vendo__3E1D39E1">
+            <End Role="VendorChallans" EntitySet="VendorChallans" />
+            <End Role="OutStocks" EntitySet="OutStocks" />
+          </AssociationSet>
           <AssociationSet Name="fk_outputcode_id" Association="Self.fk_outputcode_id">
             <End Role="OutputCodes" EntitySet="OutputCodes" />
             <End Role="InputCodes" EntitySet="InputCodes" />
@@ -93,6 +241,32 @@
           <AssociationSet Name="fk_parttype_id" Association="erpdbModel.fk_parttype_id">
             <End Role="PartType" EntitySet="PartTypes" />
             <End Role="InputCode" EntitySet="InputCodes" />
+          </AssociationSet>
+          <EntitySet Name="ProductDetails" EntityType="erpdbModel.ProductDetail" />
+          <EntitySet Name="ChallanDetails" EntityType="erpdbModel.ChallanDetail" />
+          <EntitySet Name="ChallanProducts" EntityType="erpdbModel.ChallanProduct" />
+          <AssociationSet Name="FK__ChallanPr__Chall__2BFE89A6" Association="erpdbModel.FK__ChallanPr__Chall__2BFE89A6">
+            <End Role="ChallanDetail" EntitySet="ChallanDetails" />
+            <End Role="ChallanProduct" EntitySet="ChallanProducts" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ChallanPr__Produ__2CF2ADDF" Association="erpdbModel.FK__ChallanPr__Produ__2CF2ADDF">
+            <End Role="ProductDetail" EntitySet="ProductDetails" />
+            <End Role="ChallanProduct" EntitySet="ChallanProducts" />
+          </AssociationSet>
+          <EntitySet Name="ChallanDeductions" EntityType="erpdbModel.ChallanDeduction" />
+          <EntitySet Name="OutStocks" EntityType="erpdbModel.OutStock" />
+          <EntitySet Name="VendorChallans" EntityType="erpdbModel.VendorChallan" />
+          <AssociationSet Name="FK__ChallanDe__Chall__41EDCAC5" Association="erpdbModel.FK__ChallanDe__Chall__41EDCAC5">
+            <End Role="ChallanProduct" EntitySet="ChallanProducts" />
+            <End Role="ChallanDeduction" EntitySet="ChallanDeductions" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ChallanDe__Outpu__40F9A68C" Association="erpdbModel.FK__ChallanDe__Outpu__40F9A68C">
+            <End Role="OutStock" EntitySet="OutStocks" />
+            <End Role="ChallanDeduction" EntitySet="ChallanDeductions" />
+          </AssociationSet>
+          <AssociationSet Name="FK__OutStocks__Vendo__3E1D39E1" Association="erpdbModel.FK__OutStocks__Vendo__3E1D39E1">
+            <End Role="VendorChallan" EntitySet="VendorChallans" />
+            <End Role="OutStock" EntitySet="OutStocks" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="InputCode">
@@ -159,6 +333,138 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="ProductDetail">
+          <Key>
+            <PropertyRef Name="ProductId" />
+          </Key>
+          <Property Name="ProductId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="InputCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ProductName" Type="String" Nullable="false" MaxLength="1000" FixedLength="false" Unicode="false" />
+          <Property Name="SplitQuantity" Type="Int32" />
+          <Property Name="CreateDate" Type="DateTime" Precision="3" />
+          <Property Name="EditDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="ChallanProducts" Relationship="erpdbModel.FK__ChallanPr__Produ__2CF2ADDF" FromRole="ProductDetail" ToRole="ChallanProduct" />
+        </EntityType>
+        <EntityType Name="ChallanDetail">
+          <Key>
+            <PropertyRef Name="ChallanId" />
+          </Key>
+          <Property Name="ChallanId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ChallanNo" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ChallanDate" Type="DateTime" Precision="3" />
+          <Property Name="CreateDate" Type="DateTime" Precision="3" />
+          <Property Name="EditDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="ChallanProducts" Relationship="erpdbModel.FK__ChallanPr__Chall__2BFE89A6" FromRole="ChallanDetail" ToRole="ChallanProduct" />
+        </EntityType>
+        <EntityType Name="ChallanProduct">
+          <Key>
+            <PropertyRef Name="ChallanProductId" />
+          </Key>
+          <Property Name="ChallanProductId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ChallanId" Type="Int32" />
+          <Property Name="ProductId" Type="Int32" />
+          <Property Name="InputQuantity" Type="Int32" />
+          <Property Name="CreateDate" Type="DateTime" Precision="3" />
+          <Property Name="EditDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="ChallanDetail" Relationship="erpdbModel.FK__ChallanPr__Chall__2BFE89A6" FromRole="ChallanProduct" ToRole="ChallanDetail" />
+          <NavigationProperty Name="ProductDetail" Relationship="erpdbModel.FK__ChallanPr__Produ__2CF2ADDF" FromRole="ChallanProduct" ToRole="ProductDetail" />
+          <NavigationProperty Name="ChallanDeductions" Relationship="erpdbModel.FK__ChallanDe__Chall__41EDCAC5" FromRole="ChallanProduct" ToRole="ChallanDeduction" />
+        </EntityType>
+        <Association Name="FK__ChallanPr__Chall__2BFE89A6">
+          <End Type="erpdbModel.ChallanDetail" Role="ChallanDetail" Multiplicity="0..1" />
+          <End Type="erpdbModel.ChallanProduct" Role="ChallanProduct" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ChallanDetail">
+              <PropertyRef Name="ChallanId" />
+            </Principal>
+            <Dependent Role="ChallanProduct">
+              <PropertyRef Name="ChallanId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ChallanPr__Produ__2CF2ADDF">
+          <End Type="erpdbModel.ProductDetail" Role="ProductDetail" Multiplicity="0..1" />
+          <End Type="erpdbModel.ChallanProduct" Role="ChallanProduct" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductDetail">
+              <PropertyRef Name="ProductId" />
+            </Principal>
+            <Dependent Role="ChallanProduct">
+              <PropertyRef Name="ProductId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="ChallanDeduction">
+          <Key>
+            <PropertyRef Name="ChallanDeductionId" />
+          </Key>
+          <Property Name="ChallanDeductionId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="OutputCode" Type="Int32" />
+          <Property Name="ChallanProductId" Type="Int32" />
+          <Property Name="OutQuantity" Type="Int32" />
+          <Property Name="CreateDate" Type="DateTime" Precision="3" />
+          <Property Name="EditDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="ChallanProduct" Relationship="erpdbModel.FK__ChallanDe__Chall__41EDCAC5" FromRole="ChallanDeduction" ToRole="ChallanProduct" />
+          <NavigationProperty Name="OutStock" Relationship="erpdbModel.FK__ChallanDe__Outpu__40F9A68C" FromRole="ChallanDeduction" ToRole="OutStock" />
+        </EntityType>
+        <EntityType Name="OutStock">
+          <Key>
+            <PropertyRef Name="OutputCode" />
+          </Key>
+          <Property Name="OutputCode" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="VendorChallanNo" Type="Int32" />
+          <Property Name="OutputQuantity" Type="Int32" />
+          <Property Name="CreateDate" Type="DateTime" Precision="3" />
+          <Property Name="EditDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="ChallanDeductions" Relationship="erpdbModel.FK__ChallanDe__Outpu__40F9A68C" FromRole="OutStock" ToRole="ChallanDeduction" />
+          <NavigationProperty Name="VendorChallan" Relationship="erpdbModel.FK__OutStocks__Vendo__3E1D39E1" FromRole="OutStock" ToRole="VendorChallan" />
+        </EntityType>
+        <EntityType Name="VendorChallan">
+          <Key>
+            <PropertyRef Name="VendorChallanNo" />
+          </Key>
+          <Property Name="VendorChallanNo" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="VendorChallanDate" Type="DateTime" Precision="3" />
+          <Property Name="CreateDate" Type="DateTime" Precision="3" />
+          <Property Name="EditDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="OutStocks" Relationship="erpdbModel.FK__OutStocks__Vendo__3E1D39E1" FromRole="VendorChallan" ToRole="OutStock" />
+        </EntityType>
+        <Association Name="FK__ChallanDe__Chall__41EDCAC5">
+          <End Type="erpdbModel.ChallanProduct" Role="ChallanProduct" Multiplicity="0..1" />
+          <End Type="erpdbModel.ChallanDeduction" Role="ChallanDeduction" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ChallanProduct">
+              <PropertyRef Name="ChallanProductId" />
+            </Principal>
+            <Dependent Role="ChallanDeduction">
+              <PropertyRef Name="ChallanProductId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ChallanDe__Outpu__40F9A68C">
+          <End Type="erpdbModel.OutStock" Role="OutStock" Multiplicity="0..1" />
+          <End Type="erpdbModel.ChallanDeduction" Role="ChallanDeduction" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OutStock">
+              <PropertyRef Name="OutputCode" />
+            </Principal>
+            <Dependent Role="ChallanDeduction">
+              <PropertyRef Name="OutputCode" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__OutStocks__Vendo__3E1D39E1">
+          <End Type="erpdbModel.VendorChallan" Role="VendorChallan" Multiplicity="0..1" />
+          <End Type="erpdbModel.OutStock" Role="OutStock" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="VendorChallan">
+              <PropertyRef Name="VendorChallanNo" />
+            </Principal>
+            <Dependent Role="OutStock">
+              <PropertyRef Name="VendorChallanNo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -201,6 +507,74 @@
                 <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
                 <ScalarProperty Name="PartTypeName" ColumnName="PartTypeName" />
                 <ScalarProperty Name="PartTypeId" ColumnName="PartTypeId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ProductDetails">
+            <EntityTypeMapping TypeName="erpdbModel.ProductDetail">
+              <MappingFragment StoreEntitySet="ProductDetails">
+                <ScalarProperty Name="EditDate" ColumnName="EditDate" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="SplitQuantity" ColumnName="SplitQuantity" />
+                <ScalarProperty Name="ProductName" ColumnName="ProductName" />
+                <ScalarProperty Name="InputCode" ColumnName="InputCode" />
+                <ScalarProperty Name="ProductId" ColumnName="ProductId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ChallanDetails">
+            <EntityTypeMapping TypeName="erpdbModel.ChallanDetail">
+              <MappingFragment StoreEntitySet="ChallanDetails">
+                <ScalarProperty Name="EditDate" ColumnName="EditDate" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="ChallanDate" ColumnName="ChallanDate" />
+                <ScalarProperty Name="ChallanNo" ColumnName="ChallanNo" />
+                <ScalarProperty Name="ChallanId" ColumnName="ChallanId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ChallanProducts">
+            <EntityTypeMapping TypeName="erpdbModel.ChallanProduct">
+              <MappingFragment StoreEntitySet="ChallanProducts">
+                <ScalarProperty Name="EditDate" ColumnName="EditDate" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="InputQuantity" ColumnName="InputQuantity" />
+                <ScalarProperty Name="ProductId" ColumnName="ProductId" />
+                <ScalarProperty Name="ChallanId" ColumnName="ChallanId" />
+                <ScalarProperty Name="ChallanProductId" ColumnName="ChallanProductId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ChallanDeductions">
+            <EntityTypeMapping TypeName="erpdbModel.ChallanDeduction">
+              <MappingFragment StoreEntitySet="ChallanDeductions">
+                <ScalarProperty Name="EditDate" ColumnName="EditDate" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="OutQuantity" ColumnName="OutQuantity" />
+                <ScalarProperty Name="ChallanProductId" ColumnName="ChallanProductId" />
+                <ScalarProperty Name="OutputCode" ColumnName="OutputCode" />
+                <ScalarProperty Name="ChallanDeductionId" ColumnName="ChallanDeductionId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="OutStocks">
+            <EntityTypeMapping TypeName="erpdbModel.OutStock">
+              <MappingFragment StoreEntitySet="OutStocks">
+                <ScalarProperty Name="EditDate" ColumnName="EditDate" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="OutputQuantity" ColumnName="OutputQuantity" />
+                <ScalarProperty Name="VendorChallanNo" ColumnName="VendorChallanNo" />
+                <ScalarProperty Name="OutputCode" ColumnName="OutputCode" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="VendorChallans">
+            <EntityTypeMapping TypeName="erpdbModel.VendorChallan">
+              <MappingFragment StoreEntitySet="VendorChallans">
+                <ScalarProperty Name="EditDate" ColumnName="EditDate" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="VendorChallanDate" ColumnName="VendorChallanDate" />
+                <ScalarProperty Name="VendorChallanNo" ColumnName="VendorChallanNo" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

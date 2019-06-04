@@ -168,6 +168,15 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\SampleDirection.cs" />
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
+    <Compile Include="ChallanDeduction.cs">
+      <DependentUpon>DB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ChallanDetail.cs">
+      <DependentUpon>DB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ChallanProduct.cs">
+      <DependentUpon>DB.tt</DependentUpon>
+    </Compile>
     <Compile Include="Controllers\GeneralController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\StockInflowController.cs" />
@@ -193,17 +202,31 @@
     <Compile Include="InputCode.cs">
       <DependentUpon>DB.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\ChallanDetailModel.cs" />
+    <Compile Include="Models\ChallanProductModel.cs" />
     <Compile Include="Models\InputCodeModel.cs" />
+    <Compile Include="Models\OutStockModel.cs" />
     <Compile Include="Models\PurchaseOrder.cs" />
     <Compile Include="Models\PurchaseOrderModel.cs" />
     <Compile Include="Models\SuccessResponse.cs" />
+    <Compile Include="Models\VendorChallanModel.cs" />
+    <Compile Include="Models\ViewChallanDetailModel.cs" />
     <Compile Include="OutputCode.cs">
+      <DependentUpon>DB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="OutStock.cs">
       <DependentUpon>DB.tt</DependentUpon>
     </Compile>
     <Compile Include="PartType.cs">
       <DependentUpon>DB.tt</DependentUpon>
     </Compile>
+    <Compile Include="ProductDetail.cs">
+      <DependentUpon>DB.tt</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="VendorChallan.cs">
+      <DependentUpon>DB.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\HelpPage\HelpPage.css" />

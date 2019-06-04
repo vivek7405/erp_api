@@ -10,6 +10,17 @@
         <EntityTypeShape EntityType="erpdbModel.PartType" Width="1.5" PointX="4.75" PointY="0.75" />
         <AssociationConnector Association="erpdbModel.fk_outputcode_id" />
         <AssociationConnector Association="erpdbModel.fk_parttype_id" />
+        <EntityTypeShape EntityType="erpdbModel.ProductDetail" Width="1.5" PointX="3.375" PointY="4.75" />
+        <EntityTypeShape EntityType="erpdbModel.ChallanDetail" Width="1.5" PointX="3.375" PointY="8.875" />
+        <EntityTypeShape EntityType="erpdbModel.ChallanProduct" Width="1.5" PointX="5.625" PointY="4.625" />
+        <AssociationConnector Association="erpdbModel.FK__ChallanPr__Chall__2BFE89A6" />
+        <AssociationConnector Association="erpdbModel.FK__ChallanPr__Produ__2CF2ADDF" />
+        <EntityTypeShape EntityType="erpdbModel.ChallanDeduction" Width="1.5" PointX="11.875" PointY="2.875" />
+        <EntityTypeShape EntityType="erpdbModel.OutStock" Width="1.5" PointX="9.625" PointY="1" />
+        <EntityTypeShape EntityType="erpdbModel.VendorChallan" Width="1.5" PointX="7.375" PointY="1.25" />
+        <AssociationConnector Association="erpdbModel.FK__ChallanDe__Chall__41EDCAC5" />
+        <AssociationConnector Association="erpdbModel.FK__ChallanDe__Outpu__40F9A68C" />
+        <AssociationConnector Association="erpdbModel.FK__OutStocks__Vendo__3E1D39E1" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

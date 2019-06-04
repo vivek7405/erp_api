@@ -13,22 +13,21 @@ namespace ERP
     using System;
     using System.Collections.Generic;
     
-    public partial class InputCode
+    public partial class VendorChallan
     {
-        public int InputCodeId { get; set; }
-        public string InputCodeNo { get; set; }
-        public string InputMaterialDesc { get; set; }
-        public int InputQuantity { get; set; }
-        public int SplitQuantity { get; set; }
-        public int PartTypeId { get; set; }
-        public string BASFChallanNo { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public VendorChallan()
+        {
+            this.OutStocks = new HashSet<OutStock>();
+        }
+    
+        public int VendorChallanNo { get; set; }
+        public Nullable<System.DateTime> VendorChallanDate { get; set; }
         public Nullable<System.DateTime> CreateDate { get; set; }
         public Nullable<System.DateTime> EditDate { get; set; }
-        public Nullable<int> OutputCodeId { get; set; }
     
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         [JsonIgnore]
-        public virtual OutputCode OutputCode { get; set; }
-        [JsonIgnore]
-        public virtual PartType PartType { get; set; }
+        public virtual ICollection<OutStock> OutStocks { get; set; }
     }
 }
