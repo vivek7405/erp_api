@@ -13,5 +13,11 @@ namespace ERP.Models
         public ChallanProduct ChallanProduct { get; set; }
         [DataMember]
         public ProductDetail ProductDetail { get; set; }
+        [DataMember]
+        public ChallanDetail ChallanDetail { get; set; }
+        [DataMember]
+        public ICollection<ChallanDeduction> ChallanDeductions { get; set; }
+        [DataMember]
+        public int RemainingQuantity { get; set; }
     }
 }

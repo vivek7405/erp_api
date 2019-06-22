@@ -202,14 +202,20 @@
     <Compile Include="InputCode.cs">
       <DependentUpon>DB.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\BASFChallanDeduction.cs" />
+    <Compile Include="Models\BASFChallanSelection.cs" />
+    <Compile Include="Models\ChallanDeductionModel.cs" />
     <Compile Include="Models\ChallanDetailModel.cs" />
     <Compile Include="Models\ChallanProductModel.cs" />
     <Compile Include="Models\InputCodeModel.cs" />
     <Compile Include="Models\OutStockModel.cs" />
+    <Compile Include="Models\ProductIdModel.cs" />
+    <Compile Include="Models\ProductQuantity.cs" />
     <Compile Include="Models\PurchaseOrder.cs" />
     <Compile Include="Models\PurchaseOrderModel.cs" />
     <Compile Include="Models\SuccessResponse.cs" />
     <Compile Include="Models\VendorChallanModel.cs" />
+    <Compile Include="Models\VendorChallanNoModel.cs" />
     <Compile Include="Models\ViewChallanDetailModel.cs" />
     <Compile Include="OutputCode.cs">
       <DependentUpon>DB.tt</DependentUpon>
@@ -220,7 +226,13 @@
     <Compile Include="PartType.cs">
       <DependentUpon>DB.tt</DependentUpon>
     </Compile>
+    <Compile Include="ProductCategory.cs">
+      <DependentUpon>DB.tt</DependentUpon>
+    </Compile>
     <Compile Include="ProductDetail.cs">
+      <DependentUpon>DB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ProductType.cs">
       <DependentUpon>DB.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />

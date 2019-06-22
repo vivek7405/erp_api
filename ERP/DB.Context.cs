@@ -25,14 +25,16 @@ namespace ERP
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<InputCode> InputCodes { get; set; }
-        public virtual DbSet<OutputCode> OutputCodes { get; set; }
-        public virtual DbSet<PartType> PartTypes { get; set; }
-        public virtual DbSet<ProductDetail> ProductDetails { get; set; }
+        public virtual DbSet<ChallanDeduction> ChallanDeductions { get; set; }
         public virtual DbSet<ChallanDetail> ChallanDetails { get; set; }
         public virtual DbSet<ChallanProduct> ChallanProducts { get; set; }
-        public virtual DbSet<ChallanDeduction> ChallanDeductions { get; set; }
+        public virtual DbSet<InputCode> InputCodes { get; set; }
+        public virtual DbSet<OutputCode> OutputCodes { get; set; }
         public virtual DbSet<OutStock> OutStocks { get; set; }
+        public virtual DbSet<PartType> PartTypes { get; set; }
+        public virtual DbSet<ProductCategory> ProductCategorys { get; set; }
+        public virtual DbSet<ProductDetail> ProductDetails { get; set; }
+        public virtual DbSet<ProductType> ProductTypes { get; set; }
         public virtual DbSet<VendorChallan> VendorChallans { get; set; }
     }
 }

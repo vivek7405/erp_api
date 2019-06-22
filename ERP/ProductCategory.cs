@@ -13,29 +13,19 @@ namespace ERP
     using System;
     using System.Collections.Generic;
     
-    public partial class ProductDetail
+    public partial class ProductCategory
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public ProductDetail()
+        public ProductCategory()
         {
-            this.ChallanProducts = new HashSet<ChallanProduct>();
+            this.ProductTypes = new HashSet<ProductType>();
         }
     
-        public int ProductId { get; set; }
-        public Nullable<int> ProductTypeId { get; set; }
-        public string InputCode { get; set; }
-        public string InputMaterialDesc { get; set; }
-        public string OutputCode { get; set; }
-        public string OutputMaterialDesc { get; set; }
-        public string ProjectName { get; set; }
-        public Nullable<int> SplitRatio { get; set; }
-        public Nullable<System.DateTime> CreateDate { get; set; }
-        public Nullable<System.DateTime> EditDate { get; set; }
+        public int ProductCategoryId { get; set; }
+        public string ProductCategoryName { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         [JsonIgnore]
-        public virtual ICollection<ChallanProduct> ChallanProducts { get; set; }
-        [JsonIgnore]
-        public virtual ProductType ProductType { get; set; }
+        public virtual ICollection<ProductType> ProductTypes { get; set; }
     }
 }

@@ -16,7 +16,7 @@ namespace ERP
     public partial class ChallanDeduction
     {
         public int ChallanDeductionId { get; set; }
-        public Nullable<int> OutputCode { get; set; }
+        public Nullable<int> OutStockId { get; set; }
         public Nullable<int> ChallanProductId { get; set; }
         public Nullable<int> OutQuantity { get; set; }
         public Nullable<System.DateTime> CreateDate { get; set; }

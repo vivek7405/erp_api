@@ -16,6 +16,7 @@ namespace ERP
     public partial class InputCode
     {
         public int InputCodeId { get; set; }
+        public Nullable<int> OutputCodeId { get; set; }
         public string InputCodeNo { get; set; }
         public string InputMaterialDesc { get; set; }
         public int InputQuantity { get; set; }
@@ -24,8 +25,7 @@ namespace ERP
         public string BASFChallanNo { get; set; }
         public Nullable<System.DateTime> CreateDate { get; set; }
         public Nullable<System.DateTime> EditDate { get; set; }
-        public Nullable<int> OutputCodeId { get; set; }
-    
+
         [JsonIgnore]
         public virtual OutputCode OutputCode { get; set; }
         [JsonIgnore]

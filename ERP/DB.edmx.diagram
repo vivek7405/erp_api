@@ -4,23 +4,27 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="e1d9fd1808634149ab9bd1b2cb1e1b16" Name="Diagram1" >
-        <EntityTypeShape EntityType="erpdbModel.InputCode" Width="1.5" PointX="0.75" PointY="0.75" />
-        <EntityTypeShape EntityType="erpdbModel.OutputCode" Width="1.5" PointX="2.75" PointY="0.75" />
-        <EntityTypeShape EntityType="erpdbModel.PartType" Width="1.5" PointX="4.75" PointY="0.75" />
-        <AssociationConnector Association="erpdbModel.fk_outputcode_id" />
-        <AssociationConnector Association="erpdbModel.fk_parttype_id" />
-        <EntityTypeShape EntityType="erpdbModel.ProductDetail" Width="1.5" PointX="3.375" PointY="4.75" />
-        <EntityTypeShape EntityType="erpdbModel.ChallanDetail" Width="1.5" PointX="3.375" PointY="8.875" />
-        <EntityTypeShape EntityType="erpdbModel.ChallanProduct" Width="1.5" PointX="5.625" PointY="4.625" />
-        <AssociationConnector Association="erpdbModel.FK__ChallanPr__Chall__2BFE89A6" />
-        <AssociationConnector Association="erpdbModel.FK__ChallanPr__Produ__2CF2ADDF" />
-        <EntityTypeShape EntityType="erpdbModel.ChallanDeduction" Width="1.5" PointX="11.875" PointY="2.875" />
-        <EntityTypeShape EntityType="erpdbModel.OutStock" Width="1.5" PointX="9.625" PointY="1" />
-        <EntityTypeShape EntityType="erpdbModel.VendorChallan" Width="1.5" PointX="7.375" PointY="1.25" />
-        <AssociationConnector Association="erpdbModel.FK__ChallanDe__Chall__41EDCAC5" />
-        <AssociationConnector Association="erpdbModel.FK__ChallanDe__Outpu__40F9A68C" />
-        <AssociationConnector Association="erpdbModel.FK__OutStocks__Vendo__3E1D39E1" />
+      <Diagram DiagramId="05deb12203904fc68444b680629d72c2" Name="Diagram1">
+        <EntityTypeShape EntityType="erpdbModel.ChallanDeduction" Width="1.5" PointX="9.75" PointY="1.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="erpdbModel.ChallanDetail" Width="1.5" PointX="5.25" PointY="5.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="erpdbModel.ChallanProduct" Width="1.5" PointX="7.5" PointY="1.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="erpdbModel.InputCode" Width="1.5" PointX="12" PointY="5" IsExpanded="true" />
+        <EntityTypeShape EntityType="erpdbModel.OutputCode" Width="1.5" PointX="9.75" PointY="5.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="erpdbModel.OutStock" Width="1.5" PointX="7.5" PointY="9.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="erpdbModel.PartType" Width="1.5" PointX="9.75" PointY="9.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="erpdbModel.ProductCategory" Width="1.5" PointX="0.75" PointY="1.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="erpdbModel.ProductDetail" Width="1.5" PointX="5.25" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="erpdbModel.ProductType" Width="1.5" PointX="3" PointY="1.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="erpdbModel.VendorChallan" Width="1.5" PointX="5.25" PointY="9.625" IsExpanded="true" />
+        <AssociationConnector Association="erpdbModel.FK__ChallanDe__Chall__2334397B" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__ChallanDe__OutSt__22401542" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__ChallanPr__Chall__19AACF41" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__ChallanPr__Produ__1A9EF37A" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.fk_outputcode_id" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.fk_parttype_id" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__OutStocks__Vendo__1F63A897" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__ProductTy__Produ__0D44F85C" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__ProductDe__Produ__10216507" ManuallyRouted="false" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

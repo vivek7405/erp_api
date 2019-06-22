@@ -4,21 +4,22 @@ using System.Runtime.Serialization;
 namespace ERP.Models
 {
     [DataContract]
-    public class OutStockModel
+    public class ChallanDeductionModel
     {
+        [DataMember]
+        public int ChallanDeductionId { get; set; }
         [DataMember]
         public int OutputCode { get; set; }
         [DataMember]
-        public int VendorChallanNo { get; set; }
+        public int ChallanProductId { get; set; }
         [DataMember]
-        public int OutputQuantity { get; set; }
+        public int OutQuantity { get; set; }
         [DataMember]
         public DateTime CreateDate { get; set; }
         [DataMember]
         public DateTime EditDate { get; set; }
+
         [DataMember]
-        public int ProductId { get; set; }
-        [DataMember]
-        public ChallanDeductionModel[] ChallanDeductions { get; set; }
+        public ChallanProductModel ChallanProduct { get; set; }
     }
 }
