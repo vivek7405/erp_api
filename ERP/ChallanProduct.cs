@@ -19,6 +19,7 @@ namespace ERP
         public ChallanProduct()
         {
             this.ChallanDeductions = new HashSet<ChallanDeduction>();
+            this.AccChallanDeductions = new HashSet<AccChallanDeduction>();
         }
     
         public int ChallanProductId { get; set; }
@@ -35,5 +36,8 @@ namespace ERP
         public virtual ChallanDetail ChallanDetail { get; set; }
         [JsonIgnore]
         public virtual ProductDetail ProductDetail { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        [JsonIgnore]
+        public virtual ICollection<AccChallanDeduction> AccChallanDeductions { get; set; }
     }
 }

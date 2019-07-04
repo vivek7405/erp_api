@@ -13,21 +13,24 @@ namespace ERP
     using System;
     using System.Collections.Generic;
     
-    public partial class PartType
+    public partial class OutAcc
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public PartType()
+        public OutAcc()
         {
-            this.InputCodes = new HashSet<InputCode>();
+            this.AccChallanDeductions = new HashSet<AccChallanDeduction>();
         }
     
-        public int PartTypeId { get; set; }
-        public string PartTypeName { get; set; }
+        public int OutAccId { get; set; }
+        public Nullable<int> OutStockId { get; set; }
+        public Nullable<int> OutputQuantity { get; set; }
         public Nullable<System.DateTime> CreateDate { get; set; }
         public Nullable<System.DateTime> EditDate { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         [JsonIgnore]
-        public virtual ICollection<InputCode> InputCodes { get; set; }
+        public virtual ICollection<AccChallanDeduction> AccChallanDeductions { get; set; }
+        [JsonIgnore]
+        public virtual OutStock OutStock { get; set; }
     }
 }

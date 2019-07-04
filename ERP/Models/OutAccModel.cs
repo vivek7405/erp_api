@@ -1,15 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
+using System.Web;
 
 namespace ERP.Models
 {
     [DataContract]
-    public class OutStockModel
+    public class OutAccModel
     {
         [DataMember]
-        public int OutStockId { get; set; }
+        public int OutAccId { get; set; }
         [DataMember]
-        public int VendorChallanNo { get; set; }
+        public int OutStockId { get; set; }
         [DataMember]
         public int OutputQuantity { get; set; }
         [DataMember]
@@ -19,8 +22,6 @@ namespace ERP.Models
         [DataMember]
         public int ProductId { get; set; }
         [DataMember]
-        public ChallanDeductionModel[] ChallanDeductions { get; set; }
-        [DataMember]
-        public OutAccModel[] OutAccs { get; set; }
+        public AccChallanDeductionModel[] AccChallanDeductions { get; set; }
     }
 }

@@ -18,6 +18,8 @@ namespace ERP.Models
         [DataMember]
         public ICollection<ChallanDeduction> ChallanDeductions { get; set; }
         [DataMember]
+        public ICollection<AccChallanDeduction> AccChallanDeductions { get; set; }
+        [DataMember]
         public int RemainingQuantity { get; set; }
     }
 }

@@ -136,6 +136,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AccChallanDeduction.cs">
+      <DependentUpon>DB.tt</DependentUpon>
+    </Compile>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
@@ -179,7 +182,6 @@
     </Compile>
     <Compile Include="Controllers\GeneralController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\StockInflowController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="DB.Context.cs">
       <AutoGen>True</AutoGen>
@@ -196,34 +198,29 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>DB.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Enums\EProductCategory.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="InputCode.cs">
-      <DependentUpon>DB.tt</DependentUpon>
-    </Compile>
+    <Compile Include="Models\AccChallanDeductionModel.cs" />
     <Compile Include="Models\BASFChallanDeduction.cs" />
     <Compile Include="Models\BASFChallanSelection.cs" />
     <Compile Include="Models\ChallanDeductionModel.cs" />
     <Compile Include="Models\ChallanDetailModel.cs" />
     <Compile Include="Models\ChallanProductModel.cs" />
     <Compile Include="Models\InputCodeModel.cs" />
+    <Compile Include="Models\OutAccModel.cs" />
     <Compile Include="Models\OutStockModel.cs" />
     <Compile Include="Models\ProductIdModel.cs" />
     <Compile Include="Models\ProductQuantity.cs" />
-    <Compile Include="Models\PurchaseOrder.cs" />
-    <Compile Include="Models\PurchaseOrderModel.cs" />
     <Compile Include="Models\SuccessResponse.cs" />
     <Compile Include="Models\VendorChallanModel.cs" />
     <Compile Include="Models\VendorChallanNoModel.cs" />
     <Compile Include="Models\ViewChallanDetailModel.cs" />
-    <Compile Include="OutputCode.cs">
+    <Compile Include="OutAcc.cs">
       <DependentUpon>DB.tt</DependentUpon>
     </Compile>
     <Compile Include="OutStock.cs">
-      <DependentUpon>DB.tt</DependentUpon>
-    </Compile>
-    <Compile Include="PartType.cs">
       <DependentUpon>DB.tt</DependentUpon>
     </Compile>
     <Compile Include="ProductCategory.cs">

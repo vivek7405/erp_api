@@ -19,6 +19,7 @@ namespace ERP
         public OutStock()
         {
             this.ChallanDeductions = new HashSet<ChallanDeduction>();
+            this.OutAccs = new HashSet<OutAcc>();
         }
     
         public int OutStockId { get; set; }
@@ -32,5 +33,8 @@ namespace ERP
         public virtual ICollection<ChallanDeduction> ChallanDeductions { get; set; }
         [JsonIgnore]
         public virtual VendorChallan VendorChallan { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        [JsonIgnore]
+        public virtual ICollection<OutAcc> OutAccs { get; set; }
     }
 }

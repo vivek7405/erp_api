@@ -1,15 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
+using System.Web;
 
 namespace ERP.Models
 {
     [DataContract]
-    public class ChallanDeductionModel
+    public class AccChallanDeductionModel
     {
         [DataMember]
-        public int ChallanDeductionId { get; set; }
+        public int AccChallanDeductionId { get; set; }
         [DataMember]
-        public int OutStockId { get; set; }
+        public int OutAccId { get; set; }
         [DataMember]
         public int ChallanProductId { get; set; }
         [DataMember]

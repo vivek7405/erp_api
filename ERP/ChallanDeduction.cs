@@ -21,7 +21,7 @@ namespace ERP
         public Nullable<int> OutQuantity { get; set; }
         public Nullable<System.DateTime> CreateDate { get; set; }
         public Nullable<System.DateTime> EditDate { get; set; }
-    
+
         [JsonIgnore]
         public virtual ChallanProduct ChallanProduct { get; set; }
         [JsonIgnore]
