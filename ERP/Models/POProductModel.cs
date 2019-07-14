@@ -7,20 +7,20 @@ using System.Web;
 namespace ERP.Models
 {
     [DataContract]
-    public class ChallanProductModel
+    public class POProductModel
     {
         [DataMember]
-        public ChallanProduct ChallanProduct { get; set; }
+        public POProduct POProduct { get; set; }
         [DataMember]
         public ProductDetail ProductDetail { get; set; }
         [DataMember]
-        public ChallanDetail ChallanDetail { get; set; }
+        public PODetail PODetail { get; set; }
         [DataMember]
-        public ICollection<ChallanDeduction> ChallanDeductions { get; set; }
+        public ICollection<PODeduction> PODeductions { get; set; }
         [DataMember]
-        public ICollection<AccChallanDeduction> AccChallanDeductions { get; set; }
+        public ICollection<AccPODeduction> AccPODeductions { get; set; }
         [DataMember]
-        public ICollection<AssemblyChallanDeduction> AssemblyChallanDeductions { get; set; }
+        public ICollection<AssemblyPODeduction> AssemblyPODeductions { get; set; }
         [DataMember]
         public int RemainingQuantity { get; set; }
     }

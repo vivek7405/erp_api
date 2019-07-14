@@ -9,7 +9,6 @@
 
 namespace ERP
 {
-    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     
@@ -25,9 +24,9 @@ namespace ERP
         public Nullable<System.DateTime> VendorChallanDate { get; set; }
         public Nullable<System.DateTime> CreateDate { get; set; }
         public Nullable<System.DateTime> EditDate { get; set; }
+        public Nullable<int> IsNg { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        [JsonIgnore]
         public virtual ICollection<OutStock> OutStocks { get; set; }
     }
 }

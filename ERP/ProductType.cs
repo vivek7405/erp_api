@@ -9,7 +9,6 @@
 
 namespace ERP
 {
-    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     
@@ -24,11 +23,9 @@ namespace ERP
         public int ProductTypeId { get; set; }
         public string ProductTypeName { get; set; }
         public Nullable<int> ProductCategoryId { get; set; }
-
-        [JsonIgnore]
+    
         public virtual ProductCategory ProductCategory { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        [JsonIgnore]
         public virtual ICollection<ProductDetail> ProductDetails { get; set; }
     }
 }

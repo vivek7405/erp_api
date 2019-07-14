@@ -16,6 +16,39 @@
           <Property Name="CreateDate" Type="datetime" />
           <Property Name="EditDate" Type="datetime" />
         </EntityType>
+        <EntityType Name="AccPODeductions">
+          <Key>
+            <PropertyRef Name="AccPODeductionId" />
+          </Key>
+          <Property Name="AccPODeductionId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="OutAccId" Type="int" />
+          <Property Name="POProductId" Type="int" />
+          <Property Name="OutQuantity" Type="int" />
+          <Property Name="CreateDate" Type="datetime" />
+          <Property Name="EditDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="AssemblyChallanDeductions">
+          <Key>
+            <PropertyRef Name="AssemblyChallanDeductionId" />
+          </Key>
+          <Property Name="AssemblyChallanDeductionId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="OutAssemblyId" Type="int" />
+          <Property Name="ChallanProductId" Type="int" />
+          <Property Name="OutQuantity" Type="int" />
+          <Property Name="CreateDate" Type="datetime" />
+          <Property Name="EditDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="AssemblyPODeductions">
+          <Key>
+            <PropertyRef Name="AssemblyPODeductionId" />
+          </Key>
+          <Property Name="AssemblyPODeductionId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="OutAssemblyId" Type="int" />
+          <Property Name="POProductId" Type="int" />
+          <Property Name="OutQuantity" Type="int" />
+          <Property Name="CreateDate" Type="datetime" />
+          <Property Name="EditDate" Type="datetime" />
+        </EntityType>
         <EntityType Name="ChallanDeductions">
           <Key>
             <PropertyRef Name="ChallanDeductionId" />
@@ -58,6 +91,16 @@
           <Property Name="CreateDate" Type="datetime" />
           <Property Name="EditDate" Type="datetime" />
         </EntityType>
+        <EntityType Name="OutAssemblys">
+          <Key>
+            <PropertyRef Name="OutAssemblyId" />
+          </Key>
+          <Property Name="OutAssemblyId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="OutStockId" Type="int" />
+          <Property Name="OutputQuantity" Type="int" />
+          <Property Name="CreateDate" Type="datetime" />
+          <Property Name="EditDate" Type="datetime" />
+        </EntityType>
         <EntityType Name="OutStocks">
           <Key>
             <PropertyRef Name="OutStockId" />
@@ -65,6 +108,38 @@
           <Property Name="OutStockId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="VendorChallanNo" Type="int" />
           <Property Name="OutputQuantity" Type="int" />
+          <Property Name="CreateDate" Type="datetime" />
+          <Property Name="EditDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="PODeductions">
+          <Key>
+            <PropertyRef Name="PODeductionId" />
+          </Key>
+          <Property Name="PODeductionId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="OutStockId" Type="int" />
+          <Property Name="POProductId" Type="int" />
+          <Property Name="OutQuantity" Type="int" />
+          <Property Name="CreateDate" Type="datetime" />
+          <Property Name="EditDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="PODetails">
+          <Key>
+            <PropertyRef Name="POId" />
+          </Key>
+          <Property Name="POId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PONo" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="PODate" Type="datetime" />
+          <Property Name="CreateDate" Type="datetime" />
+          <Property Name="EditDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="POProducts">
+          <Key>
+            <PropertyRef Name="POProductId" />
+          </Key>
+          <Property Name="POProductId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="POId" Type="int" />
+          <Property Name="ProductId" Type="int" />
+          <Property Name="InputQuantity" Type="int" />
           <Property Name="CreateDate" Type="datetime" />
           <Property Name="EditDate" Type="datetime" />
         </EntityType>
@@ -90,6 +165,16 @@
           <Property Name="CreateDate" Type="datetime" />
           <Property Name="EditDate" Type="datetime" />
         </EntityType>
+        <EntityType Name="ProductMappings">
+          <Key>
+            <PropertyRef Name="ProductMappingId" />
+          </Key>
+          <Property Name="ProductMappingId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ProductId" Type="int" />
+          <Property Name="MappingProductId" Type="int" />
+          <Property Name="CreateDate" Type="datetime" />
+          <Property Name="EditDate" Type="datetime" />
+        </EntityType>
         <EntityType Name="ProductTypes">
           <Key>
             <PropertyRef Name="ProductTypeId" />
@@ -106,6 +191,7 @@
           <Property Name="VendorChallanDate" Type="datetime" />
           <Property Name="CreateDate" Type="datetime" />
           <Property Name="EditDate" Type="datetime" />
+          <Property Name="IsNg" Type="int" />
         </EntityType>
         <Association Name="FK__AccChalla__Chall__57A801BA">
           <End Role="ChallanProducts" Type="Self.ChallanProducts" Multiplicity="0..1" />
@@ -128,6 +214,78 @@
             </Principal>
             <Dependent Role="AccChallanDeductions">
               <PropertyRef Name="OutAccId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__AccPODedu__OutAc__11D4A34F">
+          <End Role="OutAccs" Type="Self.OutAccs" Multiplicity="0..1" />
+          <End Role="AccPODeductions" Type="Self.AccPODeductions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OutAccs">
+              <PropertyRef Name="OutAccId" />
+            </Principal>
+            <Dependent Role="AccPODeductions">
+              <PropertyRef Name="OutAccId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__AccPODedu__POPro__12C8C788">
+          <End Role="POProducts" Type="Self.POProducts" Multiplicity="0..1" />
+          <End Role="AccPODeductions" Type="Self.AccPODeductions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="POProducts">
+              <PropertyRef Name="POProductId" />
+            </Principal>
+            <Dependent Role="AccPODeductions">
+              <PropertyRef Name="POProductId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__AssemblyC__Chall__61316BF4">
+          <End Role="ChallanProducts" Type="Self.ChallanProducts" Multiplicity="0..1" />
+          <End Role="AssemblyChallanDeductions" Type="Self.AssemblyChallanDeductions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ChallanProducts">
+              <PropertyRef Name="ChallanProductId" />
+            </Principal>
+            <Dependent Role="AssemblyChallanDeductions">
+              <PropertyRef Name="ChallanProductId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__AssemblyC__OutAs__603D47BB">
+          <End Role="OutAssemblys" Type="Self.OutAssemblys" Multiplicity="0..1" />
+          <End Role="AssemblyChallanDeductions" Type="Self.AssemblyChallanDeductions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OutAssemblys">
+              <PropertyRef Name="OutAssemblyId" />
+            </Principal>
+            <Dependent Role="AssemblyChallanDeductions">
+              <PropertyRef Name="OutAssemblyId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__AssemblyP__OutAs__15A53433">
+          <End Role="OutAssemblys" Type="Self.OutAssemblys" Multiplicity="0..1" />
+          <End Role="AssemblyPODeductions" Type="Self.AssemblyPODeductions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OutAssemblys">
+              <PropertyRef Name="OutAssemblyId" />
+            </Principal>
+            <Dependent Role="AssemblyPODeductions">
+              <PropertyRef Name="OutAssemblyId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__AssemblyP__POPro__1699586C">
+          <End Role="POProducts" Type="Self.POProducts" Multiplicity="0..1" />
+          <End Role="AssemblyPODeductions" Type="Self.AssemblyPODeductions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="POProducts">
+              <PropertyRef Name="POProductId" />
+            </Principal>
+            <Dependent Role="AssemblyPODeductions">
+              <PropertyRef Name="POProductId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -191,6 +349,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__OutAssemb__OutSt__5D60DB10">
+          <End Role="OutStocks" Type="Self.OutStocks" Multiplicity="0..1" />
+          <End Role="OutAssemblys" Type="Self.OutAssemblys" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OutStocks">
+              <PropertyRef Name="OutStockId" />
+            </Principal>
+            <Dependent Role="OutAssemblys">
+              <PropertyRef Name="OutStockId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__OutStocks__Vendo__4D2A7347">
           <End Role="VendorChallans" Type="Self.VendorChallans" Multiplicity="0..1" />
           <End Role="OutStocks" Type="Self.OutStocks" Multiplicity="*" />
@@ -203,6 +373,54 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__PODeducti__OutSt__0E04126B">
+          <End Role="OutStocks" Type="Self.OutStocks" Multiplicity="0..1" />
+          <End Role="PODeductions" Type="Self.PODeductions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OutStocks">
+              <PropertyRef Name="OutStockId" />
+            </Principal>
+            <Dependent Role="PODeductions">
+              <PropertyRef Name="OutStockId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PODeducti__POPro__0EF836A4">
+          <End Role="POProducts" Type="Self.POProducts" Multiplicity="0..1" />
+          <End Role="PODeductions" Type="Self.PODeductions" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="POProducts">
+              <PropertyRef Name="POProductId" />
+            </Principal>
+            <Dependent Role="PODeductions">
+              <PropertyRef Name="POProductId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__POProduct__Produ__6BAEFA67">
+          <End Role="ProductDetails" Type="Self.ProductDetails" Multiplicity="0..1" />
+          <End Role="POProducts" Type="Self.POProducts" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductDetails">
+              <PropertyRef Name="ProductId" />
+            </Principal>
+            <Dependent Role="POProducts">
+              <PropertyRef Name="ProductId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__POProducts__POId__6ABAD62E">
+          <End Role="PODetails" Type="Self.PODetails" Multiplicity="0..1" />
+          <End Role="POProducts" Type="Self.POProducts" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PODetails">
+              <PropertyRef Name="POId" />
+            </Principal>
+            <Dependent Role="POProducts">
+              <PropertyRef Name="POId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__ProductDe__Produ__41B8C09B">
           <End Role="ProductTypes" Type="Self.ProductTypes" Multiplicity="0..1" />
           <End Role="ProductDetails" Type="Self.ProductDetails" Multiplicity="*" />
@@ -212,6 +430,30 @@
             </Principal>
             <Dependent Role="ProductDetails">
               <PropertyRef Name="ProductTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ProductMa__Mappi__6501FCD8">
+          <End Role="ProductDetails" Type="Self.ProductDetails" Multiplicity="0..1" />
+          <End Role="ProductMappings" Type="Self.ProductMappings" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductDetails">
+              <PropertyRef Name="ProductId" />
+            </Principal>
+            <Dependent Role="ProductMappings">
+              <PropertyRef Name="MappingProductId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ProductMa__Produ__640DD89F">
+          <End Role="ProductDetails" Type="Self.ProductDetails" Multiplicity="0..1" />
+          <End Role="ProductMappings" Type="Self.ProductMappings" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductDetails">
+              <PropertyRef Name="ProductId" />
+            </Principal>
+            <Dependent Role="ProductMappings">
+              <PropertyRef Name="ProductId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -229,13 +471,21 @@
         </Association>
         <EntityContainer Name="erpdbModelStoreContainer">
           <EntitySet Name="AccChallanDeductions" EntityType="Self.AccChallanDeductions" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AccPODeductions" EntityType="Self.AccPODeductions" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AssemblyChallanDeductions" EntityType="Self.AssemblyChallanDeductions" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AssemblyPODeductions" EntityType="Self.AssemblyPODeductions" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ChallanDeductions" EntityType="Self.ChallanDeductions" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ChallanDetails" EntityType="Self.ChallanDetails" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ChallanProducts" EntityType="Self.ChallanProducts" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OutAccs" EntityType="Self.OutAccs" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="OutAssemblys" EntityType="Self.OutAssemblys" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OutStocks" EntityType="Self.OutStocks" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PODeductions" EntityType="Self.PODeductions" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="PODetails" EntityType="Self.PODetails" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="POProducts" EntityType="Self.POProducts" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ProductCategorys" EntityType="Self.ProductCategorys" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ProductDetails" EntityType="Self.ProductDetails" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ProductMappings" EntityType="Self.ProductMappings" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ProductTypes" EntityType="Self.ProductTypes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="VendorChallans" EntityType="Self.VendorChallans" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK__AccChalla__Chall__57A801BA" Association="Self.FK__AccChalla__Chall__57A801BA">
@@ -245,6 +495,30 @@
           <AssociationSet Name="FK__AccChalla__OutAc__56B3DD81" Association="Self.FK__AccChalla__OutAc__56B3DD81">
             <End Role="OutAccs" EntitySet="OutAccs" />
             <End Role="AccChallanDeductions" EntitySet="AccChallanDeductions" />
+          </AssociationSet>
+          <AssociationSet Name="FK__AccPODedu__OutAc__11D4A34F" Association="Self.FK__AccPODedu__OutAc__11D4A34F">
+            <End Role="OutAccs" EntitySet="OutAccs" />
+            <End Role="AccPODeductions" EntitySet="AccPODeductions" />
+          </AssociationSet>
+          <AssociationSet Name="FK__AccPODedu__POPro__12C8C788" Association="Self.FK__AccPODedu__POPro__12C8C788">
+            <End Role="POProducts" EntitySet="POProducts" />
+            <End Role="AccPODeductions" EntitySet="AccPODeductions" />
+          </AssociationSet>
+          <AssociationSet Name="FK__AssemblyC__Chall__61316BF4" Association="Self.FK__AssemblyC__Chall__61316BF4">
+            <End Role="ChallanProducts" EntitySet="ChallanProducts" />
+            <End Role="AssemblyChallanDeductions" EntitySet="AssemblyChallanDeductions" />
+          </AssociationSet>
+          <AssociationSet Name="FK__AssemblyC__OutAs__603D47BB" Association="Self.FK__AssemblyC__OutAs__603D47BB">
+            <End Role="OutAssemblys" EntitySet="OutAssemblys" />
+            <End Role="AssemblyChallanDeductions" EntitySet="AssemblyChallanDeductions" />
+          </AssociationSet>
+          <AssociationSet Name="FK__AssemblyP__OutAs__15A53433" Association="Self.FK__AssemblyP__OutAs__15A53433">
+            <End Role="OutAssemblys" EntitySet="OutAssemblys" />
+            <End Role="AssemblyPODeductions" EntitySet="AssemblyPODeductions" />
+          </AssociationSet>
+          <AssociationSet Name="FK__AssemblyP__POPro__1699586C" Association="Self.FK__AssemblyP__POPro__1699586C">
+            <End Role="POProducts" EntitySet="POProducts" />
+            <End Role="AssemblyPODeductions" EntitySet="AssemblyPODeductions" />
           </AssociationSet>
           <AssociationSet Name="FK__ChallanDe__Chall__53D770D6" Association="Self.FK__ChallanDe__Chall__53D770D6">
             <End Role="ChallanProducts" EntitySet="ChallanProducts" />
@@ -266,13 +540,41 @@
             <End Role="OutStocks" EntitySet="OutStocks" />
             <End Role="OutAccs" EntitySet="OutAccs" />
           </AssociationSet>
+          <AssociationSet Name="FK__OutAssemb__OutSt__5D60DB10" Association="Self.FK__OutAssemb__OutSt__5D60DB10">
+            <End Role="OutStocks" EntitySet="OutStocks" />
+            <End Role="OutAssemblys" EntitySet="OutAssemblys" />
+          </AssociationSet>
           <AssociationSet Name="FK__OutStocks__Vendo__4D2A7347" Association="Self.FK__OutStocks__Vendo__4D2A7347">
             <End Role="VendorChallans" EntitySet="VendorChallans" />
             <End Role="OutStocks" EntitySet="OutStocks" />
           </AssociationSet>
+          <AssociationSet Name="FK__PODeducti__OutSt__0E04126B" Association="Self.FK__PODeducti__OutSt__0E04126B">
+            <End Role="OutStocks" EntitySet="OutStocks" />
+            <End Role="PODeductions" EntitySet="PODeductions" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PODeducti__POPro__0EF836A4" Association="Self.FK__PODeducti__POPro__0EF836A4">
+            <End Role="POProducts" EntitySet="POProducts" />
+            <End Role="PODeductions" EntitySet="PODeductions" />
+          </AssociationSet>
+          <AssociationSet Name="FK__POProduct__Produ__6BAEFA67" Association="Self.FK__POProduct__Produ__6BAEFA67">
+            <End Role="ProductDetails" EntitySet="ProductDetails" />
+            <End Role="POProducts" EntitySet="POProducts" />
+          </AssociationSet>
+          <AssociationSet Name="FK__POProducts__POId__6ABAD62E" Association="Self.FK__POProducts__POId__6ABAD62E">
+            <End Role="PODetails" EntitySet="PODetails" />
+            <End Role="POProducts" EntitySet="POProducts" />
+          </AssociationSet>
           <AssociationSet Name="FK__ProductDe__Produ__41B8C09B" Association="Self.FK__ProductDe__Produ__41B8C09B">
             <End Role="ProductTypes" EntitySet="ProductTypes" />
             <End Role="ProductDetails" EntitySet="ProductDetails" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ProductMa__Mappi__6501FCD8" Association="Self.FK__ProductMa__Mappi__6501FCD8">
+            <End Role="ProductDetails" EntitySet="ProductDetails" />
+            <End Role="ProductMappings" EntitySet="ProductMappings" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ProductMa__Produ__640DD89F" Association="Self.FK__ProductMa__Produ__640DD89F">
+            <End Role="ProductDetails" EntitySet="ProductDetails" />
+            <End Role="ProductMappings" EntitySet="ProductMappings" />
           </AssociationSet>
           <AssociationSet Name="FK__ProductTy__Produ__0D44F85C" Association="Self.FK__ProductTy__Produ__0D44F85C">
             <End Role="ProductCategorys" EntitySet="ProductCategorys" />
@@ -283,6 +585,58 @@
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="erpdbModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="AccChallanDeduction">
+          <Key>
+            <PropertyRef Name="AccChallanDeductionId" />
+          </Key>
+          <Property Name="AccChallanDeductionId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="OutAccId" Type="Int32" />
+          <Property Name="ChallanProductId" Type="Int32" />
+          <Property Name="OutQuantity" Type="Int32" />
+          <Property Name="CreateDate" Type="DateTime" Precision="3" />
+          <Property Name="EditDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="ChallanProduct" Relationship="Self.FK__AccChalla__Chall__57A801BA" FromRole="AccChallanDeductions" ToRole="ChallanProducts" />
+          <NavigationProperty Name="OutAcc" Relationship="Self.FK__AccChalla__OutAc__56B3DD81" FromRole="AccChallanDeductions" ToRole="OutAccs" />
+        </EntityType>
+        <EntityType Name="AccPODeduction">
+          <Key>
+            <PropertyRef Name="AccPODeductionId" />
+          </Key>
+          <Property Name="AccPODeductionId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="OutAccId" Type="Int32" />
+          <Property Name="POProductId" Type="Int32" />
+          <Property Name="OutQuantity" Type="Int32" />
+          <Property Name="CreateDate" Type="DateTime" Precision="3" />
+          <Property Name="EditDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="OutAcc" Relationship="Self.FK__AccPODedu__OutAc__11D4A34F" FromRole="AccPODeductions" ToRole="OutAccs" />
+          <NavigationProperty Name="POProduct" Relationship="Self.FK__AccPODedu__POPro__12C8C788" FromRole="AccPODeductions" ToRole="POProducts" />
+        </EntityType>
+        <EntityType Name="AssemblyChallanDeduction">
+          <Key>
+            <PropertyRef Name="AssemblyChallanDeductionId" />
+          </Key>
+          <Property Name="AssemblyChallanDeductionId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="OutAssemblyId" Type="Int32" />
+          <Property Name="ChallanProductId" Type="Int32" />
+          <Property Name="OutQuantity" Type="Int32" />
+          <Property Name="CreateDate" Type="DateTime" Precision="3" />
+          <Property Name="EditDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="ChallanProduct" Relationship="Self.FK__AssemblyC__Chall__61316BF4" FromRole="AssemblyChallanDeductions" ToRole="ChallanProducts" />
+          <NavigationProperty Name="OutAssembly" Relationship="Self.FK__AssemblyC__OutAs__603D47BB" FromRole="AssemblyChallanDeductions" ToRole="OutAssemblys" />
+        </EntityType>
+        <EntityType Name="AssemblyPODeduction">
+          <Key>
+            <PropertyRef Name="AssemblyPODeductionId" />
+          </Key>
+          <Property Name="AssemblyPODeductionId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="OutAssemblyId" Type="Int32" />
+          <Property Name="POProductId" Type="Int32" />
+          <Property Name="OutQuantity" Type="Int32" />
+          <Property Name="CreateDate" Type="DateTime" Precision="3" />
+          <Property Name="EditDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="OutAssembly" Relationship="Self.FK__AssemblyP__OutAs__15A53433" FromRole="AssemblyPODeductions" ToRole="OutAssemblys" />
+          <NavigationProperty Name="POProduct" Relationship="Self.FK__AssemblyP__POPro__1699586C" FromRole="AssemblyPODeductions" ToRole="POProducts" />
+        </EntityType>
         <EntityType Name="ChallanDeduction">
           <Key>
             <PropertyRef Name="ChallanDeductionId" />
@@ -293,8 +647,8 @@
           <Property Name="OutQuantity" Type="Int32" />
           <Property Name="CreateDate" Type="DateTime" Precision="3" />
           <Property Name="EditDate" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="ChallanProduct" Relationship="Self.FK__ChallanDe__Chall__2334397B" FromRole="ChallanDeductions" ToRole="ChallanProducts" />
-          <NavigationProperty Name="OutStock" Relationship="Self.FK__ChallanDe__OutSt__22401542" FromRole="ChallanDeductions" ToRole="OutStocks" />
+          <NavigationProperty Name="ChallanProduct" Relationship="Self.FK__ChallanDe__Chall__53D770D6" FromRole="ChallanDeductions" ToRole="ChallanProducts" />
+          <NavigationProperty Name="OutStock" Relationship="Self.FK__ChallanDe__OutSt__52E34C9D" FromRole="ChallanDeductions" ToRole="OutStocks" />
         </EntityType>
         <EntityType Name="ChallanDetail">
           <Key>
@@ -305,7 +659,7 @@
           <Property Name="ChallanDate" Type="DateTime" Precision="3" />
           <Property Name="CreateDate" Type="DateTime" Precision="3" />
           <Property Name="EditDate" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="ChallanProducts" Relationship="Self.FK__ChallanPr__Chall__19AACF41" FromRole="ChallanDetails" ToRole="ChallanProducts" />
+          <NavigationProperty Name="ChallanProducts" Relationship="Self.FK__ChallanPr__Chall__477199F1" FromRole="ChallanDetails" ToRole="ChallanProducts" />
         </EntityType>
         <EntityType Name="ChallanProduct">
           <Key>
@@ -317,10 +671,37 @@
           <Property Name="InputQuantity" Type="Int32" />
           <Property Name="CreateDate" Type="DateTime" Precision="3" />
           <Property Name="EditDate" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="ChallanDeductions" Relationship="Self.FK__ChallanDe__Chall__2334397B" FromRole="ChallanProducts" ToRole="ChallanDeductions" />
-          <NavigationProperty Name="ChallanDetail" Relationship="Self.FK__ChallanPr__Chall__19AACF41" FromRole="ChallanProducts" ToRole="ChallanDetails" />
-          <NavigationProperty Name="ProductDetail" Relationship="Self.FK__ChallanPr__Produ__1A9EF37A" FromRole="ChallanProducts" ToRole="ProductDetails" />
-          <NavigationProperty Name="AccChallanDeductions" Relationship="erpdbModel.FK__AccChalla__Chall__32767D0B" FromRole="ChallanProduct" ToRole="AccChallanDeduction" />
+          <NavigationProperty Name="AccChallanDeductions" Relationship="Self.FK__AccChalla__Chall__57A801BA" FromRole="ChallanProducts" ToRole="AccChallanDeductions" />
+          <NavigationProperty Name="AssemblyChallanDeductions" Relationship="Self.FK__AssemblyC__Chall__61316BF4" FromRole="ChallanProducts" ToRole="AssemblyChallanDeductions" />
+          <NavigationProperty Name="ChallanDeductions" Relationship="Self.FK__ChallanDe__Chall__53D770D6" FromRole="ChallanProducts" ToRole="ChallanDeductions" />
+          <NavigationProperty Name="ChallanDetail" Relationship="Self.FK__ChallanPr__Chall__477199F1" FromRole="ChallanProducts" ToRole="ChallanDetails" />
+          <NavigationProperty Name="ProductDetail" Relationship="Self.FK__ChallanPr__Produ__4865BE2A" FromRole="ChallanProducts" ToRole="ProductDetails" />
+        </EntityType>
+        <EntityType Name="OutAcc">
+          <Key>
+            <PropertyRef Name="OutAccId" />
+          </Key>
+          <Property Name="OutAccId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="OutStockId" Type="Int32" />
+          <Property Name="OutputQuantity" Type="Int32" />
+          <Property Name="CreateDate" Type="DateTime" Precision="3" />
+          <Property Name="EditDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="AccChallanDeductions" Relationship="Self.FK__AccChalla__OutAc__56B3DD81" FromRole="OutAccs" ToRole="AccChallanDeductions" />
+          <NavigationProperty Name="AccPODeductions" Relationship="Self.FK__AccPODedu__OutAc__11D4A34F" FromRole="OutAccs" ToRole="AccPODeductions" />
+          <NavigationProperty Name="OutStock" Relationship="Self.FK__OutAccs__OutStoc__5006DFF2" FromRole="OutAccs" ToRole="OutStocks" />
+        </EntityType>
+        <EntityType Name="OutAssembly">
+          <Key>
+            <PropertyRef Name="OutAssemblyId" />
+          </Key>
+          <Property Name="OutAssemblyId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="OutStockId" Type="Int32" />
+          <Property Name="OutputQuantity" Type="Int32" />
+          <Property Name="CreateDate" Type="DateTime" Precision="3" />
+          <Property Name="EditDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="AssemblyChallanDeductions" Relationship="Self.FK__AssemblyC__OutAs__603D47BB" FromRole="OutAssemblys" ToRole="AssemblyChallanDeductions" />
+          <NavigationProperty Name="AssemblyPODeductions" Relationship="Self.FK__AssemblyP__OutAs__15A53433" FromRole="OutAssemblys" ToRole="AssemblyPODeductions" />
+          <NavigationProperty Name="OutStock" Relationship="Self.FK__OutAssemb__OutSt__5D60DB10" FromRole="OutAssemblys" ToRole="OutStocks" />
         </EntityType>
         <EntityType Name="OutStock">
           <Key>
@@ -331,9 +712,51 @@
           <Property Name="OutputQuantity" Type="Int32" />
           <Property Name="CreateDate" Type="DateTime" Precision="3" />
           <Property Name="EditDate" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="ChallanDeductions" Relationship="Self.FK__ChallanDe__OutSt__22401542" FromRole="OutStocks" ToRole="ChallanDeductions" />
-          <NavigationProperty Name="VendorChallan" Relationship="Self.FK__OutStocks__Vendo__1F63A897" FromRole="OutStocks" ToRole="VendorChallans" />
-          <NavigationProperty Name="OutAccs" Relationship="erpdbModel.FK__OutAccs__OutStoc__2EA5EC27" FromRole="OutStock" ToRole="OutAcc" />
+          <NavigationProperty Name="ChallanDeductions" Relationship="Self.FK__ChallanDe__OutSt__52E34C9D" FromRole="OutStocks" ToRole="ChallanDeductions" />
+          <NavigationProperty Name="OutAccs" Relationship="Self.FK__OutAccs__OutStoc__5006DFF2" FromRole="OutStocks" ToRole="OutAccs" />
+          <NavigationProperty Name="OutAssemblys" Relationship="Self.FK__OutAssemb__OutSt__5D60DB10" FromRole="OutStocks" ToRole="OutAssemblys" />
+          <NavigationProperty Name="VendorChallan" Relationship="Self.FK__OutStocks__Vendo__4D2A7347" FromRole="OutStocks" ToRole="VendorChallans" />
+          <NavigationProperty Name="PODeductions" Relationship="Self.FK__PODeducti__OutSt__0E04126B" FromRole="OutStocks" ToRole="PODeductions" />
+        </EntityType>
+        <EntityType Name="PODeduction">
+          <Key>
+            <PropertyRef Name="PODeductionId" />
+          </Key>
+          <Property Name="PODeductionId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="OutStockId" Type="Int32" />
+          <Property Name="POProductId" Type="Int32" />
+          <Property Name="OutQuantity" Type="Int32" />
+          <Property Name="CreateDate" Type="DateTime" Precision="3" />
+          <Property Name="EditDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="OutStock" Relationship="Self.FK__PODeducti__OutSt__0E04126B" FromRole="PODeductions" ToRole="OutStocks" />
+          <NavigationProperty Name="POProduct" Relationship="Self.FK__PODeducti__POPro__0EF836A4" FromRole="PODeductions" ToRole="POProducts" />
+        </EntityType>
+        <EntityType Name="PODetail">
+          <Key>
+            <PropertyRef Name="POId" />
+          </Key>
+          <Property Name="POId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PONo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="PODate" Type="DateTime" Precision="3" />
+          <Property Name="CreateDate" Type="DateTime" Precision="3" />
+          <Property Name="EditDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="POProducts" Relationship="Self.FK__POProducts__POId__6ABAD62E" FromRole="PODetails" ToRole="POProducts" />
+        </EntityType>
+        <EntityType Name="POProduct">
+          <Key>
+            <PropertyRef Name="POProductId" />
+          </Key>
+          <Property Name="POProductId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="POId" Type="Int32" />
+          <Property Name="ProductId" Type="Int32" />
+          <Property Name="InputQuantity" Type="Int32" />
+          <Property Name="CreateDate" Type="DateTime" Precision="3" />
+          <Property Name="EditDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="AccPODeductions" Relationship="Self.FK__AccPODedu__POPro__12C8C788" FromRole="POProducts" ToRole="AccPODeductions" />
+          <NavigationProperty Name="AssemblyPODeductions" Relationship="Self.FK__AssemblyP__POPro__1699586C" FromRole="POProducts" ToRole="AssemblyPODeductions" />
+          <NavigationProperty Name="PODeductions" Relationship="Self.FK__PODeducti__POPro__0EF836A4" FromRole="POProducts" ToRole="PODeductions" />
+          <NavigationProperty Name="PODetail" Relationship="Self.FK__POProducts__POId__6ABAD62E" FromRole="POProducts" ToRole="PODetails" />
+          <NavigationProperty Name="ProductDetail" Relationship="Self.FK__POProduct__Produ__6BAEFA67" FromRole="POProducts" ToRole="ProductDetails" />
         </EntityType>
         <EntityType Name="ProductCategory">
           <Key>
@@ -357,8 +780,23 @@
           <Property Name="SplitRatio" Type="Int32" />
           <Property Name="CreateDate" Type="DateTime" Precision="3" />
           <Property Name="EditDate" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="ChallanProducts" Relationship="Self.FK__ChallanPr__Produ__1A9EF37A" FromRole="ProductDetails" ToRole="ChallanProducts" />
-          <NavigationProperty Name="ProductType" Relationship="Self.FK__ProductDe__Produ__10216507" FromRole="ProductDetails" ToRole="ProductTypes" />
+          <NavigationProperty Name="ChallanProducts" Relationship="Self.FK__ChallanPr__Produ__4865BE2A" FromRole="ProductDetails" ToRole="ChallanProducts" />
+          <NavigationProperty Name="POProducts" Relationship="Self.FK__POProduct__Produ__6BAEFA67" FromRole="ProductDetails" ToRole="POProducts" />
+          <NavigationProperty Name="ProductType" Relationship="Self.FK__ProductDe__Produ__41B8C09B" FromRole="ProductDetails" ToRole="ProductTypes" />
+          <NavigationProperty Name="ProductMappings1" Relationship="Self.FK__ProductMa__Mappi__6501FCD8" FromRole="ProductDetails" ToRole="ProductMappings" />
+          <NavigationProperty Name="ProductMappings" Relationship="Self.FK__ProductMa__Produ__640DD89F" FromRole="ProductDetails" ToRole="ProductMappings" />
+        </EntityType>
+        <EntityType Name="ProductMapping">
+          <Key>
+            <PropertyRef Name="ProductMappingId" />
+          </Key>
+          <Property Name="ProductMappingId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ProductId" Type="Int32" />
+          <Property Name="MappingProductId" Type="Int32" />
+          <Property Name="CreateDate" Type="DateTime" Precision="3" />
+          <Property Name="EditDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="ProductDetail1" Relationship="Self.FK__ProductMa__Mappi__6501FCD8" FromRole="ProductMappings" ToRole="ProductDetails" />
+          <NavigationProperty Name="ProductDetail" Relationship="Self.FK__ProductMa__Produ__640DD89F" FromRole="ProductMappings" ToRole="ProductDetails" />
         </EntityType>
         <EntityType Name="ProductType">
           <Key>
@@ -368,7 +806,7 @@
           <Property Name="ProductTypeName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="ProductCategoryId" Type="Int32" />
           <NavigationProperty Name="ProductCategory" Relationship="Self.FK__ProductTy__Produ__0D44F85C" FromRole="ProductTypes" ToRole="ProductCategorys" />
-          <NavigationProperty Name="ProductDetails" Relationship="Self.FK__ProductDe__Produ__10216507" FromRole="ProductTypes" ToRole="ProductDetails" />
+          <NavigationProperty Name="ProductDetails" Relationship="Self.FK__ProductDe__Produ__41B8C09B" FromRole="ProductTypes" ToRole="ProductDetails" />
         </EntityType>
         <EntityType Name="VendorChallan">
           <Key>
@@ -378,9 +816,106 @@
           <Property Name="VendorChallanDate" Type="DateTime" Precision="3" />
           <Property Name="CreateDate" Type="DateTime" Precision="3" />
           <Property Name="EditDate" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="OutStocks" Relationship="Self.FK__OutStocks__Vendo__1F63A897" FromRole="VendorChallans" ToRole="OutStocks" />
+          <NavigationProperty Name="OutStocks" Relationship="Self.FK__OutStocks__Vendo__4D2A7347" FromRole="VendorChallans" ToRole="OutStocks" />
+          <Property Name="IsNg" Type="Int32" />
         </EntityType>
-        <Association Name="FK__ChallanDe__Chall__2334397B">
+        <Association Name="FK__AccChalla__Chall__57A801BA">
+          <End Role="ChallanProducts" Type="Self.ChallanProduct" Multiplicity="0..1" />
+          <End Role="AccChallanDeductions" Type="Self.AccChallanDeduction" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ChallanProducts">
+              <PropertyRef Name="ChallanProductId" />
+            </Principal>
+            <Dependent Role="AccChallanDeductions">
+              <PropertyRef Name="ChallanProductId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__AccChalla__OutAc__56B3DD81">
+          <End Role="OutAccs" Type="Self.OutAcc" Multiplicity="0..1" />
+          <End Role="AccChallanDeductions" Type="Self.AccChallanDeduction" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OutAccs">
+              <PropertyRef Name="OutAccId" />
+            </Principal>
+            <Dependent Role="AccChallanDeductions">
+              <PropertyRef Name="OutAccId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__AccPODedu__OutAc__11D4A34F">
+          <End Role="OutAccs" Type="Self.OutAcc" Multiplicity="0..1" />
+          <End Role="AccPODeductions" Type="Self.AccPODeduction" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OutAccs">
+              <PropertyRef Name="OutAccId" />
+            </Principal>
+            <Dependent Role="AccPODeductions">
+              <PropertyRef Name="OutAccId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__AccPODedu__POPro__12C8C788">
+          <End Role="POProducts" Type="Self.POProduct" Multiplicity="0..1" />
+          <End Role="AccPODeductions" Type="Self.AccPODeduction" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="POProducts">
+              <PropertyRef Name="POProductId" />
+            </Principal>
+            <Dependent Role="AccPODeductions">
+              <PropertyRef Name="POProductId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__AssemblyC__Chall__61316BF4">
+          <End Role="ChallanProducts" Type="Self.ChallanProduct" Multiplicity="0..1" />
+          <End Role="AssemblyChallanDeductions" Type="Self.AssemblyChallanDeduction" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ChallanProducts">
+              <PropertyRef Name="ChallanProductId" />
+            </Principal>
+            <Dependent Role="AssemblyChallanDeductions">
+              <PropertyRef Name="ChallanProductId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__AssemblyC__OutAs__603D47BB">
+          <End Role="OutAssemblys" Type="Self.OutAssembly" Multiplicity="0..1" />
+          <End Role="AssemblyChallanDeductions" Type="Self.AssemblyChallanDeduction" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OutAssemblys">
+              <PropertyRef Name="OutAssemblyId" />
+            </Principal>
+            <Dependent Role="AssemblyChallanDeductions">
+              <PropertyRef Name="OutAssemblyId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__AssemblyP__OutAs__15A53433">
+          <End Role="OutAssemblys" Type="Self.OutAssembly" Multiplicity="0..1" />
+          <End Role="AssemblyPODeductions" Type="Self.AssemblyPODeduction" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OutAssemblys">
+              <PropertyRef Name="OutAssemblyId" />
+            </Principal>
+            <Dependent Role="AssemblyPODeductions">
+              <PropertyRef Name="OutAssemblyId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__AssemblyP__POPro__1699586C">
+          <End Role="POProducts" Type="Self.POProduct" Multiplicity="0..1" />
+          <End Role="AssemblyPODeductions" Type="Self.AssemblyPODeduction" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="POProducts">
+              <PropertyRef Name="POProductId" />
+            </Principal>
+            <Dependent Role="AssemblyPODeductions">
+              <PropertyRef Name="POProductId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ChallanDe__Chall__53D770D6">
           <End Role="ChallanProducts" Type="Self.ChallanProduct" Multiplicity="0..1" />
           <End Role="ChallanDeductions" Type="Self.ChallanDeduction" Multiplicity="*" />
           <ReferentialConstraint>
@@ -392,7 +927,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__ChallanDe__OutSt__22401542">
+        <Association Name="FK__ChallanDe__OutSt__52E34C9D">
           <End Role="OutStocks" Type="Self.OutStock" Multiplicity="0..1" />
           <End Role="ChallanDeductions" Type="Self.ChallanDeduction" Multiplicity="*" />
           <ReferentialConstraint>
@@ -404,7 +939,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__ChallanPr__Chall__19AACF41">
+        <Association Name="FK__ChallanPr__Chall__477199F1">
           <End Role="ChallanDetails" Type="Self.ChallanDetail" Multiplicity="0..1" />
           <End Role="ChallanProducts" Type="Self.ChallanProduct" Multiplicity="*" />
           <ReferentialConstraint>
@@ -416,7 +951,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__ChallanPr__Produ__1A9EF37A">
+        <Association Name="FK__ChallanPr__Produ__4865BE2A">
           <End Role="ProductDetails" Type="Self.ProductDetail" Multiplicity="0..1" />
           <End Role="ChallanProducts" Type="Self.ChallanProduct" Multiplicity="*" />
           <ReferentialConstraint>
@@ -428,7 +963,31 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__OutStocks__Vendo__1F63A897">
+        <Association Name="FK__OutAccs__OutStoc__5006DFF2">
+          <End Role="OutStocks" Type="Self.OutStock" Multiplicity="0..1" />
+          <End Role="OutAccs" Type="Self.OutAcc" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OutStocks">
+              <PropertyRef Name="OutStockId" />
+            </Principal>
+            <Dependent Role="OutAccs">
+              <PropertyRef Name="OutStockId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__OutAssemb__OutSt__5D60DB10">
+          <End Role="OutStocks" Type="Self.OutStock" Multiplicity="0..1" />
+          <End Role="OutAssemblys" Type="Self.OutAssembly" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OutStocks">
+              <PropertyRef Name="OutStockId" />
+            </Principal>
+            <Dependent Role="OutAssemblys">
+              <PropertyRef Name="OutStockId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__OutStocks__Vendo__4D2A7347">
           <End Role="VendorChallans" Type="Self.VendorChallan" Multiplicity="0..1" />
           <End Role="OutStocks" Type="Self.OutStock" Multiplicity="*" />
           <ReferentialConstraint>
@@ -437,6 +996,54 @@
             </Principal>
             <Dependent Role="OutStocks">
               <PropertyRef Name="VendorChallanNo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PODeducti__OutSt__0E04126B">
+          <End Role="OutStocks" Type="Self.OutStock" Multiplicity="0..1" />
+          <End Role="PODeductions" Type="Self.PODeduction" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OutStocks">
+              <PropertyRef Name="OutStockId" />
+            </Principal>
+            <Dependent Role="PODeductions">
+              <PropertyRef Name="OutStockId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__PODeducti__POPro__0EF836A4">
+          <End Role="POProducts" Type="Self.POProduct" Multiplicity="0..1" />
+          <End Role="PODeductions" Type="Self.PODeduction" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="POProducts">
+              <PropertyRef Name="POProductId" />
+            </Principal>
+            <Dependent Role="PODeductions">
+              <PropertyRef Name="POProductId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__POProducts__POId__6ABAD62E">
+          <End Role="PODetails" Type="Self.PODetail" Multiplicity="0..1" />
+          <End Role="POProducts" Type="Self.POProduct" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PODetails">
+              <PropertyRef Name="POId" />
+            </Principal>
+            <Dependent Role="POProducts">
+              <PropertyRef Name="POId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__POProduct__Produ__6BAEFA67">
+          <End Role="ProductDetails" Type="Self.ProductDetail" Multiplicity="0..1" />
+          <End Role="POProducts" Type="Self.POProduct" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductDetails">
+              <PropertyRef Name="ProductId" />
+            </Principal>
+            <Dependent Role="POProducts">
+              <PropertyRef Name="ProductId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -452,7 +1059,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__ProductDe__Produ__10216507">
+        <Association Name="FK__ProductDe__Produ__41B8C09B">
           <End Role="ProductTypes" Type="Self.ProductType" Multiplicity="0..1" />
           <End Role="ProductDetails" Type="Self.ProductDetail" Multiplicity="*" />
           <ReferentialConstraint>
@@ -464,125 +1071,196 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__ProductMa__Mappi__6501FCD8">
+          <End Role="ProductDetails" Type="Self.ProductDetail" Multiplicity="0..1" />
+          <End Role="ProductMappings" Type="Self.ProductMapping" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductDetails">
+              <PropertyRef Name="ProductId" />
+            </Principal>
+            <Dependent Role="ProductMappings">
+              <PropertyRef Name="MappingProductId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ProductMa__Produ__640DD89F">
+          <End Role="ProductDetails" Type="Self.ProductDetail" Multiplicity="0..1" />
+          <End Role="ProductMappings" Type="Self.ProductMapping" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductDetails">
+              <PropertyRef Name="ProductId" />
+            </Principal>
+            <Dependent Role="ProductMappings">
+              <PropertyRef Name="ProductId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="erpdbEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="AccChallanDeductions" EntityType="Self.AccChallanDeduction" />
+          <EntitySet Name="AccPODeductions" EntityType="Self.AccPODeduction" />
+          <EntitySet Name="AssemblyChallanDeductions" EntityType="Self.AssemblyChallanDeduction" />
+          <EntitySet Name="AssemblyPODeductions" EntityType="Self.AssemblyPODeduction" />
           <EntitySet Name="ChallanDeductions" EntityType="Self.ChallanDeduction" />
           <EntitySet Name="ChallanDetails" EntityType="Self.ChallanDetail" />
           <EntitySet Name="ChallanProducts" EntityType="Self.ChallanProduct" />
+          <EntitySet Name="OutAccs" EntityType="Self.OutAcc" />
+          <EntitySet Name="OutAssemblys" EntityType="Self.OutAssembly" />
           <EntitySet Name="OutStocks" EntityType="Self.OutStock" />
+          <EntitySet Name="PODeductions" EntityType="Self.PODeduction" />
+          <EntitySet Name="PODetails" EntityType="Self.PODetail" />
+          <EntitySet Name="POProducts" EntityType="Self.POProduct" />
           <EntitySet Name="ProductCategorys" EntityType="Self.ProductCategory" />
           <EntitySet Name="ProductDetails" EntityType="Self.ProductDetail" />
+          <EntitySet Name="ProductMappings" EntityType="Self.ProductMapping" />
           <EntitySet Name="ProductTypes" EntityType="Self.ProductType" />
           <EntitySet Name="VendorChallans" EntityType="Self.VendorChallan" />
-          <AssociationSet Name="FK__ChallanDe__Chall__2334397B" Association="Self.FK__ChallanDe__Chall__2334397B">
+          <AssociationSet Name="FK__AccChalla__Chall__57A801BA" Association="Self.FK__AccChalla__Chall__57A801BA">
+            <End Role="ChallanProducts" EntitySet="ChallanProducts" />
+            <End Role="AccChallanDeductions" EntitySet="AccChallanDeductions" />
+          </AssociationSet>
+          <AssociationSet Name="FK__AccChalla__OutAc__56B3DD81" Association="Self.FK__AccChalla__OutAc__56B3DD81">
+            <End Role="OutAccs" EntitySet="OutAccs" />
+            <End Role="AccChallanDeductions" EntitySet="AccChallanDeductions" />
+          </AssociationSet>
+          <AssociationSet Name="FK__AccPODedu__OutAc__11D4A34F" Association="Self.FK__AccPODedu__OutAc__11D4A34F">
+            <End Role="OutAccs" EntitySet="OutAccs" />
+            <End Role="AccPODeductions" EntitySet="AccPODeductions" />
+          </AssociationSet>
+          <AssociationSet Name="FK__AccPODedu__POPro__12C8C788" Association="Self.FK__AccPODedu__POPro__12C8C788">
+            <End Role="POProducts" EntitySet="POProducts" />
+            <End Role="AccPODeductions" EntitySet="AccPODeductions" />
+          </AssociationSet>
+          <AssociationSet Name="FK__AssemblyC__Chall__61316BF4" Association="Self.FK__AssemblyC__Chall__61316BF4">
+            <End Role="ChallanProducts" EntitySet="ChallanProducts" />
+            <End Role="AssemblyChallanDeductions" EntitySet="AssemblyChallanDeductions" />
+          </AssociationSet>
+          <AssociationSet Name="FK__AssemblyC__OutAs__603D47BB" Association="Self.FK__AssemblyC__OutAs__603D47BB">
+            <End Role="OutAssemblys" EntitySet="OutAssemblys" />
+            <End Role="AssemblyChallanDeductions" EntitySet="AssemblyChallanDeductions" />
+          </AssociationSet>
+          <AssociationSet Name="FK__AssemblyP__OutAs__15A53433" Association="Self.FK__AssemblyP__OutAs__15A53433">
+            <End Role="OutAssemblys" EntitySet="OutAssemblys" />
+            <End Role="AssemblyPODeductions" EntitySet="AssemblyPODeductions" />
+          </AssociationSet>
+          <AssociationSet Name="FK__AssemblyP__POPro__1699586C" Association="Self.FK__AssemblyP__POPro__1699586C">
+            <End Role="POProducts" EntitySet="POProducts" />
+            <End Role="AssemblyPODeductions" EntitySet="AssemblyPODeductions" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ChallanDe__Chall__53D770D6" Association="Self.FK__ChallanDe__Chall__53D770D6">
             <End Role="ChallanProducts" EntitySet="ChallanProducts" />
             <End Role="ChallanDeductions" EntitySet="ChallanDeductions" />
           </AssociationSet>
-          <AssociationSet Name="FK__ChallanDe__OutSt__22401542" Association="Self.FK__ChallanDe__OutSt__22401542">
+          <AssociationSet Name="FK__ChallanDe__OutSt__52E34C9D" Association="Self.FK__ChallanDe__OutSt__52E34C9D">
             <End Role="OutStocks" EntitySet="OutStocks" />
             <End Role="ChallanDeductions" EntitySet="ChallanDeductions" />
           </AssociationSet>
-          <AssociationSet Name="FK__ChallanPr__Chall__19AACF41" Association="Self.FK__ChallanPr__Chall__19AACF41">
+          <AssociationSet Name="FK__ChallanPr__Chall__477199F1" Association="Self.FK__ChallanPr__Chall__477199F1">
             <End Role="ChallanDetails" EntitySet="ChallanDetails" />
             <End Role="ChallanProducts" EntitySet="ChallanProducts" />
           </AssociationSet>
-          <AssociationSet Name="FK__ChallanPr__Produ__1A9EF37A" Association="Self.FK__ChallanPr__Produ__1A9EF37A">
+          <AssociationSet Name="FK__ChallanPr__Produ__4865BE2A" Association="Self.FK__ChallanPr__Produ__4865BE2A">
             <End Role="ProductDetails" EntitySet="ProductDetails" />
             <End Role="ChallanProducts" EntitySet="ChallanProducts" />
           </AssociationSet>
-          <AssociationSet Name="FK__OutStocks__Vendo__1F63A897" Association="Self.FK__OutStocks__Vendo__1F63A897">
+          <AssociationSet Name="FK__OutAccs__OutStoc__5006DFF2" Association="Self.FK__OutAccs__OutStoc__5006DFF2">
+            <End Role="OutStocks" EntitySet="OutStocks" />
+            <End Role="OutAccs" EntitySet="OutAccs" />
+          </AssociationSet>
+          <AssociationSet Name="FK__OutAssemb__OutSt__5D60DB10" Association="Self.FK__OutAssemb__OutSt__5D60DB10">
+            <End Role="OutStocks" EntitySet="OutStocks" />
+            <End Role="OutAssemblys" EntitySet="OutAssemblys" />
+          </AssociationSet>
+          <AssociationSet Name="FK__OutStocks__Vendo__4D2A7347" Association="Self.FK__OutStocks__Vendo__4D2A7347">
             <End Role="VendorChallans" EntitySet="VendorChallans" />
             <End Role="OutStocks" EntitySet="OutStocks" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PODeducti__OutSt__0E04126B" Association="Self.FK__PODeducti__OutSt__0E04126B">
+            <End Role="OutStocks" EntitySet="OutStocks" />
+            <End Role="PODeductions" EntitySet="PODeductions" />
+          </AssociationSet>
+          <AssociationSet Name="FK__PODeducti__POPro__0EF836A4" Association="Self.FK__PODeducti__POPro__0EF836A4">
+            <End Role="POProducts" EntitySet="POProducts" />
+            <End Role="PODeductions" EntitySet="PODeductions" />
+          </AssociationSet>
+          <AssociationSet Name="FK__POProducts__POId__6ABAD62E" Association="Self.FK__POProducts__POId__6ABAD62E">
+            <End Role="PODetails" EntitySet="PODetails" />
+            <End Role="POProducts" EntitySet="POProducts" />
+          </AssociationSet>
+          <AssociationSet Name="FK__POProduct__Produ__6BAEFA67" Association="Self.FK__POProduct__Produ__6BAEFA67">
+            <End Role="ProductDetails" EntitySet="ProductDetails" />
+            <End Role="POProducts" EntitySet="POProducts" />
           </AssociationSet>
           <AssociationSet Name="FK__ProductTy__Produ__0D44F85C" Association="Self.FK__ProductTy__Produ__0D44F85C">
             <End Role="ProductCategorys" EntitySet="ProductCategorys" />
             <End Role="ProductTypes" EntitySet="ProductTypes" />
           </AssociationSet>
-          <AssociationSet Name="FK__ProductDe__Produ__10216507" Association="Self.FK__ProductDe__Produ__10216507">
+          <AssociationSet Name="FK__ProductDe__Produ__41B8C09B" Association="Self.FK__ProductDe__Produ__41B8C09B">
             <End Role="ProductTypes" EntitySet="ProductTypes" />
             <End Role="ProductDetails" EntitySet="ProductDetails" />
           </AssociationSet>
-          <EntitySet Name="AccChallanDeductions" EntityType="erpdbModel.AccChallanDeduction" />
-          <EntitySet Name="OutAccs" EntityType="erpdbModel.OutAcc" />
-          <AssociationSet Name="FK__AccChalla__Chall__32767D0B" Association="erpdbModel.FK__AccChalla__Chall__32767D0B">
-            <End Role="ChallanProduct" EntitySet="ChallanProducts" />
-            <End Role="AccChallanDeduction" EntitySet="AccChallanDeductions" />
+          <AssociationSet Name="FK__ProductMa__Mappi__6501FCD8" Association="Self.FK__ProductMa__Mappi__6501FCD8">
+            <End Role="ProductDetails" EntitySet="ProductDetails" />
+            <End Role="ProductMappings" EntitySet="ProductMappings" />
           </AssociationSet>
-          <AssociationSet Name="FK__AccChalla__OutAc__318258D2" Association="erpdbModel.FK__AccChalla__OutAc__318258D2">
-            <End Role="OutAcc" EntitySet="OutAccs" />
-            <End Role="AccChallanDeduction" EntitySet="AccChallanDeductions" />
-          </AssociationSet>
-          <AssociationSet Name="FK__OutAccs__OutStoc__2EA5EC27" Association="erpdbModel.FK__OutAccs__OutStoc__2EA5EC27">
-            <End Role="OutStock" EntitySet="OutStocks" />
-            <End Role="OutAcc" EntitySet="OutAccs" />
+          <AssociationSet Name="FK__ProductMa__Produ__640DD89F" Association="Self.FK__ProductMa__Produ__640DD89F">
+            <End Role="ProductDetails" EntitySet="ProductDetails" />
+            <End Role="ProductMappings" EntitySet="ProductMappings" />
           </AssociationSet>
         </EntityContainer>
-        <EntityType Name="AccChallanDeduction">
-          <Key>
-            <PropertyRef Name="AccChallanDeductionId" />
-          </Key>
-          <Property Name="AccChallanDeductionId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="OutAccId" Type="Int32" />
-          <Property Name="ChallanProductId" Type="Int32" />
-          <Property Name="OutQuantity" Type="Int32" />
-          <Property Name="CreateDate" Type="DateTime" Precision="3" />
-          <Property Name="EditDate" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="ChallanProduct" Relationship="erpdbModel.FK__AccChalla__Chall__32767D0B" FromRole="AccChallanDeduction" ToRole="ChallanProduct" />
-          <NavigationProperty Name="OutAcc" Relationship="erpdbModel.FK__AccChalla__OutAc__318258D2" FromRole="AccChallanDeduction" ToRole="OutAcc" />
-        </EntityType>
-        <EntityType Name="OutAcc">
-          <Key>
-            <PropertyRef Name="OutAccId" />
-          </Key>
-          <Property Name="OutAccId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="OutStockId" Type="Int32" />
-          <Property Name="OutputQuantity" Type="Int32" />
-          <Property Name="CreateDate" Type="DateTime" Precision="3" />
-          <Property Name="EditDate" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="AccChallanDeductions" Relationship="erpdbModel.FK__AccChalla__OutAc__318258D2" FromRole="OutAcc" ToRole="AccChallanDeduction" />
-          <NavigationProperty Name="OutStock" Relationship="erpdbModel.FK__OutAccs__OutStoc__2EA5EC27" FromRole="OutAcc" ToRole="OutStock" />
-        </EntityType>
-        <Association Name="FK__AccChalla__Chall__32767D0B">
-          <End Type="erpdbModel.ChallanProduct" Role="ChallanProduct" Multiplicity="0..1" />
-          <End Type="erpdbModel.AccChallanDeduction" Role="AccChallanDeduction" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="ChallanProduct">
-              <PropertyRef Name="ChallanProductId" />
-            </Principal>
-            <Dependent Role="AccChallanDeduction">
-              <PropertyRef Name="ChallanProductId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__AccChalla__OutAc__318258D2">
-          <End Type="erpdbModel.OutAcc" Role="OutAcc" Multiplicity="0..1" />
-          <End Type="erpdbModel.AccChallanDeduction" Role="AccChallanDeduction" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="OutAcc">
-              <PropertyRef Name="OutAccId" />
-            </Principal>
-            <Dependent Role="AccChallanDeduction">
-              <PropertyRef Name="OutAccId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__OutAccs__OutStoc__2EA5EC27">
-          <End Type="erpdbModel.OutStock" Role="OutStock" Multiplicity="0..1" />
-          <End Type="erpdbModel.OutAcc" Role="OutAcc" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="OutStock">
-              <PropertyRef Name="OutStockId" />
-            </Principal>
-            <Dependent Role="OutAcc">
-              <PropertyRef Name="OutStockId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="erpdbModelStoreContainer" CdmEntityContainer="erpdbEntities">
+          <EntitySetMapping Name="AccChallanDeductions">
+            <EntityTypeMapping TypeName="erpdbModel.AccChallanDeduction">
+              <MappingFragment StoreEntitySet="AccChallanDeductions">
+                <ScalarProperty Name="AccChallanDeductionId" ColumnName="AccChallanDeductionId" />
+                <ScalarProperty Name="OutAccId" ColumnName="OutAccId" />
+                <ScalarProperty Name="ChallanProductId" ColumnName="ChallanProductId" />
+                <ScalarProperty Name="OutQuantity" ColumnName="OutQuantity" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="EditDate" ColumnName="EditDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AccPODeductions">
+            <EntityTypeMapping TypeName="erpdbModel.AccPODeduction">
+              <MappingFragment StoreEntitySet="AccPODeductions">
+                <ScalarProperty Name="AccPODeductionId" ColumnName="AccPODeductionId" />
+                <ScalarProperty Name="OutAccId" ColumnName="OutAccId" />
+                <ScalarProperty Name="POProductId" ColumnName="POProductId" />
+                <ScalarProperty Name="OutQuantity" ColumnName="OutQuantity" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="EditDate" ColumnName="EditDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AssemblyChallanDeductions">
+            <EntityTypeMapping TypeName="erpdbModel.AssemblyChallanDeduction">
+              <MappingFragment StoreEntitySet="AssemblyChallanDeductions">
+                <ScalarProperty Name="AssemblyChallanDeductionId" ColumnName="AssemblyChallanDeductionId" />
+                <ScalarProperty Name="OutAssemblyId" ColumnName="OutAssemblyId" />
+                <ScalarProperty Name="ChallanProductId" ColumnName="ChallanProductId" />
+                <ScalarProperty Name="OutQuantity" ColumnName="OutQuantity" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="EditDate" ColumnName="EditDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AssemblyPODeductions">
+            <EntityTypeMapping TypeName="erpdbModel.AssemblyPODeduction">
+              <MappingFragment StoreEntitySet="AssemblyPODeductions">
+                <ScalarProperty Name="AssemblyPODeductionId" ColumnName="AssemblyPODeductionId" />
+                <ScalarProperty Name="OutAssemblyId" ColumnName="OutAssemblyId" />
+                <ScalarProperty Name="POProductId" ColumnName="POProductId" />
+                <ScalarProperty Name="OutQuantity" ColumnName="OutQuantity" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="EditDate" ColumnName="EditDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="ChallanDeductions">
             <EntityTypeMapping TypeName="erpdbModel.ChallanDeduction">
               <MappingFragment StoreEntitySet="ChallanDeductions">
@@ -618,12 +1296,69 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="OutAccs">
+            <EntityTypeMapping TypeName="erpdbModel.OutAcc">
+              <MappingFragment StoreEntitySet="OutAccs">
+                <ScalarProperty Name="OutAccId" ColumnName="OutAccId" />
+                <ScalarProperty Name="OutStockId" ColumnName="OutStockId" />
+                <ScalarProperty Name="OutputQuantity" ColumnName="OutputQuantity" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="EditDate" ColumnName="EditDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="OutAssemblys">
+            <EntityTypeMapping TypeName="erpdbModel.OutAssembly">
+              <MappingFragment StoreEntitySet="OutAssemblys">
+                <ScalarProperty Name="OutAssemblyId" ColumnName="OutAssemblyId" />
+                <ScalarProperty Name="OutStockId" ColumnName="OutStockId" />
+                <ScalarProperty Name="OutputQuantity" ColumnName="OutputQuantity" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="EditDate" ColumnName="EditDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="OutStocks">
             <EntityTypeMapping TypeName="erpdbModel.OutStock">
               <MappingFragment StoreEntitySet="OutStocks">
                 <ScalarProperty Name="OutStockId" ColumnName="OutStockId" />
                 <ScalarProperty Name="VendorChallanNo" ColumnName="VendorChallanNo" />
                 <ScalarProperty Name="OutputQuantity" ColumnName="OutputQuantity" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="EditDate" ColumnName="EditDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PODeductions">
+            <EntityTypeMapping TypeName="erpdbModel.PODeduction">
+              <MappingFragment StoreEntitySet="PODeductions">
+                <ScalarProperty Name="PODeductionId" ColumnName="PODeductionId" />
+                <ScalarProperty Name="OutStockId" ColumnName="OutStockId" />
+                <ScalarProperty Name="POProductId" ColumnName="POProductId" />
+                <ScalarProperty Name="OutQuantity" ColumnName="OutQuantity" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="EditDate" ColumnName="EditDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PODetails">
+            <EntityTypeMapping TypeName="erpdbModel.PODetail">
+              <MappingFragment StoreEntitySet="PODetails">
+                <ScalarProperty Name="POId" ColumnName="POId" />
+                <ScalarProperty Name="PONo" ColumnName="PONo" />
+                <ScalarProperty Name="PODate" ColumnName="PODate" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="EditDate" ColumnName="EditDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="POProducts">
+            <EntityTypeMapping TypeName="erpdbModel.POProduct">
+              <MappingFragment StoreEntitySet="POProducts">
+                <ScalarProperty Name="POProductId" ColumnName="POProductId" />
+                <ScalarProperty Name="POId" ColumnName="POId" />
+                <ScalarProperty Name="ProductId" ColumnName="ProductId" />
+                <ScalarProperty Name="InputQuantity" ColumnName="InputQuantity" />
                 <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
                 <ScalarProperty Name="EditDate" ColumnName="EditDate" />
               </MappingFragment>
@@ -653,6 +1388,17 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="ProductMappings">
+            <EntityTypeMapping TypeName="erpdbModel.ProductMapping">
+              <MappingFragment StoreEntitySet="ProductMappings">
+                <ScalarProperty Name="ProductMappingId" ColumnName="ProductMappingId" />
+                <ScalarProperty Name="ProductId" ColumnName="ProductId" />
+                <ScalarProperty Name="MappingProductId" ColumnName="MappingProductId" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="EditDate" ColumnName="EditDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="ProductTypes">
             <EntityTypeMapping TypeName="erpdbModel.ProductType">
               <MappingFragment StoreEntitySet="ProductTypes">
@@ -665,33 +1411,11 @@
           <EntitySetMapping Name="VendorChallans">
             <EntityTypeMapping TypeName="erpdbModel.VendorChallan">
               <MappingFragment StoreEntitySet="VendorChallans">
+                <ScalarProperty Name="IsNg" ColumnName="IsNg" />
                 <ScalarProperty Name="VendorChallanNo" ColumnName="VendorChallanNo" />
                 <ScalarProperty Name="VendorChallanDate" ColumnName="VendorChallanDate" />
                 <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
                 <ScalarProperty Name="EditDate" ColumnName="EditDate" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="AccChallanDeductions">
-            <EntityTypeMapping TypeName="erpdbModel.AccChallanDeduction">
-              <MappingFragment StoreEntitySet="AccChallanDeductions">
-                <ScalarProperty Name="EditDate" ColumnName="EditDate" />
-                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
-                <ScalarProperty Name="OutQuantity" ColumnName="OutQuantity" />
-                <ScalarProperty Name="ChallanProductId" ColumnName="ChallanProductId" />
-                <ScalarProperty Name="OutAccId" ColumnName="OutAccId" />
-                <ScalarProperty Name="AccChallanDeductionId" ColumnName="AccChallanDeductionId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="OutAccs">
-            <EntityTypeMapping TypeName="erpdbModel.OutAcc">
-              <MappingFragment StoreEntitySet="OutAccs">
-                <ScalarProperty Name="EditDate" ColumnName="EditDate" />
-                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
-                <ScalarProperty Name="OutputQuantity" ColumnName="OutputQuantity" />
-                <ScalarProperty Name="OutStockId" ColumnName="OutStockId" />
-                <ScalarProperty Name="OutAccId" ColumnName="OutAccId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

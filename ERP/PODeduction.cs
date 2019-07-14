@@ -12,16 +12,16 @@ namespace ERP
     using System;
     using System.Collections.Generic;
     
-    public partial class AccChallanDeduction
+    public partial class PODeduction
     {
-        public int AccChallanDeductionId { get; set; }
-        public Nullable<int> OutAccId { get; set; }
-        public Nullable<int> ChallanProductId { get; set; }
+        public int PODeductionId { get; set; }
+        public Nullable<int> OutStockId { get; set; }
+        public Nullable<int> POProductId { get; set; }
         public Nullable<int> OutQuantity { get; set; }
         public Nullable<System.DateTime> CreateDate { get; set; }
         public Nullable<System.DateTime> EditDate { get; set; }
     
-        public virtual ChallanProduct ChallanProduct { get; set; }
-        public virtual OutAcc OutAcc { get; set; }
+        public virtual OutStock OutStock { get; set; }
+        public virtual POProduct POProduct { get; set; }
     }
 }

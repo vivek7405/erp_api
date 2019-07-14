@@ -139,6 +139,9 @@
     <Compile Include="AccChallanDeduction.cs">
       <DependentUpon>DB.tt</DependentUpon>
     </Compile>
+    <Compile Include="AccPODeduction.cs">
+      <DependentUpon>DB.tt</DependentUpon>
+    </Compile>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
@@ -171,6 +174,12 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\SampleDirection.cs" />
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
+    <Compile Include="AssemblyChallanDeduction.cs">
+      <DependentUpon>DB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AssemblyPODeduction.cs">
+      <DependentUpon>DB.tt</DependentUpon>
+    </Compile>
     <Compile Include="ChallanDeduction.cs">
       <DependentUpon>DB.tt</DependentUpon>
     </Compile>
@@ -203,30 +212,56 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AccChallanDeductionModel.cs" />
+    <Compile Include="Models\AccPODeductionModel.cs" />
+    <Compile Include="Models\AssemblyChallanDeductionModel.cs" />
+    <Compile Include="Models\AssemblyPODeductionModel.cs" />
     <Compile Include="Models\BASFChallanDeduction.cs" />
     <Compile Include="Models\BASFChallanSelection.cs" />
+    <Compile Include="Models\BASFPODeduction.cs" />
+    <Compile Include="Models\BASFPOSelection.cs" />
     <Compile Include="Models\ChallanDeductionModel.cs" />
+    <Compile Include="Models\ChallanDetailMod.cs" />
     <Compile Include="Models\ChallanDetailModel.cs" />
     <Compile Include="Models\ChallanProductModel.cs" />
     <Compile Include="Models\InputCodeModel.cs" />
     <Compile Include="Models\OutAccModel.cs" />
+    <Compile Include="Models\OutAssemblyModel.cs" />
     <Compile Include="Models\OutStockModel.cs" />
+    <Compile Include="Models\PODeductionModel.cs" />
+    <Compile Include="Models\POProductModel.cs" />
+    <Compile Include="Models\ProductDetailModel.cs" />
     <Compile Include="Models\ProductIdModel.cs" />
     <Compile Include="Models\ProductQuantity.cs" />
     <Compile Include="Models\SuccessResponse.cs" />
     <Compile Include="Models\VendorChallanModel.cs" />
     <Compile Include="Models\VendorChallanNoModel.cs" />
     <Compile Include="Models\ViewChallanDetailModel.cs" />
+    <Compile Include="Models\ViewPODetailModel.cs" />
     <Compile Include="OutAcc.cs">
       <DependentUpon>DB.tt</DependentUpon>
     </Compile>
+    <Compile Include="OutAssembly.cs">
+      <DependentUpon>DB.tt</DependentUpon>
+    </Compile>
     <Compile Include="OutStock.cs">
+      <DependentUpon>DB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PODeduction.cs">
+      <DependentUpon>DB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PODetail.cs">
+      <DependentUpon>DB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="POProduct.cs">
       <DependentUpon>DB.tt</DependentUpon>
     </Compile>
     <Compile Include="ProductCategory.cs">
       <DependentUpon>DB.tt</DependentUpon>
     </Compile>
     <Compile Include="ProductDetail.cs">
+      <DependentUpon>DB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ProductMapping.cs">
       <DependentUpon>DB.tt</DependentUpon>
     </Compile>
     <Compile Include="ProductType.cs">

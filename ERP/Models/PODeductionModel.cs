@@ -7,23 +7,22 @@ using System.Web;
 namespace ERP.Models
 {
     [DataContract]
-    public class OutAccModel
+    public class PODeductionModel
     {
         [DataMember]
-        public int OutAccId { get; set; }
+        public int PODeductionId { get; set; }
         [DataMember]
         public int OutStockId { get; set; }
         [DataMember]
-        public int OutputQuantity { get; set; }
+        public int POProductId { get; set; }
+        [DataMember]
+        public int OutQuantity { get; set; }
         [DataMember]
         public DateTime CreateDate { get; set; }
         [DataMember]
         public DateTime EditDate { get; set; }
+
         [DataMember]
-        public int ProductId { get; set; }
-        [DataMember]
-        public AccChallanDeductionModel[] AccChallanDeductions { get; set; }
-        [DataMember]
-        public AccPODeductionModel[] AccPODeductions { get; set; }
+        public POProductModel POProduct { get; set; }
     }
 }

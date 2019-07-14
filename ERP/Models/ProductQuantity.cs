@@ -15,5 +15,10 @@ namespace ERP.Models
         public string ProductName { get; set; }
         [DataMember]
         public int RemainingQuantity { get; set; }
+        [DataMember]
+        public int RemainingQuantityPO { get; set; }
+
+        [DataMember]
+        public ProductQuantity[] AssemblyProductQnts { get; set; }        
     }
 }

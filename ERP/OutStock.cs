@@ -9,7 +9,6 @@
 
 namespace ERP
 {
-    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     
@@ -20,6 +19,8 @@ namespace ERP
         {
             this.ChallanDeductions = new HashSet<ChallanDeduction>();
             this.OutAccs = new HashSet<OutAcc>();
+            this.OutAssemblys = new HashSet<OutAssembly>();
+            this.PODeductions = new HashSet<PODeduction>();
         }
     
         public int OutStockId { get; set; }
@@ -29,12 +30,13 @@ namespace ERP
         public Nullable<System.DateTime> EditDate { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        [JsonIgnore]
         public virtual ICollection<ChallanDeduction> ChallanDeductions { get; set; }
-        [JsonIgnore]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<OutAcc> OutAccs { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<OutAssembly> OutAssemblys { get; set; }
         public virtual VendorChallan VendorChallan { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        [JsonIgnore]
-        public virtual ICollection<OutAcc> OutAccs { get; set; }
+        public virtual ICollection<PODeduction> PODeductions { get; set; }
     }
 }

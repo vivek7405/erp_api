@@ -9,7 +9,6 @@
 
 namespace ERP
 {
-    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     
@@ -19,6 +18,7 @@ namespace ERP
         public OutAcc()
         {
             this.AccChallanDeductions = new HashSet<AccChallanDeduction>();
+            this.AccPODeductions = new HashSet<AccPODeduction>();
         }
     
         public int OutAccId { get; set; }
@@ -28,9 +28,9 @@ namespace ERP
         public Nullable<System.DateTime> EditDate { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        [JsonIgnore]
         public virtual ICollection<AccChallanDeduction> AccChallanDeductions { get; set; }
-        [JsonIgnore]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AccPODeduction> AccPODeductions { get; set; }
         public virtual OutStock OutStock { get; set; }
     }
 }

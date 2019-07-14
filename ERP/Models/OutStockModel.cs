@@ -21,6 +21,10 @@ namespace ERP.Models
         [DataMember]
         public ChallanDeductionModel[] ChallanDeductions { get; set; }
         [DataMember]
+        public PODeductionModel[] PODeductions { get; set; }
+        [DataMember]
         public OutAccModel[] OutAccs { get; set; }
+        [DataMember]
+        public OutAssemblyModel[] OutAssemblys { get; set; }
     }
 }

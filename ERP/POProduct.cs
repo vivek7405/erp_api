@@ -12,30 +12,30 @@ namespace ERP
     using System;
     using System.Collections.Generic;
     
-    public partial class ChallanProduct
+    public partial class POProduct
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public ChallanProduct()
+        public POProduct()
         {
-            this.AccChallanDeductions = new HashSet<AccChallanDeduction>();
-            this.AssemblyChallanDeductions = new HashSet<AssemblyChallanDeduction>();
-            this.ChallanDeductions = new HashSet<ChallanDeduction>();
+            this.AccPODeductions = new HashSet<AccPODeduction>();
+            this.AssemblyPODeductions = new HashSet<AssemblyPODeduction>();
+            this.PODeductions = new HashSet<PODeduction>();
         }
     
-        public int ChallanProductId { get; set; }
-        public Nullable<int> ChallanId { get; set; }
+        public int POProductId { get; set; }
+        public Nullable<int> POId { get; set; }
         public Nullable<int> ProductId { get; set; }
         public Nullable<int> InputQuantity { get; set; }
         public Nullable<System.DateTime> CreateDate { get; set; }
         public Nullable<System.DateTime> EditDate { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AccChallanDeduction> AccChallanDeductions { get; set; }
+        public virtual ICollection<AccPODeduction> AccPODeductions { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<AssemblyChallanDeduction> AssemblyChallanDeductions { get; set; }
+        public virtual ICollection<AssemblyPODeduction> AssemblyPODeductions { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ChallanDeduction> ChallanDeductions { get; set; }
-        public virtual ChallanDetail ChallanDetail { get; set; }
+        public virtual ICollection<PODeduction> PODeductions { get; set; }
+        public virtual PODetail PODetail { get; set; }
         public virtual ProductDetail ProductDetail { get; set; }
     }
 }

@@ -7,15 +7,11 @@ using System.Web;
 namespace ERP.Models
 {
     [DataContract]
-    public class ChallanDetailModel
+    public class ProductDetailModel
     {
         [DataMember]
-        public ChallanDetail ChallanDetail { get; set; }
-
+        public ProductDetail ProductDetail { get; set; }
         [DataMember]
-        public ChallanProduct[] ChallanProducts { get; set; }
-
-        [DataMember]
-        public bool isPO { get; set; }
+        public ProductMapping[] ProductMappings { get; set; }
     }
 }

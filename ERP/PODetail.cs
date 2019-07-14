@@ -12,21 +12,21 @@ namespace ERP
     using System;
     using System.Collections.Generic;
     
-    public partial class ChallanDetail
+    public partial class PODetail
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public ChallanDetail()
+        public PODetail()
         {
-            this.ChallanProducts = new HashSet<ChallanProduct>();
+            this.POProducts = new HashSet<POProduct>();
         }
     
-        public int ChallanId { get; set; }
-        public string ChallanNo { get; set; }
-        public Nullable<System.DateTime> ChallanDate { get; set; }
+        public int POId { get; set; }
+        public string PONo { get; set; }
+        public Nullable<System.DateTime> PODate { get; set; }
         public Nullable<System.DateTime> CreateDate { get; set; }
         public Nullable<System.DateTime> EditDate { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ChallanProduct> ChallanProducts { get; set; }
+        public virtual ICollection<POProduct> POProducts { get; set; }
     }
 }

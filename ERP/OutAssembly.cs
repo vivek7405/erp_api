@@ -12,21 +12,25 @@ namespace ERP
     using System;
     using System.Collections.Generic;
     
-    public partial class ChallanDetail
+    public partial class OutAssembly
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public ChallanDetail()
+        public OutAssembly()
         {
-            this.ChallanProducts = new HashSet<ChallanProduct>();
+            this.AssemblyChallanDeductions = new HashSet<AssemblyChallanDeduction>();
+            this.AssemblyPODeductions = new HashSet<AssemblyPODeduction>();
         }
     
-        public int ChallanId { get; set; }
-        public string ChallanNo { get; set; }
-        public Nullable<System.DateTime> ChallanDate { get; set; }
+        public int OutAssemblyId { get; set; }
+        public Nullable<int> OutStockId { get; set; }
+        public Nullable<int> OutputQuantity { get; set; }
         public Nullable<System.DateTime> CreateDate { get; set; }
         public Nullable<System.DateTime> EditDate { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ChallanProduct> ChallanProducts { get; set; }
+        public virtual ICollection<AssemblyChallanDeduction> AssemblyChallanDeductions { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AssemblyPODeduction> AssemblyPODeductions { get; set; }
+        public virtual OutStock OutStock { get; set; }
     }
 }

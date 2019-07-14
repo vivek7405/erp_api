@@ -11,6 +11,8 @@ namespace ERP.Models
         [DataMember]
         public DateTime VendorChallanDate { get; set; }
         [DataMember]
+        public bool IsNg { get; set; }
+        [DataMember]
         public DateTime CreateDate { get; set; }
         [DataMember]
         public DateTime EditDate { get; set; }

@@ -9,7 +9,6 @@
 
 namespace ERP
 {
-    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     
@@ -19,6 +18,9 @@ namespace ERP
         public ProductDetail()
         {
             this.ChallanProducts = new HashSet<ChallanProduct>();
+            this.POProducts = new HashSet<POProduct>();
+            this.ProductMappings1 = new HashSet<ProductMapping>();
+            this.ProductMappings = new HashSet<ProductMapping>();
         }
     
         public int ProductId { get; set; }
@@ -33,9 +35,13 @@ namespace ERP
         public Nullable<System.DateTime> EditDate { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        [JsonIgnore]
         public virtual ICollection<ChallanProduct> ChallanProducts { get; set; }
-        [JsonIgnore]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<POProduct> POProducts { get; set; }
         public virtual ProductType ProductType { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ProductMapping> ProductMappings1 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ProductMapping> ProductMappings { get; set; }
     }
 }
