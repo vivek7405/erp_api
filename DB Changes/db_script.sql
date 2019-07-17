@@ -127,16 +127,26 @@ select * from ProductMappings;
 
 
 
---delete from ChallanDeductions where OutStockId in (select OutStockId from OutStocks where VendorChallanNo = 41);
---delete from AccChallanDeductions where OutAccId in (select OutAccId from OutAccs where OutStockId in (select OutStockId from OutStocks where VendorChallanNo = 41));
---delete from AssemblyChallanDeductions where OutAssemblyId in (select OutAssemblyId from OutAssemblys where OutStockId in (select OutStockId from OutStocks where VendorChallanNo = 41));
+--delete from ChallanDeductions where OutStockId in (select OutStockId from OutStocks where VendorChallanNo = 49);
+--delete from AccChallanDeductions where OutAccId in (select OutAccId from OutAccs where OutStockId in (select OutStockId from OutStocks where VendorChallanNo = 49));
+--delete from AssemblyChallanDeductions where OutAssemblyId in (select OutAssemblyId from OutAssemblys where OutStockId in (select OutStockId from OutStocks where VendorChallanNo = 49));
 
---delete from PODeductions where OutStockId in (select OutStockId from OutStocks where VendorChallanNo = 41);
---delete from AccPODeductions where OutAccId in (select OutAccId from OutAccs where OutStockId in (select OutStockId from OutStocks where VendorChallanNo = 41));
---delete from AssemblyPODeductions where OutAssemblyId in (select OutAssemblyId from OutAssemblys where OutStockId in (select OutStockId from OutStocks where VendorChallanNo = 41));
+--delete from PODeductions where OutStockId in (select OutStockId from OutStocks where VendorChallanNo = 49);
+--delete from AccPODeductions where OutAccId in (select OutAccId from OutAccs where OutStockId in (select OutStockId from OutStocks where VendorChallanNo = 49));
+--delete from AssemblyPODeductions where OutAssemblyId in (select OutAssemblyId from OutAssemblys where OutStockId in (select OutStockId from OutStocks where VendorChallanNo = 49));
 
---delete from OutAccs where OutStockId in (select OutStockId from OutStocks where VendorChallanNo = 41);
---delete from OutAssemblys where OutStockId in (select OutStockId from OutStocks where VendorChallanNo = 41);
---delete from OutStocks where VendorChallanNo = 41;
+--delete from OutAccs where OutStockId in (select OutStockId from OutStocks where VendorChallanNo = 49);
+--delete from OutAssemblys where OutStockId in (select OutStockId from OutStocks where VendorChallanNo = 49);
+--delete from OutStocks where VendorChallanNo = 49;
 
---delete from VendorChallans where VendorChallanNo = 41;
+--delete from VendorChallans where VendorChallanNo = 49;
+
+
+
+select * from VendorChallans;
+select * from ChallanProducts;
+select * from POProducts;
+
+select * from ProductDetails where ProductId = 21;
+
+--update POProducts set InputQuantity = 100 where POProductId = 40;

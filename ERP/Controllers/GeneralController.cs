@@ -1461,7 +1461,7 @@ namespace ERP.Controllers
                 {
                     BASFChallanDeduction basfChallanDeduction = new BASFChallanDeduction();
 
-                    BASFChallanSelection[] basfChallanSelection = context.ChallanDetails.Select(x => new BASFChallanSelection { ChallanDetail = x, ChallanProduct = x.ChallanProducts.Where(p => p.ProductId == productId).FirstOrDefault(), InputQuantity = x.ChallanProducts.Where(p => p.ProductId == productId).Sum(p => p.InputQuantity * p.ProductDetail.SplitRatio), OutputQuantity = context.ChallanDeductions.Where(z => z.ChallanProduct.ProductId == productId).Sum(p => p.OutQuantity).Value }).OrderBy(x => x.ChallanDetail.ChallanDate).ToArray();
+                    BASFChallanSelection[] basfChallanSelection = context.ChallanDetails.Select(x => new BASFChallanSelection { ChallanDetail = x, ChallanProduct = x.ChallanProducts.Where(p => p.ProductId == productId).FirstOrDefault(), InputQuantity = x.ChallanProducts.Where(p => p.ProductId == productId).Sum(p => p.InputQuantity * p.ProductDetail.SplitRatio), OutputQuantity = context.ChallanDeductions.Where(z => z.ChallanProduct.ProductId == productId).Sum(p => p.OutQuantity).Value }).Where(q => q.ChallanProduct.ProductId == productId).OrderBy(x => x.ChallanDetail.ChallanDate).ToArray();
 
                     List<BASFChallanSelection> selection = new List<BASFChallanSelection>();
                     foreach (var basfChallan in basfChallanSelection)
@@ -1512,58 +1512,13 @@ namespace ERP.Controllers
         [HttpPost, Route("GetAllBASFChallanByProductId")]
         public IHttpActionResult GetAllBASFChallanByProductId(ProductIdModel model)
         {
-            int productId = model.ProductId;
-            using (var context = new erpdbEntities())
+            try
             {
-                try
-                {
-                    BASFChallanDeduction basfChallanDeduction = new BASFChallanDeduction();
-
-                    BASFChallanSelection[] basfChallanSelection = context.ChallanDetails.Select(x => new BASFChallanSelection { ChallanDetail = x, ChallanProduct = x.ChallanProducts.Where(p => p.ProductId == productId).FirstOrDefault(), InputQuantity = x.ChallanProducts.Where(p => p.ProductId == productId).Sum(p => p.InputQuantity * p.ProductDetail.SplitRatio), OutputQuantity = context.ChallanDeductions.Where(z => z.ChallanProduct.ProductId == productId).Sum(p => p.OutQuantity).Value }).OrderBy(x => x.ChallanDetail.ChallanDate).ToArray();
-
-                    List<BASFChallanSelection> selection = new List<BASFChallanSelection>();
-                    foreach (var basfChallan in basfChallanSelection)
-                    {
-                        //basfChallan.RemainingQuantity = (basfChallan.InputQuantity ?? 0) - (basfChallan.OutputQuantity ?? 0);
-
-                        if (basfChallan.ChallanProduct != null)
-                        {
-                            //basfChallan.InputQuantity = (basfChallan.ChallanProduct.InputQuantity ?? 0) * (basfChallan.ChallanProduct.ProductDetail.SplitRatio ?? 1);
-                            //basfChallan.OutputQuantity = basfChallan.ChallanProduct.ChallanDeductions.Where(x => x.ChallanProductId == basfChallan.ChallanProduct.ChallanProductId).Sum(x => x.OutQuantity) ?? 0;
-                            //basfChallan.RemainingQuantity = (basfChallan.InputQuantity ?? 0) - (basfChallan.OutputQuantity ?? 0);
-
-                            basfChallan.InputQuantity = (basfChallan.ChallanProduct.InputQuantity ?? 0) * (basfChallan.ChallanProduct.ProductDetail.SplitRatio ?? 1);
-                            basfChallan.RemainingQuantity = (basfChallan.InputQuantity ?? 0) / (basfChallan.ChallanProduct.ProductDetail.SplitRatio ?? 1);
-
-                            if (basfChallan.ChallanProduct.ChallanDeductions != null && basfChallan.ChallanProduct.ChallanDeductions.Count > 0)
-                            {
-                                basfChallan.OutputQuantity = basfChallan.ChallanProduct.ChallanDeductions.Where(x => x.ChallanProductId == basfChallan.ChallanProduct.ChallanProductId).Sum(x => x.OutQuantity) ?? 0;
-                                basfChallan.RemainingQuantity = ((basfChallan.InputQuantity - basfChallan.ChallanProduct.ChallanDeductions.Sum(x => x.OutQuantity)) ?? basfChallan.InputQuantity ?? 0) / (basfChallan.ChallanProduct.ProductDetail.SplitRatio ?? 1);
-                            }
-                            else if (basfChallan.ChallanProduct.AccChallanDeductions != null && basfChallan.ChallanProduct.AccChallanDeductions.Count > 0)
-                            {
-                                basfChallan.OutputQuantity = basfChallan.ChallanProduct.AccChallanDeductions.Where(x => x.ChallanProductId == basfChallan.ChallanProduct.ChallanProductId).Sum(x => x.OutQuantity) ?? 0;
-                                basfChallan.RemainingQuantity = ((basfChallan.InputQuantity - basfChallan.ChallanProduct.AccChallanDeductions.Sum(x => x.OutQuantity)) ?? basfChallan.InputQuantity ?? 0) / (basfChallan.ChallanProduct.ProductDetail.SplitRatio ?? 1);
-                            }
-                            else if (basfChallan.ChallanProduct.AssemblyChallanDeductions != null && basfChallan.ChallanProduct.AssemblyChallanDeductions.Count > 0)
-                            {
-                                basfChallan.OutputQuantity = basfChallan.ChallanProduct.AssemblyChallanDeductions.Where(x => x.ChallanProductId == basfChallan.ChallanProduct.ChallanProductId).Sum(x => x.OutQuantity) ?? 0;
-                                basfChallan.RemainingQuantity = ((basfChallan.InputQuantity - basfChallan.ChallanProduct.AssemblyChallanDeductions.Sum(x => x.OutQuantity)) ?? basfChallan.InputQuantity ?? 0) / (basfChallan.ChallanProduct.ProductDetail.SplitRatio ?? 1);
-                            }
-
-                            if (basfChallan.RemainingQuantity > 0)
-                                selection.Add(basfChallan);
-                        }
-                    }
-
-                    basfChallanDeduction.BASFChallanSelections = selection.ToArray();
-
-                    return Ok(basfChallanDeduction);
-                }
-                catch (Exception e)
-                {
-                    return InternalServerError();
-                }
+                return Ok(GetAllBASFChallanByProductIdPrivate(model));
+            }
+            catch (Exception e)
+            {
+                return InternalServerError();
             }
         }
 
@@ -1576,7 +1531,7 @@ namespace ERP.Controllers
                 {
                     BASFPODeduction basfPODeduction = new BASFPODeduction();
 
-                    BASFPOSelection[] basfPOSelection = context.PODetails.Select(x => new BASFPOSelection { PODetail = x, POProduct = x.POProducts.Where(p => p.ProductId == productId).FirstOrDefault(), InputQuantity = x.POProducts.Where(p => p.ProductId == productId).Sum(p => p.InputQuantity * p.ProductDetail.SplitRatio), OutputQuantity = context.PODeductions.Where(z => z.POProduct.ProductId == productId).Sum(p => p.OutQuantity).Value }).OrderBy(x => x.PODetail.PODate).ToArray();
+                    BASFPOSelection[] basfPOSelection = context.PODetails.Select(x => new BASFPOSelection { PODetail = x, POProduct = x.POProducts.Where(p => p.ProductId == productId).FirstOrDefault(), InputQuantity = x.POProducts.Where(p => p.ProductId == productId).Sum(p => p.InputQuantity * p.ProductDetail.SplitRatio), OutputQuantity = context.PODeductions.Where(z => z.POProduct.ProductId == productId).Sum(p => p.OutQuantity).Value }).Where(q => q.POProduct.ProductId == productId).OrderBy(x => x.PODetail.PODate).ToArray();
 
                     List<BASFPOSelection> selection = new List<BASFPOSelection>();
                     foreach (var basfPO in basfPOSelection)
@@ -1627,58 +1582,13 @@ namespace ERP.Controllers
         [HttpPost, Route("GetAllBASFPOByProductId")]
         public IHttpActionResult GetAllBASFPOByProductId(ProductIdModel model)
         {
-            int productId = model.ProductId;
-            using (var context = new erpdbEntities())
+            try
             {
-                try
-                {
-                    BASFPODeduction basfPODeduction = new BASFPODeduction();
-
-                    BASFPOSelection[] basfPOSelection = context.PODetails.Select(x => new BASFPOSelection { PODetail = x, POProduct = x.POProducts.Where(p => p.ProductId == productId).FirstOrDefault(), InputQuantity = x.POProducts.Where(p => p.ProductId == productId).Sum(p => p.InputQuantity * p.ProductDetail.SplitRatio), OutputQuantity = context.PODeductions.Where(z => z.POProduct.ProductId == productId).Sum(p => p.OutQuantity).Value }).OrderBy(x => x.PODetail.PODate).ToArray();
-
-                    List<BASFPOSelection> selection = new List<BASFPOSelection>();
-                    foreach (var basfPO in basfPOSelection)
-                    {
-                        //basfChallan.RemainingQuantity = (basfChallan.InputQuantity ?? 0) - (basfChallan.OutputQuantity ?? 0);
-
-                        if (basfPO.POProduct != null)
-                        {
-                            //basfChallan.InputQuantity = (basfChallan.ChallanProduct.InputQuantity ?? 0) * (basfChallan.ChallanProduct.ProductDetail.SplitRatio ?? 1);
-                            //basfChallan.OutputQuantity = basfChallan.ChallanProduct.ChallanDeductions.Where(x => x.ChallanProductId == basfChallan.ChallanProduct.ChallanProductId).Sum(x => x.OutQuantity) ?? 0;
-                            //basfChallan.RemainingQuantity = (basfChallan.InputQuantity ?? 0) - (basfChallan.OutputQuantity ?? 0);
-
-                            basfPO.InputQuantity = (basfPO.POProduct.InputQuantity ?? 0) * (basfPO.POProduct.ProductDetail.SplitRatio ?? 1);
-                            basfPO.RemainingQuantity = (basfPO.InputQuantity ?? 0) / (basfPO.POProduct.ProductDetail.SplitRatio ?? 1);
-
-                            if (basfPO.POProduct.PODeductions != null && basfPO.POProduct.PODeductions.Count > 0)
-                            {
-                                basfPO.OutputQuantity = basfPO.POProduct.PODeductions.Where(x => x.POProductId == basfPO.POProduct.POProductId).Sum(x => x.OutQuantity) ?? 0;
-                                basfPO.RemainingQuantity = ((basfPO.InputQuantity - basfPO.POProduct.PODeductions.Sum(x => x.OutQuantity)) ?? basfPO.InputQuantity ?? 0) / (basfPO.POProduct.ProductDetail.SplitRatio ?? 1);
-                            }
-                            else if (basfPO.POProduct.AccPODeductions != null && basfPO.POProduct.AccPODeductions.Count > 0)
-                            {
-                                basfPO.OutputQuantity = basfPO.POProduct.AccPODeductions.Where(x => x.POProductId == basfPO.POProduct.POProductId).Sum(x => x.OutQuantity) ?? 0;
-                                basfPO.RemainingQuantity = ((basfPO.InputQuantity - basfPO.POProduct.AccPODeductions.Sum(x => x.OutQuantity)) ?? basfPO.InputQuantity ?? 0) / (basfPO.POProduct.ProductDetail.SplitRatio ?? 1);
-                            }
-                            else if (basfPO.POProduct.AssemblyPODeductions != null && basfPO.POProduct.AssemblyPODeductions.Count > 0)
-                            {
-                                basfPO.OutputQuantity = basfPO.POProduct.AssemblyPODeductions.Where(x => x.POProductId == basfPO.POProduct.POProductId).Sum(x => x.OutQuantity) ?? 0;
-                                basfPO.RemainingQuantity = ((basfPO.InputQuantity - basfPO.POProduct.AssemblyPODeductions.Sum(x => x.OutQuantity)) ?? basfPO.InputQuantity ?? 0) / (basfPO.POProduct.ProductDetail.SplitRatio ?? 1);
-                            }
-
-                            if (basfPO.RemainingQuantity > 0)
-                                selection.Add(basfPO);
-                        }
-                    }
-
-                    basfPODeduction.BASFPOSelections = selection.ToArray();
-
-                    return Ok(basfPODeduction);
-                }
-                catch (Exception e)
-                {
-                    return null;
-                }
+                return Ok(GetAllBASFPOByProductIdPrivate(model));
+            }
+            catch (Exception e)
+            {
+                return null;
             }
         }
 
