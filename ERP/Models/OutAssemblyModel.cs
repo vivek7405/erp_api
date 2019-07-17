@@ -22,6 +22,8 @@ namespace ERP.Models
         [DataMember]
         public int ProductId { get; set; }
         [DataMember]
+        public int SplitRatio { get; set; }
+        [DataMember]
         public AssemblyChallanDeductionModel[] AssemblyChallanDeductions { get; set; }
         [DataMember]
         public AssemblyPODeductionModel[] AssemblyPODeductions { get; set; }

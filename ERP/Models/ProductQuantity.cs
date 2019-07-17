@@ -14,11 +14,13 @@ namespace ERP.Models
         [DataMember]
         public string ProductName { get; set; }
         [DataMember]
+        public int SplitRatio { get; set; }
+        [DataMember]
         public int RemainingQuantity { get; set; }
         [DataMember]
         public int RemainingQuantityPO { get; set; }
 
         [DataMember]
-        public ProductQuantity[] AssemblyProductQnts { get; set; }        
+        public ProductQuantity[] AssemblyProductQnts { get; set; }
     }
 }
