@@ -51,6 +51,9 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="IronPdf, Version=5.2.0.22321, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\IronPdf.5.2.0.1\lib\net40\IronPdf.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -223,6 +226,7 @@
     <Compile Include="Models\ChallanDetailMod.cs" />
     <Compile Include="Models\ChallanDetailModel.cs" />
     <Compile Include="Models\ChallanProductModel.cs" />
+    <Compile Include="Models\FileResult.cs" />
     <Compile Include="Models\InputCodeModel.cs" />
     <Compile Include="Models\OutAccModel.cs" />
     <Compile Include="Models\OutAssemblyModel.cs" />

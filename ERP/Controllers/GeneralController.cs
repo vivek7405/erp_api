@@ -1,4 +1,5 @@
 ﻿using ERP.Models;
+using IronPdf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -76,7 +77,17 @@ namespace ERP.Controllers
         {
             using (var context = new erpdbEntities())
             {
-                return Ok(context.ProductDetails.ToArray());
+                return Ok(context.ProductDetails.OrderBy(x => new { x.InputMaterialDesc, x.OutputMaterialDesc }).ToArray());
+            }
+        }
+
+        [HttpGet, Route("GetAllProductDetailsForPO")]
+        public IHttpActionResult GetAllProductDetailsForPO()
+        {
+            using (var context = new erpdbEntities())
+            {
+                int main = Convert.ToInt32(EProductCategorys.Main);
+                return Ok(context.ProductDetails.Where(x => x.ProductType.ProductCategory.ProductCategoryId == main).ToArray());
             }
         }
 
@@ -167,7 +178,7 @@ namespace ERP.Controllers
                         if (model.isPO)
                         {
                             var existingPOProducts = context.POProducts.Where(x => x.POId == response.Id).ToArray();
-                            context.POProducts.RemoveRange(existingPOProducts);
+                            //context.POProducts.RemoveRange(existingPOProducts);
 
                             foreach (var challanProduct in challanProducts)
                             {
@@ -181,10 +192,20 @@ namespace ERP.Controllers
                                 {
                                     try
                                     {
-                                        poProduct.POProductId = 0;
-                                        poProduct.CreateDate = DateTime.Now;
-                                        poProduct.EditDate = DateTime.Now;
-                                        context.POProducts.Add(poProduct);
+                                        var existingPOProduct = existingPOProducts.Where(x => x.POProductId == poProduct.POProductId).FirstOrDefault();
+
+                                        if (existingPOProduct == null)
+                                        {
+                                            poProduct.POProductId = 0;
+                                            poProduct.CreateDate = DateTime.Now;
+                                            poProduct.EditDate = DateTime.Now;
+                                            context.POProducts.Add(poProduct);
+                                        }
+                                        else
+                                        {
+                                            existingPOProduct.EditDate = DateTime.Now;
+                                            existingPOProduct.InputQuantity = poProduct.InputQuantity;
+                                        }
 
                                         response.StatusCode = HttpStatusCode.OK;
                                     }
@@ -208,7 +229,7 @@ namespace ERP.Controllers
                         else
                         {
                             var existingChallanProducts = context.ChallanProducts.Where(x => x.ChallanId == response.Id).ToArray();
-                            context.ChallanProducts.RemoveRange(existingChallanProducts);
+                            //context.ChallanProducts.RemoveRange(existingChallanProducts);
 
                             foreach (var challanProduct in challanProducts)
                             {
@@ -217,10 +238,20 @@ namespace ERP.Controllers
                                 {
                                     try
                                     {
-                                        challanProduct.ChallanProductId = 0;
-                                        challanProduct.CreateDate = DateTime.Now;
-                                        challanProduct.EditDate = DateTime.Now;
-                                        context.ChallanProducts.Add(challanProduct);
+                                        var existingChallanProduct = existingChallanProducts.Where(x => x.ChallanProductId == challanProduct.ChallanProductId).FirstOrDefault();
+
+                                        if (existingChallanProduct == null)
+                                        {
+                                            challanProduct.ChallanProductId = 0;
+                                            challanProduct.CreateDate = DateTime.Now;
+                                            challanProduct.EditDate = DateTime.Now;
+                                            context.ChallanProducts.Add(challanProduct);
+                                        }
+                                        else
+                                        {
+                                            existingChallanProduct.EditDate = DateTime.Now;
+                                            existingChallanProduct.InputQuantity = challanProduct.InputQuantity;
+                                        }
 
                                         response.StatusCode = HttpStatusCode.OK;
                                     }
@@ -413,13 +444,13 @@ namespace ERP.Controllers
                                 return InternalServerError();
                             }
                         }
-                        else
-                        {
-                            response.Message = "Product Mapping details doesn't seem to be entered correctly.";
-                            response.StatusCode = HttpStatusCode.BadRequest;
+                        //else
+                        //{
+                        //    response.Message = "Product Mapping details doesn't seem to be entered correctly.";
+                        //    response.StatusCode = HttpStatusCode.BadRequest;
 
-                            return BadRequest(response.Message);
-                        }
+                        //    return BadRequest(response.Message);
+                        //}
                     }
                 }
                 else
@@ -441,7 +472,7 @@ namespace ERP.Controllers
         {
             using (var context = new erpdbEntities())
             {
-                var challanDetails = context.ChallanDetails.ToArray();
+                var challanDetails = context.ChallanDetails.OrderByDescending(x => new { x.ChallanDate, x.CreateDate, x.ChallanNo }).ToArray();
                 List<ViewChallanDetailModel> modelList = new List<ViewChallanDetailModel>();
 
                 foreach (var challan in challanDetails)
@@ -580,10 +611,11 @@ namespace ERP.Controllers
                             mappedAssemblyProductDetail.ProductName = assemblyProduct.InputMaterialDesc;
                             mappedAssemblyProductDetail.SplitRatio = Convert.ToInt32(assemblyProduct.SplitRatio);
                             mappedAssemblyProductDetail.RemainingQuantity = assemblyRemainingQuantity * mappedAssemblyProductDetail.SplitRatio;
-                            mappedAssemblyProductDetail.RemainingQuantityPO = assemblyRemainingQuantityPO * mappedAssemblyProductDetail.SplitRatio;
+                            mappedAssemblyProductDetail.RemainingQuantityPO = assemblyRemainingQuantityPO;
                             assemblyProductsQuantity.Add(mappedAssemblyProductDetail);
 
-                            if (assemblyRemainingQuantity <= 0 || assemblyRemainingQuantityPO <= 0)
+                            //if (assemblyRemainingQuantity <= 0 || assemblyRemainingQuantityPO <= 0)
+                            if (assemblyRemainingQuantity <= 0)
                                 assemblyProductsQntPresent = false;
                         }
 
@@ -595,7 +627,7 @@ namespace ERP.Controllers
                             productQnty.ProductName = mainProduct.InputMaterialDesc;
                             productQnty.SplitRatio = Convert.ToInt32(mainProduct.SplitRatio);
                             productQnty.RemainingQuantity = mainRemainingQuantity * productQnty.SplitRatio;
-                            productQnty.RemainingQuantityPO = mainRemainingQuantityPO * productQnty.SplitRatio;
+                            productQnty.RemainingQuantityPO = mainRemainingQuantityPO;
                             productQnty.AssemblyProductQnts = assemblyProductsQuantity.ToArray();
                             productQnts.Add(productQnty);
                         }
@@ -631,14 +663,15 @@ namespace ERP.Controllers
                         var outQntPO = context.AccPODeductions.Where(x => x.POProduct.ProductId == product.ProductId).Sum(l => l.OutQuantity) ?? 0;
                         var remainingQuantityPO = Convert.ToInt32(inQntPO) - Convert.ToInt32(outQntPO);
 
-                        if (remainingQuantity > 0 && remainingQuantityPO > 0)
+                        //if (remainingQuantity > 0 && remainingQuantityPO > 0)
+                        if (remainingQuantity > 0)
                         {
                             ProductQuantity productQnty = new ProductQuantity();
                             productQnty.ProductId = Convert.ToInt32(product.ProductId);
                             productQnty.ProductName = product.InputMaterialDesc;
                             productQnty.SplitRatio = Convert.ToInt32(product.SplitRatio);
                             productQnty.RemainingQuantity = remainingQuantity * productQnty.SplitRatio;
-                            productQnty.RemainingQuantityPO = remainingQuantityPO * productQnty.SplitRatio;
+                            productQnty.RemainingQuantityPO = remainingQuantityPO;
                             productQnts.Add(productQnty);
                         }
                     }
@@ -680,7 +713,7 @@ namespace ERP.Controllers
                             productQnty.ProductName = product.InputMaterialDesc;
                             productQnty.SplitRatio = Convert.ToInt32(product.SplitRatio);
                             productQnty.RemainingQuantity = remainingQuantity * productQnty.SplitRatio;
-                            productQnty.RemainingQuantityPO = remainingQuantityPO * productQnty.SplitRatio;
+                            productQnty.RemainingQuantityPO = remainingQuantityPO;
                             productQnts.Add(productQnty);
                         }
                     }
@@ -1199,13 +1232,14 @@ namespace ERP.Controllers
                         challanDeduction.OutQuantity = challan.OutQuantity;
 
                         challanDeductions.Add(challanDeduction);
-                        outStock.ChallanDeductions = challanDeductions.ToArray();
                     }
                     else
                     {
                         challan.QntAfterDeduction = challan.RemainingQuantity;
                     }
                 }
+
+                outStock.ChallanDeductions = challanDeductions.ToArray();
             }
 
             if (!isNg)
@@ -1248,13 +1282,14 @@ namespace ERP.Controllers
                                 accChallanDeduction.OutQuantity = challan.OutQuantity;
 
                                 accChallanDeductions.Add(accChallanDeduction);
-                                outAcc.AccChallanDeductions = accChallanDeductions.ToArray();
                             }
                             else
                             {
                                 challan.QntAfterDeduction = challan.RemainingQuantity;
                             }
                         }
+
+                        outAcc.AccChallanDeductions = accChallanDeductions.ToArray();
                     }
                 }
 
@@ -1296,13 +1331,14 @@ namespace ERP.Controllers
                                 assemblyChallanDeduction.OutQuantity = challan.OutQuantity;
 
                                 assemblyChallanDeductions.Add(assemblyChallanDeduction);
-                                outAssembly.AssemblyChallanDeductions = assemblyChallanDeductions.ToArray();
                             }
                             else
                             {
                                 challan.QntAfterDeduction = challan.RemainingQuantity;
                             }
                         }
+
+                        outAssembly.AssemblyChallanDeductions = assemblyChallanDeductions.ToArray();
                     }
                 }
             }
@@ -1318,7 +1354,7 @@ namespace ERP.Controllers
 
                 var basfPOSelection = result.BASFPOSelections;
 
-                var outputQnt = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(outStock.OutputQuantity) / Convert.ToDouble(outStock.SplitRatio)));
+                var outputQnt = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(outStock.OutputQuantity)));
 
                 List<PODeductionModel> PODeductions = new List<PODeductionModel>();
                 foreach (var po in basfPOSelection)
@@ -1346,113 +1382,114 @@ namespace ERP.Controllers
                         PODeduction.OutQuantity = po.OutQuantity;
 
                         PODeductions.Add(PODeduction);
-                        outStock.PODeductions = PODeductions.ToArray();
                     }
                     else
                     {
                         po.QntAfterDeduction = po.RemainingQuantity;
                     }
                 }
+
+                outStock.PODeductions = PODeductions.ToArray();
             }
 
-            if (!isNg)
-            {
-                foreach (OutAccModel outAcc in outStock.OutAccs)
-                {
-                    if (outAcc.AccPODeductions == null || (outAcc.AccPODeductions != null && outAcc.AccPODeductions.Length == 0))
-                    {
-                        var productIdModel = new ProductIdModel();
-                        productIdModel.ProductId = outAcc.ProductId;
-                        var result = GetAllBASFPOByProductIdPrivate(productIdModel);
+            //if (!isNg)
+            //{
+            //    foreach (OutAccModel outAcc in outStock.OutAccs)
+            //    {
+            //        if (outAcc.AccPODeductions == null || (outAcc.AccPODeductions != null && outAcc.AccPODeductions.Length == 0))
+            //        {
+            //            var productIdModel = new ProductIdModel();
+            //            productIdModel.ProductId = outAcc.ProductId;
+            //            var result = GetAllBASFPOByProductIdPrivate(productIdModel);
 
-                        var basfPOSelection = result.BASFPOSelections;
+            //            var basfPOSelection = result.BASFPOSelections;
 
-                        var outputQnt = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(outAcc.OutputQuantity) / Convert.ToDouble(outAcc.SplitRatio)));
+            //            var outputQnt = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(outAcc.OutputQuantity)));
 
-                        List<AccPODeductionModel> accPODeductions = new List<AccPODeductionModel>();
-                        foreach (var po in basfPOSelection)
-                        {
-                            var accPODeduction = new AccPODeductionModel();
+            //            List<AccPODeductionModel> accPODeductions = new List<AccPODeductionModel>();
+            //            foreach (var po in basfPOSelection)
+            //            {
+            //                var accPODeduction = new AccPODeductionModel();
 
-                            if (outputQnt > 0)
-                            {
-                                if (po.RemainingQuantity < outputQnt)
-                                {
-                                    po.OutQuantity = po.RemainingQuantity;
-                                    outputQnt -= po.RemainingQuantity;
-                                    po.QntAfterDeduction = 0;
-                                }
-                                else
-                                {
-                                    po.OutQuantity = outputQnt;
-                                    outputQnt = 0;
-                                    po.QntAfterDeduction = po.RemainingQuantity - po.OutQuantity;
-                                }
+            //                if (outputQnt > 0)
+            //                {
+            //                    if (po.RemainingQuantity < outputQnt)
+            //                    {
+            //                        po.OutQuantity = po.RemainingQuantity;
+            //                        outputQnt -= po.RemainingQuantity;
+            //                        po.QntAfterDeduction = 0;
+            //                    }
+            //                    else
+            //                    {
+            //                        po.OutQuantity = outputQnt;
+            //                        outputQnt = 0;
+            //                        po.QntAfterDeduction = po.RemainingQuantity - po.OutQuantity;
+            //                    }
 
-                                po.IsChecked = true;
+            //                    po.IsChecked = true;
 
-                                accPODeduction.POProductId = po.POProduct.POProductId;
-                                accPODeduction.OutQuantity = po.OutQuantity;
+            //                    accPODeduction.POProductId = po.POProduct.POProductId;
+            //                    accPODeduction.OutQuantity = po.OutQuantity;
 
-                                accPODeductions.Add(accPODeduction);
-                                outAcc.AccPODeductions = accPODeductions.ToArray();
-                            }
-                            else
-                            {
-                                po.QntAfterDeduction = po.RemainingQuantity;
-                            }
-                        }
-                    }
-                }
+            //                    accPODeductions.Add(accPODeduction);
+            //                    outAcc.AccPODeductions = accPODeductions.ToArray();
+            //                }
+            //                else
+            //                {
+            //                    po.QntAfterDeduction = po.RemainingQuantity;
+            //                }
+            //            }
+            //        }
+            //    }
 
-                foreach (OutAssemblyModel outAssembly in outStock.OutAssemblys)
-                {
-                    if (outAssembly.AssemblyPODeductions == null || (outAssembly.AssemblyPODeductions != null && outAssembly.AssemblyPODeductions.Length == 0))
-                    {
-                        var productIdModel = new ProductIdModel();
-                        productIdModel.ProductId = outAssembly.ProductId;
-                        var result = GetAllBASFPOByProductIdPrivate(productIdModel);
+            //    foreach (OutAssemblyModel outAssembly in outStock.OutAssemblys)
+            //    {
+            //        if (outAssembly.AssemblyPODeductions == null || (outAssembly.AssemblyPODeductions != null && outAssembly.AssemblyPODeductions.Length == 0))
+            //        {
+            //            var productIdModel = new ProductIdModel();
+            //            productIdModel.ProductId = outAssembly.ProductId;
+            //            var result = GetAllBASFPOByProductIdPrivate(productIdModel);
 
-                        var basfPOSelection = result.BASFPOSelections;
+            //            var basfPOSelection = result.BASFPOSelections;
 
-                        var outputQnt = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(outAssembly.OutputQuantity) / Convert.ToDouble(outAssembly.SplitRatio)));
+            //            var outputQnt = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(outAssembly.OutputQuantity)));
 
-                        List<AssemblyPODeductionModel> assemblyPODeductions = new List<AssemblyPODeductionModel>();
-                        foreach (var PO in basfPOSelection)
-                        {
-                            var assemblyPODeduction = new AssemblyPODeductionModel();
+            //            List<AssemblyPODeductionModel> assemblyPODeductions = new List<AssemblyPODeductionModel>();
+            //            foreach (var PO in basfPOSelection)
+            //            {
+            //                var assemblyPODeduction = new AssemblyPODeductionModel();
 
-                            if (outputQnt > 0)
-                            {
-                                if (PO.RemainingQuantity < outputQnt)
-                                {
-                                    PO.OutQuantity = PO.RemainingQuantity;
-                                    outputQnt -= PO.RemainingQuantity;
-                                    PO.QntAfterDeduction = 0;
-                                }
-                                else
-                                {
-                                    PO.OutQuantity = outputQnt;
-                                    outputQnt = 0;
-                                    PO.QntAfterDeduction = PO.RemainingQuantity - PO.OutQuantity;
-                                }
+            //                if (outputQnt > 0)
+            //                {
+            //                    if (PO.RemainingQuantity < outputQnt)
+            //                    {
+            //                        PO.OutQuantity = PO.RemainingQuantity;
+            //                        outputQnt -= PO.RemainingQuantity;
+            //                        PO.QntAfterDeduction = 0;
+            //                    }
+            //                    else
+            //                    {
+            //                        PO.OutQuantity = outputQnt;
+            //                        outputQnt = 0;
+            //                        PO.QntAfterDeduction = PO.RemainingQuantity - PO.OutQuantity;
+            //                    }
 
-                                PO.IsChecked = true;
+            //                    PO.IsChecked = true;
 
-                                assemblyPODeduction.POProductId = PO.POProduct.POProductId;
-                                assemblyPODeduction.OutQuantity = PO.OutQuantity;
+            //                    assemblyPODeduction.POProductId = PO.POProduct.POProductId;
+            //                    assemblyPODeduction.OutQuantity = PO.OutQuantity;
 
-                                assemblyPODeductions.Add(assemblyPODeduction);
-                                outAssembly.AssemblyPODeductions = assemblyPODeductions.ToArray();
-                            }
-                            else
-                            {
-                                PO.QntAfterDeduction = PO.RemainingQuantity;
-                            }
-                        }
-                    }
-                }
-            }
+            //                    assemblyPODeductions.Add(assemblyPODeduction);
+            //                    outAssembly.AssemblyPODeductions = assemblyPODeductions.ToArray();
+            //                }
+            //                else
+            //                {
+            //                    PO.QntAfterDeduction = PO.RemainingQuantity;
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
         }
 
 
@@ -1604,7 +1641,7 @@ namespace ERP.Controllers
             {
                 try
                 {
-                    var vendorChallans = context.VendorChallans.Where(x => x.IsNg == 0).ToList();
+                    var vendorChallans = context.VendorChallans.Where(x => x.IsNg == 0).OrderByDescending(x => new { x.VendorChallanDate, x.CreateDate, x.VendorChallanNo }).ToList();
 
                     List<VendorChallanModel> modelList = new List<VendorChallanModel>();
                     foreach (var vendorChallan in vendorChallans)
@@ -1749,7 +1786,108 @@ namespace ERP.Controllers
             {
                 try
                 {
-                    var vendorChallan = context.VendorChallans.Where(x => x.VendorChallanNo == vendorChallanNoModel.VendorChallanNo).FirstOrDefault();
+                    return Ok(GetVendorChallanByVendorChallanNoPrivate(vendorChallanNoModel.VendorChallanNo));
+                }
+                catch (Exception e)
+                {
+                    return InternalServerError();
+                }
+            }
+        }
+
+        [HttpPost, Route("PrintVendorChallanByVendorChallanNo")]
+        public IHttpActionResult PrintVendorChallanByVendorChallanNo(VendorChallanNoModel vendorChallanNoModel)
+        {
+            using (var context = new erpdbEntities())
+            {
+                try
+                {
+                    VendorChallanModel vendorChallan = GetVendorChallanByVendorChallanNoPrivate(vendorChallanNoModel.VendorChallanNo);
+
+                    string html = "";
+
+                    html += "<html><div style=\"margin: 1%\"><table style=\"border: 1px solid\"><tr style=\"width: 100%\"><td style=\"width: 33%\"><b>Vibrant Challan No: </b>" + vendorChallan.VendorChallanNo + "</td><td style=\"width: 33%\"><b>Vibrant Challan Date: </b>" + vendorChallan.VendorChallanDate.ToShortDateString() + "</td>" + "<td style=\"width: 33%\"><b>Total Stock Out: </b>" + vendorChallan.OutStocks.Sum(x => x.OutputQuantity).ToString() + "</td></tr></table>";
+
+                    html += "<table style=\"border: 1px solid\">";
+                    foreach (var outStock in vendorChallan.OutStocks)
+                    {
+                        html += "<tr style=\"width: 100%\">";
+                        foreach (var challanDeduction in outStock.ChallanDeductions)
+                        {
+                            var projName = challanDeduction.ChallanProduct.ProductDetail.ProjectName;
+                            html += "<td style=\"border: 1px solid\">" + projName + "</td>";
+
+                            var outputCode = challanDeduction.ChallanProduct.ProductDetail.OutputCode;
+                            html += "<td style=\"border: 1px solid\">" + outputCode + "</td>";
+
+                            var outputMatDesc = challanDeduction.ChallanProduct.ProductDetail.OutputMaterialDesc;
+                            html += "<td style=\"border: 1px solid\">" + outputMatDesc + "</td>";
+
+                            var outputQnt = challanDeduction.OutQuantity;
+                            html += "<td style=\"border: 1px solid\">" + outputQnt + "</td>";
+
+                            var inputCode = challanDeduction.ChallanProduct.ProductDetail.InputCode;
+                            html += "<td style=\"border: 1px solid\">" + inputCode + "</td>";
+
+                            var inputMatDesc = challanDeduction.ChallanProduct.ProductDetail.InputMaterialDesc;
+                            html += "<td style=\"border: 1px solid\">" + inputMatDesc + "</td>";
+
+                            var inputQnt = challanDeduction.ChallanProduct.ProductDetail.InputMaterialDesc;
+                            html += "<td style=\"border: 1px solid\">" + inputQnt + "</td>";
+
+                            var partType = challanDeduction.ChallanProduct.ProductDetail.ProductType.ProductTypeName;
+                            html += "<td style=\"border: 1px solid\">" + partType + "</td>";
+
+                            var basfChallanNo = challanDeduction.ChallanProduct.ChallanDetail.ChallanNo;
+                            html += "<td style=\"border: 1px solid\">" + basfChallanNo + "</td>";
+
+                            var balance = challanDeduction.ChallanProduct.RemainingQuantity;
+                            html += "<td style=\"border: 1px solid\">" + balance + "</td>";
+                        }
+
+                        var poNos = "<ul>";
+                        foreach (var poDeduction in outStock.PODeductions)
+                        {
+                            var poNo = poDeduction.POProduct.PODetail.PONo;
+                            poNos += "<li>" + poNo + "</li>";
+                        }
+
+                        poNos += "</ul>";
+
+                        html += "<td style=\"border: 1px solid\" rowspan=\"" + outStock.ChallanDeductions.Count() + "\">" + poNos + "</td>";
+                    }
+
+                    html += "</div></html>";
+
+                    HtmlToPdf renderer = new HtmlToPdf();
+                    renderer.PrintOptions.PrintHtmlBackgrounds = true;
+                    renderer.PrintOptions.MarginTop = 2.5;
+                    renderer.PrintOptions.MarginBottom = 0;
+                    renderer.PrintOptions.MarginLeft = 1;
+                    renderer.PrintOptions.MarginRight = 2.5;
+                    renderer.PrintOptions.PaperSize = PdfPrintOptions.PdfPaperSize.A4;
+                    renderer.PrintOptions.PaperOrientation = PdfPrintOptions.PdfPaperOrientation.Landscape;
+                    renderer.PrintOptions.RenderDelay = 500;
+
+                    var doc = renderer.RenderHtmlAsPdf(html);
+                    var dataStream = doc.Stream;
+
+                    return new FileResult(dataStream, Request, "Vibrant Challan " + vendorChallan.VendorChallanNo + ".pdf");
+                }
+                catch (Exception e)
+                {
+                    throw new Exception();
+                }
+            }
+        }
+
+        private VendorChallanModel GetVendorChallanByVendorChallanNoPrivate(int vendorChallanNo)
+        {
+            using (var context = new erpdbEntities())
+            {
+                try
+                {
+                    var vendorChallan = context.VendorChallans.Where(x => x.VendorChallanNo == vendorChallanNo).FirstOrDefault();
 
                     VendorChallanModel model = new VendorChallanModel();
                     model.VendorChallanNo = vendorChallan.VendorChallanNo;
@@ -1975,11 +2113,11 @@ namespace ERP.Controllers
 
                     model.OutStocks = outStockModelList.ToArray();
 
-                    return Ok(model);
+                    return model;
                 }
                 catch (Exception e)
                 {
-                    return InternalServerError();
+                    throw new Exception();
                 }
             }
         }
