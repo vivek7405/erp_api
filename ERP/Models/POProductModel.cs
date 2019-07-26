@@ -23,5 +23,7 @@ namespace ERP.Models
         public ICollection<AssemblyPODeduction> AssemblyPODeductions { get; set; }
         [DataMember]
         public int RemainingQuantity { get; set; }
+        [DataMember]
+        public bool CanDelete { get; set; }
     }
 }

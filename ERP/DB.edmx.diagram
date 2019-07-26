@@ -46,6 +46,12 @@
         <AssociationConnector Association="erpdbModel.FK__ProductDe__Produ__41B8C09B" ManuallyRouted="false" />
         <AssociationConnector Association="erpdbModel.FK__ProductMa__Mappi__6501FCD8" ManuallyRouted="false" />
         <AssociationConnector Association="erpdbModel.FK__ProductMa__Produ__640DD89F" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="erpdbModel.BASFInvoice" Width="1.5" PointX="13.375" PointY="1" />
+        <EntityTypeShape EntityType="erpdbModel.InvoiceChallanDeduction" Width="1.5" PointX="17.875" PointY="6.625" />
+        <EntityTypeShape EntityType="erpdbModel.InvoiceOutStock" Width="1.5" PointX="15.625" PointY="1" />
+        <AssociationConnector Association="erpdbModel.FK__InvoiceOu__BASFI__22FF2F51" />
+        <AssociationConnector Association="erpdbModel.FK__InvoiceCh__Chall__26CFC035" />
+        <AssociationConnector Association="erpdbModel.FK__InvoiceCh__Invoi__25DB9BFC" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

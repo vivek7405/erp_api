@@ -23,5 +23,7 @@ namespace ERP.Models
         public ICollection<AssemblyChallanDeduction> AssemblyChallanDeductions { get; set; }
         [DataMember]
         public int RemainingQuantity { get; set; }
+        [DataMember]
+        public bool CanDelete { get; set; }
     }
 }

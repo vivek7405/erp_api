@@ -214,7 +214,7 @@ namespace ERP.Controllers
                                         response.Message = "Some error occurred while performing transaction.";
                                         response.StatusCode = HttpStatusCode.InternalServerError;
 
-                                        return InternalServerError();
+                                        return InternalServerError(new Exception("Something went worng while saving Products!"));
                                     }
                                 }
                                 else
@@ -222,7 +222,17 @@ namespace ERP.Controllers
                                     response.Message = "PO Product details doesn't seem to be entered correctly.";
                                     response.StatusCode = HttpStatusCode.BadRequest;
 
-                                    return BadRequest(response.Message);
+                                    //return BadRequest(response.Message);
+                                    return InternalServerError(new Exception("PO Product details doesn't seem to be entered correctly!"));
+                                }
+                            }
+
+                            foreach (var existingPOProd in existingPOProducts)
+                            {
+                                var poContains = challanProducts.Where(x => x.ChallanProductId == existingPOProd.POProductId).FirstOrDefault();
+                                if (poContains == null)
+                                {
+                                    context.POProducts.Remove(existingPOProd);
                                 }
                             }
                         }
@@ -249,8 +259,37 @@ namespace ERP.Controllers
                                         }
                                         else
                                         {
-                                            existingChallanProduct.EditDate = DateTime.Now;
-                                            existingChallanProduct.InputQuantity = challanProduct.InputQuantity;
+                                            if (challanProduct.InputQuantity < existingChallanProduct.InputQuantity)
+                                            {
+                                                int main = Convert.ToInt32(EProductCategorys.Main);
+                                                int assembly = Convert.ToInt32(EProductCategorys.Assembly);
+                                                int acc = Convert.ToInt32(EProductCategorys.Accessories);
+
+                                                int? totalDeductions = 0;
+                                                if (existingChallanProduct.ProductDetail.ProductType.ProductCategory.ProductCategoryId == main)
+                                                    totalDeductions = existingChallanProduct.ChallanDeductions.Sum(x => x.OutQuantity);
+                                                else if (existingChallanProduct.ProductDetail.ProductType.ProductCategory.ProductCategoryId == assembly)
+                                                    totalDeductions = existingChallanProduct.AssemblyChallanDeductions.Sum(x => x.OutQuantity);
+                                                else if (existingChallanProduct.ProductDetail.ProductType.ProductCategory.ProductCategoryId == acc)
+                                                    totalDeductions = existingChallanProduct.AccChallanDeductions.Sum(x => x.OutQuantity);
+
+                                                int? currentRemainingQnt = existingChallanProduct.InputQuantity - totalDeductions;
+                                                int? difference = existingChallanProduct.InputQuantity - challanProduct.InputQuantity;
+                                                if (difference <= currentRemainingQnt)
+                                                {
+                                                    existingChallanProduct.EditDate = DateTime.Now;
+                                                    existingChallanProduct.InputQuantity = challanProduct.InputQuantity;
+                                                }
+                                                else
+                                                {
+                                                    return InternalServerError(new Exception("The new quanity is not allowed as the remaining quantity will become less than zero!"));
+                                                }
+                                            }
+                                            else
+                                            {
+                                                existingChallanProduct.EditDate = DateTime.Now;
+                                                existingChallanProduct.InputQuantity = challanProduct.InputQuantity;
+                                            }
                                         }
 
                                         response.StatusCode = HttpStatusCode.OK;
@@ -260,7 +299,7 @@ namespace ERP.Controllers
                                         response.Message = "Some error occurred while performing transaction.";
                                         response.StatusCode = HttpStatusCode.InternalServerError;
 
-                                        return InternalServerError();
+                                        return InternalServerError(new Exception("Something went wrong while saving Products!"));
                                     }
                                 }
                                 else
@@ -268,7 +307,17 @@ namespace ERP.Controllers
                                     response.Message = "Challan Product details doesn't seem to be entered correctly.";
                                     response.StatusCode = HttpStatusCode.BadRequest;
 
-                                    return BadRequest(response.Message);
+                                    //return BadRequest(response.Message);
+                                    return InternalServerError(new Exception("Challan Product details doesn't seem to be entered correctly!"));
+                                }
+                            }
+
+                            foreach (var existingChallanProd in existingChallanProducts)
+                            {
+                                var challanContains = challanProducts.Where(x => x.ChallanProductId == existingChallanProd.ChallanProductId).FirstOrDefault();
+                                if (challanContains == null)
+                                {
+                                    context.ChallanProducts.Remove(existingChallanProd);
                                 }
                             }
                         }
@@ -524,7 +573,7 @@ namespace ERP.Controllers
         {
             using (var context = new erpdbEntities())
             {
-                var poDetails = context.PODetails.ToArray();
+                var poDetails = context.PODetails.OrderByDescending(x => new { x.CreateDate, x.EditDate }).ToArray();
                 List<ViewPODetailModel> modelList = new List<ViewPODetailModel>();
 
                 foreach (var po in poDetails)
@@ -629,6 +678,46 @@ namespace ERP.Controllers
                             productQnty.RemainingQuantity = mainRemainingQuantity * productQnty.SplitRatio;
                             productQnty.RemainingQuantityPO = mainRemainingQuantityPO;
                             productQnty.AssemblyProductQnts = assemblyProductsQuantity.ToArray();
+                            productQnts.Add(productQnty);
+                        }
+                    }
+
+                    return Ok(productQnts);
+                }
+                catch (Exception e)
+                {
+                    return InternalServerError();
+                }
+            }
+        }
+
+        [HttpGet, Route("GetMainProductRemainingQuantityBASFInvoice")]
+        public IHttpActionResult GetMainProductRemainingQuantityBASFInvoice()
+        {
+            using (var context = new erpdbEntities())
+            {
+                try
+                {
+                    int main = Convert.ToInt32(EProductCategorys.Main);
+                    var products = context.ProductDetails.Where(x => x.ProductType.ProductCategoryId == main).ToList();
+
+                    List<ProductQuantity> productQnts = new List<ProductQuantity>();
+                    foreach (var mainProduct in products)
+                    {
+                        var inMainQnt = context.ChallanProducts.Where(x => x.ProductId == mainProduct.ProductId).Sum(l => l.InputQuantity) ?? 0;
+                        var outMainQnt = context.InvoiceChallanDeductions.Where(x => x.ChallanProduct.ProductId == mainProduct.ProductId).Sum(l => l.OutQuantity) ?? 0;
+                        var ngOutMainQnt = context.ChallanDeductions.Where(x => x.ChallanProduct.ProductId == mainProduct.ProductId && x.OutStock.VendorChallan.IsNg == 1).Sum(l => l.OutQuantity) ?? 0;
+
+                        int mainRemainingQuantity = Convert.ToInt32(inMainQnt) - Convert.ToInt32(outMainQnt) - Convert.ToInt32(ngOutMainQnt);
+
+
+                        if (mainRemainingQuantity > 0)
+                        {
+                            ProductQuantity productQnty = new ProductQuantity();
+                            productQnty.ProductId = Convert.ToInt32(mainProduct.ProductId);
+                            productQnty.ProductName = mainProduct.InputMaterialDesc;
+                            productQnty.SplitRatio = Convert.ToInt32(mainProduct.SplitRatio);
+                            productQnty.RemainingQuantity = mainRemainingQuantity * productQnty.SplitRatio;
                             productQnts.Add(productQnty);
                         }
                     }
@@ -888,6 +977,64 @@ namespace ERP.Controllers
 
                     response.Id = vendorChallan.VendorChallanNo;
                     response.Message = "Vendor challan successfully saved.";
+                    response.StatusCode = HttpStatusCode.OK;
+
+                    return Ok(response);
+                }
+                catch (Exception e)
+                {
+                    return InternalServerError();
+                }
+            }
+        }
+
+        [HttpPost, Route("AddOrUpdateBASFInvoice")]
+        public IHttpActionResult AddOrUpdateBASFInvoice(BASFInvoiceModel model)
+        {
+            SuccessResponse response = new SuccessResponse();
+
+            using (var context = new erpdbEntities())
+            {
+                try
+                {
+                    BASFInvoice basfInvoice = new BASFInvoice();
+                    basfInvoice.BASFInvoiceDate = model.BASFInvoiceDate;
+                    basfInvoice.IsNg = model.IsNg ? 1 : 0;
+                    basfInvoice.CreateDate = DateTime.Now;
+                    basfInvoice.EditDate = DateTime.Now;
+
+                    context.BASFInvoices.Add(basfInvoice);
+                    context.SaveChanges();
+
+                    foreach (InvoiceOutStockModel outStockModel in model.InvoiceOutStocks)
+                    {
+                        GetInvoiceChallanDeductionsByInvoiceOutStock(outStockModel);
+
+                        InvoiceOutStock outStock = new InvoiceOutStock();
+                        outStock.BASFInvoiceId = basfInvoice.BASFInvoiceId;
+                        outStock.OutputQuantity = outStockModel.OutputQuantity;
+                        outStock.CreateDate = DateTime.Now;
+                        outStock.EditDate = DateTime.Now;
+
+                        context.InvoiceOutStocks.Add(outStock);
+                        context.SaveChanges();
+
+                        foreach (InvoiceChallanDeductionModel challanDeductionModel in outStockModel.InvoiceChallanDeductions)
+                        {
+                            InvoiceChallanDeduction challanDeduction = new InvoiceChallanDeduction();
+                            challanDeduction.CreateDate = DateTime.Now;
+                            challanDeduction.EditDate = DateTime.Now;
+                            challanDeduction.InvoiceOutStockId = outStock.InvoiceOutStockId;
+                            challanDeduction.OutQuantity = challanDeductionModel.OutQuantity;
+                            challanDeduction.ChallanProductId = challanDeductionModel.ChallanProductId;
+
+                            context.InvoiceChallanDeductions.Add(challanDeduction);
+                            context.SaveChanges();
+                        }
+                    }
+
+                    response.Id = basfInvoice.BASFInvoiceId;
+                    response.Message = "BASF Invoice successfully saved.";
                     response.StatusCode = HttpStatusCode.OK;
 
                     return Ok(response);
@@ -1492,6 +1639,97 @@ namespace ERP.Controllers
             //}
         }
 
+        public void GetInvoiceChallanDeductionsByInvoiceOutStock(InvoiceOutStockModel outStock)
+        {
+            if (outStock.InvoiceChallanDeductions == null || (outStock.InvoiceChallanDeductions != null && outStock.InvoiceChallanDeductions.Length == 0))
+            {
+                var productIdModel = new ProductIdModel();
+                productIdModel.ProductId = outStock.ProductId;
+                var result = GetAllBASFInvoiceChallanByProductIdPrivate(productIdModel);
+
+                var basfChallanSelection = result.BASFChallanSelections;
+
+                var outputQnt = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(outStock.OutputQuantity) / Convert.ToDouble(outStock.SplitRatio)));
+
+                List<InvoiceChallanDeductionModel> challanDeductions = new List<InvoiceChallanDeductionModel>();
+                foreach (var challan in basfChallanSelection)
+                {
+                    var challanDeduction = new InvoiceChallanDeductionModel();
+
+                    if (outputQnt > 0)
+                    {
+                        if (challan.RemainingQuantity < outputQnt)
+                        {
+                            challan.OutQuantity = challan.RemainingQuantity;
+                            outputQnt -= challan.RemainingQuantity;
+                            challan.QntAfterDeduction = 0;
+                        }
+                        else
+                        {
+                            challan.OutQuantity = outputQnt;
+                            outputQnt = 0;
+                            challan.QntAfterDeduction = challan.RemainingQuantity - challan.OutQuantity;
+                        }
+
+                        challan.IsChecked = true;
+
+                        challanDeduction.ChallanProductId = challan.ChallanProduct.ChallanProductId;
+                        challanDeduction.OutQuantity = challan.OutQuantity;
+
+                        challanDeductions.Add(challanDeduction);
+                    }
+                    else
+                    {
+                        challan.QntAfterDeduction = challan.RemainingQuantity;
+                    }
+                }
+
+                outStock.InvoiceChallanDeductions = challanDeductions.ToArray();
+            }
+        }
+
+        private BASFChallanDeduction GetAllBASFInvoiceChallanByProductIdPrivate(ProductIdModel model)
+        {
+            int productId = model.ProductId;
+            using (var context = new erpdbEntities())
+            {
+                try
+                {
+                    BASFChallanDeduction basfChallanDeduction = new BASFChallanDeduction();
+
+                    BASFChallanSelection[] basfChallanSelection = context.ChallanDetails.Select(x => new BASFChallanSelection { ChallanDetail = x, ChallanProduct = x.ChallanProducts.Where(p => p.ProductId == productId).FirstOrDefault(), InputQuantity = x.ChallanProducts.Where(p => p.ProductId == productId).Sum(p => p.InputQuantity), OutputQuantity = context.InvoiceChallanDeductions.Where(z => z.ChallanProduct.ProductId == productId).Sum(p => p.OutQuantity).Value }).Where(q => q.ChallanProduct.ProductId == productId).OrderBy(x => x.ChallanDetail.ChallanDate).ToArray();
+
+                    List<BASFChallanSelection> selection = new List<BASFChallanSelection>();
+                    foreach (var basfChallan in basfChallanSelection)
+                    {
+                        //basfChallan.RemainingQuantity = (basfChallan.InputQuantity ?? 0) - (basfChallan.OutputQuantity ?? 0);
+
+                        if (basfChallan.ChallanProduct != null)
+                        {
+                            basfChallan.InputQuantity = basfChallan.ChallanProduct.InputQuantity ?? 0;
+                            basfChallan.RemainingQuantity = basfChallan.InputQuantity ?? 0;
+
+                            if (basfChallan.ChallanProduct.InvoiceChallanDeductions != null && basfChallan.ChallanProduct.InvoiceChallanDeductions.Count > 0)
+                            {
+                                basfChallan.OutputQuantity = basfChallan.ChallanProduct.InvoiceChallanDeductions.Where(x => x.ChallanProductId == basfChallan.ChallanProduct.ChallanProductId).Sum(x => x.OutQuantity) ?? 0;
+                                basfChallan.RemainingQuantity = (basfChallan.InputQuantity - basfChallan.ChallanProduct.InvoiceChallanDeductions.Sum(x => x.OutQuantity)) ?? basfChallan.InputQuantity ?? 0;
+                            }
+
+                            if (basfChallan.RemainingQuantity > 0)
+                                selection.Add(basfChallan);
+                        }
+                    }
+
+                    basfChallanDeduction.BASFChallanSelections = selection.ToArray();
+
+                    return basfChallanDeduction;
+                }
+                catch (Exception e)
+                {
+                    return null;
+                }
+            }
+        }
 
         private BASFChallanDeduction GetAllBASFChallanByProductIdPrivate(ProductIdModel model)
         {
@@ -1713,7 +1951,7 @@ namespace ERP.Controllers
             {
                 try
                 {
-                    var vendorChallans = context.VendorChallans.Where(x => x.IsNg == 1).ToList();
+                    var vendorChallans = context.VendorChallans.Where(x => x.IsNg == 1).OrderByDescending(x => new { x.VendorChallanDate, x.CreateDate, x.VendorChallanNo }).ToList();
 
                     List<VendorChallanModel> modelList = new List<VendorChallanModel>();
                     foreach (var vendorChallan in vendorChallans)
@@ -2154,6 +2392,8 @@ namespace ERP.Controllers
                         else if (challanProductModel.AssemblyChallanDeductions != null && challanProductModel.AssemblyChallanDeductions.Count > 0)
                             challanProductModel.RemainingQuantity = (inputQuantity - challanProductModel.AssemblyChallanDeductions.Sum(x => x.OutQuantity)) ?? inputQuantity;
 
+                        challanProductModel.CanDelete = challanProductModel.RemainingQuantity == challanProductModel.ChallanProduct.InputQuantity;
+
                         challanProducts.Add(challanProductModel);
                     }
 
@@ -2201,6 +2441,8 @@ namespace ERP.Controllers
                         else if (poProductModel.AssemblyPODeductions != null && poProductModel.AssemblyPODeductions.Count > 0)
                             poProductModel.RemainingQuantity = (inputQuantity - poProductModel.AssemblyPODeductions.Sum(x => x.OutQuantity)) ?? inputQuantity;
 
+                        poProductModel.CanDelete = poProductModel.RemainingQuantity == poProductModel.POProduct.InputQuantity;
+
                         poProducts.Add(poProductModel);
                     }
 
@@ -2222,6 +2464,586 @@ namespace ERP.Controllers
             using (var context = new erpdbEntities())
             {
                 return Ok(context.ProductTypes.ToArray());
+            }
+        }
+
+        [HttpPost, Route("DeleteProductByProductId")]
+        public IHttpActionResult DeleteProductByProductId(VendorChallanNoModel vendorChallanNoModel)
+        {
+            var productId = vendorChallanNoModel.VendorChallanNo;
+
+            SuccessResponse response = new SuccessResponse();
+
+            try
+            {
+                using (var context = new erpdbEntities())
+                {
+                    var product = context.ProductDetails.Where(x => x.ProductId == productId).FirstOrDefault();
+
+                    if (product != null)
+                    {
+                        var productMappings = context.ProductMappings.Where(x => x.ProductId == productId).ToArray();
+                        if (productMappings != null)
+                            context.ProductMappings.RemoveRange(productMappings);
+
+                        context.ProductDetails.Remove(product);
+                    }
+
+                    context.SaveChanges();
+
+                    response.StatusCode = HttpStatusCode.OK;
+                    response.Message = "Product deleted successfully.";
+
+                    return Ok(response);
+                }
+            }
+            catch (Exception e)
+            {
+                response.StatusCode = HttpStatusCode.InternalServerError;
+                response.Message = "Cannot delete the product as it has been used in some Challan(s)! Do you still want to delete the product and all its references?";
+
+                return InternalServerError(new Exception("Cannot delete the product as it has been used in some Challan(s)! Do you still want to delete the product and all its references?"));
+            }
+        }
+
+        [HttpPost, Route("DeleteBASFChallanByChallanId")]
+        public IHttpActionResult DeleteBASFChallanByChallanId(VendorChallanNoModel vendorChallanNoModel)
+        {
+            var challanId = vendorChallanNoModel.VendorChallanNo;
+
+            SuccessResponse response = new SuccessResponse();
+
+            try
+            {
+                using (var context = new erpdbEntities())
+                {
+                    var challan = context.ChallanDetails.Where(x => x.ChallanId == challanId).FirstOrDefault();
+
+                    if (challan != null)
+                    {
+                        var challanProducts = context.ChallanProducts.Where(x => x.ChallanId == challanId).ToArray();
+                        if (challanProducts != null)
+                            context.ChallanProducts.RemoveRange(challanProducts);
+
+                        context.ChallanDetails.Remove(challan);
+                    }
+
+                    context.SaveChanges();
+
+                    response.StatusCode = HttpStatusCode.OK;
+                    response.Message = "BASF Challan deleted successfully.";
+
+                    return Ok(response);
+                }
+            }
+            catch (Exception e)
+            {
+                response.StatusCode = HttpStatusCode.InternalServerError;
+                response.Message = "Cannot delete the challan as it has been used in some Vibrant Challan(s)! Do you still want to delete the challan and all its references?";
+
+                return InternalServerError(new Exception("Cannot delete the challan as it has been used in some Vibrant Challan(s)! Do you still want to delete the challan and all its references?"));
+            }
+        }
+
+        [HttpPost, Route("DeleteBASFPOByPOId")]
+        public IHttpActionResult DeleteBASFPOByPOId(VendorChallanNoModel vendorChallanNoModel)
+        {
+            var poId = vendorChallanNoModel.VendorChallanNo;
+
+            SuccessResponse response = new SuccessResponse();
+
+            try
+            {
+                using (var context = new erpdbEntities())
+                {
+                    var po = context.PODetails.Where(x => x.POId == poId).FirstOrDefault();
+
+                    if (po != null)
+                    {
+                        var poProducts = context.POProducts.Where(x => x.POId == poId).ToArray();
+                        if (poProducts != null)
+                            context.POProducts.RemoveRange(poProducts);
+
+                        context.PODetails.Remove(po);
+                    }
+
+                    context.SaveChanges();
+
+                    response.StatusCode = HttpStatusCode.OK;
+                    response.Message = "BASF PO deleted successfully.";
+
+                    return Ok(response);
+                }
+            }
+            catch (Exception e)
+            {
+                response.StatusCode = HttpStatusCode.InternalServerError;
+                response.Message = "Cannot delete the PO as it has been used in some Vibrant Challan(s)! Do you still want to delete the PO and all its references?";
+
+                return InternalServerError(new Exception("Cannot delete the PO as it has been used in some Vibrant Challan(s)! Do you still want to delete the PO and all its references?"));
+            }
+        }
+
+        [HttpPost, Route("DeleteVendorChallanByVendorChallanNo")]
+        public IHttpActionResult DeleteVendorChallanByVendorChallanNo(VendorChallanNoModel vendorChallanNoModel)
+        {
+            var vendorChallanNo = vendorChallanNoModel.VendorChallanNo;
+
+            SuccessResponse response = new SuccessResponse();
+
+            try
+            {
+                using (var context = new erpdbEntities())
+                {
+                    var vendorChallan = context.VendorChallans.Where(x => x.VendorChallanNo == vendorChallanNo).FirstOrDefault();
+
+                    if (vendorChallan != null)
+                    {
+                        var challanDeductions = context.ChallanDeductions.Where(x => x.OutStock.VendorChallanNo == vendorChallanNo).ToArray();
+                        if (challanDeductions != null)
+                            context.ChallanDeductions.RemoveRange(challanDeductions);
+
+                        var assemblyChallanDeductions = context.AssemblyChallanDeductions.Where(x => x.OutAssembly.OutStock.VendorChallanNo == vendorChallanNo).ToArray();
+                        if (assemblyChallanDeductions != null)
+                            context.AssemblyChallanDeductions.RemoveRange(assemblyChallanDeductions);
+
+                        var accChallanDeductions = context.AccChallanDeductions.Where(x => x.OutAcc.OutStock.VendorChallanNo == vendorChallanNo).ToArray();
+                        if (accChallanDeductions != null)
+                            context.AccChallanDeductions.RemoveRange(accChallanDeductions);
+
+
+
+                        var poDeductions = context.PODeductions.Where(x => x.OutStock.VendorChallanNo == vendorChallanNo).ToArray();
+                        if (poDeductions != null)
+                            context.PODeductions.RemoveRange(poDeductions);
+
+                        var assemblyPODeductions = context.AssemblyPODeductions.Where(x => x.OutAssembly.OutStock.VendorChallanNo == vendorChallanNo).ToArray();
+                        if (assemblyPODeductions != null)
+                            context.AssemblyPODeductions.RemoveRange(assemblyPODeductions);
+
+                        var accPODeductions = context.AccPODeductions.Where(x => x.OutAcc.OutStock.VendorChallanNo == vendorChallanNo).ToArray();
+                        if (accPODeductions != null)
+                            context.AccPODeductions.RemoveRange(accPODeductions);
+
+
+
+                        var outAssemblys = context.OutAssemblys.Where(x => x.OutStock.VendorChallanNo == vendorChallanNo).ToArray();
+                        if (outAssemblys != null)
+                            context.OutAssemblys.RemoveRange(outAssemblys);
+
+                        var outAccs = context.OutAccs.Where(x => x.OutStock.VendorChallanNo == vendorChallanNo).ToArray();
+                        if (outAccs != null)
+                            context.OutAccs.RemoveRange(outAccs);
+
+                        var outStocks = context.OutStocks.Where(x => x.VendorChallanNo == vendorChallanNo).ToArray();
+                        if (outStocks != null)
+                            context.OutStocks.RemoveRange(outStocks);
+
+
+
+                        context.VendorChallans.Remove(vendorChallan);
+                    }
+
+                    context.SaveChanges();
+
+                    response.StatusCode = HttpStatusCode.OK;
+                    response.Message = "Vendor Challan deleted successfully.";
+
+                    return Ok(response);
+                }
+            }
+            catch (Exception e)
+            {
+                response.StatusCode = HttpStatusCode.InternalServerError;
+                response.Message = "Something went wrong!";
+
+                return InternalServerError(new Exception("Something went wrong!"));
+            }
+        }
+
+        [HttpPost, Route("ForceDeleteProductByProductId")]
+        public IHttpActionResult ForceDeleteProductByProductId(VendorChallanNoModel vendorChallanNoModel)
+        {
+            var productId = vendorChallanNoModel.VendorChallanNo;
+
+            SuccessResponse response = new SuccessResponse();
+
+            try
+            {
+                List<AssemblyChallanDeduction> removeAssemblyChallanDeductions = new List<AssemblyChallanDeduction>();
+                List<AccChallanDeduction> removeAccChallanDeductions = new List<AccChallanDeduction>();
+                List<ChallanDeduction> removeChallanDeductions = new List<ChallanDeduction>();
+
+                List<AssemblyPODeduction> removeAssemblyPODeductions = new List<AssemblyPODeduction>();
+                List<AccPODeduction> removeAccPODeductions = new List<AccPODeduction>();
+                List<PODeduction> removePODeductions = new List<PODeduction>();
+
+                List<OutAssembly> removeOutAssemblys = new List<OutAssembly>();
+                List<OutAcc> removeOutAccs = new List<OutAcc>();
+                List<OutStock> removeOutStocks = new List<OutStock>();
+
+                List<VendorChallan> removeVendorChallans = new List<VendorChallan>();
+
+                List<ChallanProduct> removeChallanProducts = new List<ChallanProduct>();
+                List<ChallanDetail> removeChallanDetails = new List<ChallanDetail>();
+
+                List<POProduct> removePOProducts = new List<POProduct>();
+                List<PODetail> removePODetails = new List<PODetail>();
+
+                List<ProductMapping> removeProductMappings = new List<ProductMapping>();
+
+                using (var context = new erpdbEntities())
+                {
+                    var product = context.ProductDetails.Where(x => x.ProductId == productId).FirstOrDefault();
+
+                    if (product != null)
+                    {
+                        var challanDeductions = context.ChallanDeductions.Where(x => x.ChallanProduct.ProductId == productId).ToArray();
+                        if (challanDeductions != null)
+                            removeChallanDeductions.AddRange(challanDeductions);
+                        //context.ChallanDeductions.RemoveRange(challanDeductions);
+
+                        foreach (var challanDeduction in challanDeductions)
+                        {
+                            var assemblyChallanDeductions = context.AssemblyChallanDeductions.Where(x => x.OutAssembly.OutStockId == challanDeduction.OutStockId).ToArray();
+                            if (assemblyChallanDeductions != null)
+                                removeAssemblyChallanDeductions.AddRange(assemblyChallanDeductions);
+                            //context.AssemblyChallanDeductions.RemoveRange(assemblyChallanDeductions);
+                        }
+
+                        foreach (var challanDeduction in challanDeductions)
+                        {
+                            var accChallanDeductions = context.AccChallanDeductions.Where(x => x.OutAcc.OutStockId == challanDeduction.OutStockId).ToArray();
+                            if (accChallanDeductions != null)
+                                removeAccChallanDeductions.AddRange(accChallanDeductions);
+                            //context.AccChallanDeductions.RemoveRange(accChallanDeductions);
+                        }
+
+
+
+                        var poDeductions = context.PODeductions.Where(x => x.POProduct.ProductId == productId).ToArray();
+                        if (poDeductions != null)
+                            removePODeductions.AddRange(poDeductions);
+                        //context.PODeductions.RemoveRange(poDeductions);
+
+                        foreach (var poDeduction in poDeductions)
+                        {
+                            var assemblyPODeductions = context.AssemblyPODeductions.Where(x => x.OutAssembly.OutStockId == poDeduction.OutStockId).ToArray();
+                            if (assemblyPODeductions != null)
+                                removeAssemblyPODeductions.AddRange(assemblyPODeductions);
+                            //context.AssemblyPODeductions.RemoveRange(assemblyPODeductions);
+                        }
+
+                        foreach (var poDeduction in poDeductions)
+                        {
+                            var accPODeductions = context.AccPODeductions.Where(x => x.OutAcc.OutStockId == poDeduction.OutStockId).ToArray();
+                            if (accPODeductions != null)
+                                removeAccPODeductions.AddRange(accPODeductions);
+                            //context.AccPODeductions.RemoveRange(accPODeductions);
+                        }
+
+
+
+                        foreach (var assemblyChallanDeduction in removeAssemblyChallanDeductions)
+                        {
+                            var outAssembly = context.OutAssemblys.Where(x => x.OutAssemblyId == assemblyChallanDeduction.OutAssemblyId).FirstOrDefault();
+                            if (outAssembly != null)
+                                removeOutAssemblys.Add(outAssembly);
+                            //context.OutAssemblys.Remove(outAssembly);
+                        }
+
+                        foreach (var accChallanDeduction in removeAccChallanDeductions)
+                        {
+                            var outAcc = context.OutAccs.Where(x => x.OutAccId == accChallanDeduction.OutAccId).FirstOrDefault();
+                            if (outAcc != null)
+                                removeOutAccs.Add(outAcc);
+                            //context.OutAccs.Remove(outAcc);
+                        }
+
+                        foreach (var challanDeduction in challanDeductions)
+                        {
+                            var outStock = context.OutStocks.Where(x => x.OutStockId == challanDeduction.OutStockId).FirstOrDefault();
+                            if (outStock != null)
+                                removeOutStocks.Add(outStock);
+                            //context.OutStocks.Remove(outStock);
+                        }
+
+
+
+                        foreach (var assemblyPODeduction in removeAssemblyPODeductions)
+                        {
+                            var outAssembly = context.OutAssemblys.Where(x => x.OutAssemblyId == assemblyPODeduction.OutAssemblyId).FirstOrDefault();
+                            if (outAssembly != null)
+                                removeOutAssemblys.Add(outAssembly);
+                            //context.OutAssemblys.Remove(outAssembly);
+                        }
+
+                        foreach (var accPODeduction in removeAccPODeductions)
+                        {
+                            var outAcc = context.OutAccs.Where(x => x.OutAccId == accPODeduction.OutAccId).FirstOrDefault();
+                            if (outAcc != null)
+                                removeOutAccs.Add(outAcc);
+                            //context.OutAccs.Remove(outAcc);
+                        }
+
+                        foreach (var poDeduction in poDeductions)
+                        {
+                            var outStock = context.OutStocks.Where(x => x.OutStockId == poDeduction.OutStockId).FirstOrDefault();
+                            if (outStock != null)
+                                removeOutStocks.Add(outStock);
+                            //context.OutStocks.Remove(outStock);
+                        }
+
+
+
+                        foreach (var outStock in removeOutStocks)
+                        {
+                            var vendorChallan = context.VendorChallans.Where(x => x.VendorChallanNo == outStock.VendorChallanNo).ToArray();
+                            removeVendorChallans.AddRange(vendorChallan);
+                        }
+
+
+
+                        var challanProducts = context.ChallanProducts.Where(x => x.ProductId == productId).ToArray();
+                        if (challanProducts != null)
+                            removeChallanProducts.AddRange(challanProducts);
+                        //context.ChallanProducts.RemoveRange(challanProducts);
+
+                        foreach (var challanProduct in challanProducts)
+                        {
+                            var challanDetail = challanProduct.ChallanDetail;
+                            if (challanDetail != null)
+                                removeChallanDetails.Add(challanDetail);
+                            //context.ChallanDetails.Remove(challanDetail);
+                        }
+
+                        var poProducts = context.POProducts.Where(x => x.ProductId == productId).ToArray();
+                        if (poProducts != null)
+                            removePOProducts.AddRange(poProducts);
+                        //context.POProducts.RemoveRange(poProducts);
+
+                        foreach (var poProduct in poProducts)
+                        {
+                            var poDetail = poProduct.PODetail;
+                            if (poDetail != null)
+                                removePODetails.Add(poDetail);
+                            //context.PODetails.Remove(poDetail);
+                        }
+
+
+
+                        var productMappings = context.ProductMappings.Where(x => x.ProductId == productId).ToArray();
+                        if (productMappings != null)
+                            removeProductMappings.AddRange(productMappings);
+                        //context.ProductMappings.RemoveRange(productMappings);
+
+
+
+                        context.AssemblyChallanDeductions.RemoveRange(removeAssemblyChallanDeductions.Distinct());
+                        context.AccChallanDeductions.RemoveRange(removeAccChallanDeductions.Distinct());
+                        context.ChallanDeductions.RemoveRange(removeChallanDeductions.Distinct());
+
+                        context.AssemblyPODeductions.RemoveRange(removeAssemblyPODeductions.Distinct());
+                        context.AccPODeductions.RemoveRange(removeAccPODeductions.Distinct());
+                        context.PODeductions.RemoveRange(removePODeductions.Distinct());
+
+                        context.OutAssemblys.RemoveRange(removeOutAssemblys.Distinct());
+                        context.OutAccs.RemoveRange(removeOutAccs.Distinct());
+                        context.OutStocks.RemoveRange(removeOutStocks.Distinct());
+
+                        context.VendorChallans.RemoveRange(removeVendorChallans.Distinct());
+
+                        context.ChallanProducts.RemoveRange(removeChallanProducts.Distinct());
+                        context.ChallanDetails.RemoveRange(removeChallanDetails.Distinct());
+
+                        context.POProducts.RemoveRange(removePOProducts.Distinct());
+                        context.PODetails.RemoveRange(removePODetails.Distinct());
+
+                        context.ProductMappings.RemoveRange(removeProductMappings.Distinct());
+
+                        context.ProductDetails.Remove(product);
+                    }
+
+                    context.SaveChanges();
+
+                    response.StatusCode = HttpStatusCode.OK;
+                    response.Message = "Product and all its references deleted successfully.";
+
+                    return Ok(response);
+                }
+            }
+            catch (Exception e)
+            {
+                response.StatusCode = HttpStatusCode.InternalServerError;
+                response.Message = "Something went wrong!";
+
+                return InternalServerError(new Exception("Something went wrong!"));
+            }
+        }
+
+        [HttpPost, Route("ForceDeleteBASFChallanByChallanId")]
+        public IHttpActionResult ForceDeleteBASFChallanByChallanId(VendorChallanNoModel vendorChallanNoModel)
+        {
+            var challanId = vendorChallanNoModel.VendorChallanNo;
+
+            SuccessResponse response = new SuccessResponse();
+
+            try
+            {
+                List<OutStock> removeOutStocks = new List<OutStock>();
+
+                List<VendorChallan> removeVendorChallans = new List<VendorChallan>();
+
+                List<ChallanProduct> removeChallanProducts = new List<ChallanProduct>();
+
+                using (var context = new erpdbEntities())
+                {
+                    var challan = context.ChallanDetails.Where(x => x.ChallanId == challanId).FirstOrDefault();
+
+                    if (challan != null)
+                    {
+                        var challanDeductions = context.ChallanDeductions.Where(x => x.ChallanProduct.ChallanId == challanId).ToArray();
+
+                        foreach (var challanDeduction in challanDeductions)
+                        {
+                            var outStock = context.OutStocks.Where(x => x.OutStockId == challanDeduction.OutStockId).FirstOrDefault();
+                            if (outStock != null)
+                                removeOutStocks.Add(outStock);
+                        }
+
+
+
+                        foreach (var outStock in removeOutStocks)
+                        {
+                            var vendorChallan = context.VendorChallans.Where(x => x.VendorChallanNo == outStock.VendorChallanNo).ToArray();
+                            removeVendorChallans.AddRange(vendorChallan);
+                        }
+
+                        var distinctVendorChallans = removeVendorChallans.Distinct();
+                        foreach (var vendorChallan in distinctVendorChallans)
+                        {
+                            DeleteVendorChallanByVendorChallanNo(new VendorChallanNoModel() { VendorChallanNo = vendorChallan.VendorChallanNo });
+                        }
+
+                    }
+
+                    context.SaveChanges();
+                }
+
+                using (var context = new erpdbEntities())
+                {
+                    var challan = context.ChallanDetails.Where(x => x.ChallanId == challanId).FirstOrDefault();
+
+                    if (challan != null)
+                    {
+                        var challanProducts = context.ChallanProducts.Where(x => x.ChallanId == challanId).ToArray();
+                        if (challanProducts != null)
+                            removeChallanProducts.AddRange(challanProducts);
+
+                        context.ChallanProducts.RemoveRange(removeChallanProducts.Distinct());
+
+                        challan = context.ChallanDetails.Where(x => x.ChallanId == challanId).FirstOrDefault();
+                        if (challan != null)
+                            context.ChallanDetails.Remove(challan);
+
+                        context.SaveChanges();
+
+                        response.StatusCode = HttpStatusCode.OK;
+                        response.Message = "BASF Challan and all its references deleted successfully.";
+                    }
+                }
+
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                response.StatusCode = HttpStatusCode.InternalServerError;
+                response.Message = "Something went wrong!";
+
+                return InternalServerError(new Exception("Something went wrong!"));
+            }
+        }
+
+        [HttpPost, Route("ForceDeleteBASFPOByPOId")]
+        public IHttpActionResult ForceDeleteBASFPOByPOId(VendorChallanNoModel vendorChallanNoModel)
+        {
+            var poId = vendorChallanNoModel.VendorChallanNo;
+
+            SuccessResponse response = new SuccessResponse();
+
+            try
+            {
+                List<OutStock> removeOutStocks = new List<OutStock>();
+
+                List<VendorChallan> removeVendorChallans = new List<VendorChallan>();
+
+                List<POProduct> removePOProducts = new List<POProduct>();
+
+                using (var context = new erpdbEntities())
+                {
+                    var po = context.PODetails.Where(x => x.POId == poId).FirstOrDefault();
+
+                    if (po != null)
+                    {
+                        var poDeductions = context.PODeductions.Where(x => x.POProduct.POId == poId).ToArray();
+
+                        foreach (var poDeduction in poDeductions)
+                        {
+                            var outStock = context.OutStocks.Where(x => x.OutStockId == poDeduction.OutStockId).FirstOrDefault();
+                            if (outStock != null)
+                                removeOutStocks.Add(outStock);
+                        }
+
+
+
+                        foreach (var outStock in removeOutStocks)
+                        {
+                            var vendorChallan = context.VendorChallans.Where(x => x.VendorChallanNo == outStock.VendorChallanNo).ToArray();
+                            removeVendorChallans.AddRange(vendorChallan);
+                        }
+
+                        var distinctVendorChallans = removeVendorChallans.Distinct();
+                        foreach (var vendorChallan in distinctVendorChallans)
+                        {
+                            DeleteVendorChallanByVendorChallanNo(new VendorChallanNoModel() { VendorChallanNo = vendorChallan.VendorChallanNo });
+                        }
+
+                    }
+
+                    context.SaveChanges();
+                }
+
+                using (var context = new erpdbEntities())
+                {
+                    var po = context.PODetails.Where(x => x.POId == poId).FirstOrDefault();
+
+                    if (po != null)
+                    {
+                        var poProducts = context.POProducts.Where(x => x.POId == poId).ToArray();
+                        if (poProducts != null)
+                            removePOProducts.AddRange(poProducts);
+
+                        context.POProducts.RemoveRange(removePOProducts.Distinct());
+
+                        po = context.PODetails.Where(x => x.POId == poId).FirstOrDefault();
+                        if (po != null)
+                            context.PODetails.Remove(po);
+
+                        context.SaveChanges();
+
+                        response.StatusCode = HttpStatusCode.OK;
+                        response.Message = "BASF PO and all its references deleted successfully.";
+                    }
+                }
+
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                response.StatusCode = HttpStatusCode.InternalServerError;
+                response.Message = "Something went wrong!";
+
+                return InternalServerError(new Exception("Something went wrong!"));
             }
         }
     }

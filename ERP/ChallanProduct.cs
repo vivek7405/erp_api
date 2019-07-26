@@ -20,6 +20,7 @@ namespace ERP
             this.AccChallanDeductions = new HashSet<AccChallanDeduction>();
             this.AssemblyChallanDeductions = new HashSet<AssemblyChallanDeduction>();
             this.ChallanDeductions = new HashSet<ChallanDeduction>();
+            this.InvoiceChallanDeductions = new HashSet<InvoiceChallanDeduction>();
         }
     
         public int ChallanProductId { get; set; }
@@ -37,5 +38,7 @@ namespace ERP
         public virtual ICollection<ChallanDeduction> ChallanDeductions { get; set; }
         public virtual ChallanDetail ChallanDetail { get; set; }
         public virtual ProductDetail ProductDetail { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<InvoiceChallanDeduction> InvoiceChallanDeductions { get; set; }
     }
 }

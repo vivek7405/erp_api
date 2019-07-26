@@ -43,5 +43,8 @@ namespace ERP
         public virtual DbSet<ProductMapping> ProductMappings { get; set; }
         public virtual DbSet<ProductType> ProductTypes { get; set; }
         public virtual DbSet<VendorChallan> VendorChallans { get; set; }
+        public virtual DbSet<BASFInvoice> BASFInvoices { get; set; }
+        public virtual DbSet<InvoiceChallanDeduction> InvoiceChallanDeductions { get; set; }
+        public virtual DbSet<InvoiceOutStock> InvoiceOutStocks { get; set; }
     }
 }

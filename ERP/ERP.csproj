@@ -183,6 +183,9 @@
     <Compile Include="AssemblyPODeduction.cs">
       <DependentUpon>DB.tt</DependentUpon>
     </Compile>
+    <Compile Include="BASFInvoice.cs">
+      <DependentUpon>DB.tt</DependentUpon>
+    </Compile>
     <Compile Include="ChallanDeduction.cs">
       <DependentUpon>DB.tt</DependentUpon>
     </Compile>
@@ -214,12 +217,19 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="InvoiceChallanDeduction.cs">
+      <DependentUpon>DB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="InvoiceOutStock.cs">
+      <DependentUpon>DB.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\AccChallanDeductionModel.cs" />
     <Compile Include="Models\AccPODeductionModel.cs" />
     <Compile Include="Models\AssemblyChallanDeductionModel.cs" />
     <Compile Include="Models\AssemblyPODeductionModel.cs" />
     <Compile Include="Models\BASFChallanDeduction.cs" />
     <Compile Include="Models\BASFChallanSelection.cs" />
+    <Compile Include="Models\BASFInvoiceModel.cs" />
     <Compile Include="Models\BASFPODeduction.cs" />
     <Compile Include="Models\BASFPOSelection.cs" />
     <Compile Include="Models\ChallanDeductionModel.cs" />
@@ -228,6 +238,8 @@
     <Compile Include="Models\ChallanProductModel.cs" />
     <Compile Include="Models\FileResult.cs" />
     <Compile Include="Models\InputCodeModel.cs" />
+    <Compile Include="Models\InvoiceChallanDeductionModel.cs" />
+    <Compile Include="Models\InvoiceOutStockModel.cs" />
     <Compile Include="Models\OutAccModel.cs" />
     <Compile Include="Models\OutAssemblyModel.cs" />
     <Compile Include="Models\OutStockModel.cs" />

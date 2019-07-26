@@ -29,6 +29,10 @@
 --create table AccPODeductions (AccPODeductionId integer primary key identity, OutAccId integer FOREIGN KEY REFERENCES OutAccs(OutAccId), POProductId integer FOREIGN KEY REFERENCES POProducts(POProductId), OutQuantity integer, CreateDate datetime, EditDate datetime);
 --create table AssemblyPODeductions (AssemblyPODeductionId integer primary key identity, OutAssemblyId integer FOREIGN KEY REFERENCES OutAssemblys(OutAssemblyId), POProductId integer FOREIGN KEY REFERENCES POProducts(POProductId), OutQuantity integer, CreateDate datetime, EditDate datetime);
 
+--create table BASFInvoices (BASFInvoiceId integer primary key identity, BASFInvoiceNo integer, BASFInvoiceDate datetime, IsNg integer, CreateDate datetime, EditDate datetime);
+--CREATE UNIQUE INDEX unq_BASFInvoices_BASFInvoiceNo ON BASFInvoices(BASFInvoiceNo) WHERE BASFInvoiceNo IS NOT NULL;
+--create table InvoiceOutStocks (InvoiceOutStockId integer primary key identity, BASFInvoiceId integer FOREIGN KEY REFERENCES BASFInvoices(BASFInvoiceId), OutputQuantity integer, CreateDate datetime, EditDate datetime);
+--create table InvoiceChallanDeductions (InvoiceChallanDeductionId integer primary key identity, InvoiceOutStockId integer FOREIGN KEY REFERENCES InvoiceOutStocks(InvoiceOutStockId), ChallanProductId integer FOREIGN KEY REFERENCES ChallanProducts(ChallanProductId), OutQuantity integer, CreateDate datetime, EditDate datetime);
 
 --insert into ProductCategorys (ProductCategoryName) values ('Main');
 --insert into ProductCategorys (ProductCategoryName) values ('Assembly');
@@ -151,11 +155,23 @@ select * from POProducts;
 select * from ProductDetails where ProductId = 21;
 
 select * from OutStocks;
+select * from OutAccs;
 
 select * from ChallanDeductions;
+select * from AccChallanDeductions;
+select * from AssemblyChallanDeductions;
 select * from PODeductions;
 
 --update POProducts set InputQuantity = 100 where POProductId = 40;
 
 select * from ProductTypes;
 select * from ProductDetails;
+
+
+select * from PODeductions where OutStockId in (select OutStockId from POProducts where ProductId = 1);
+
+
+
+select * from BASFInvoices;
+select * from InvoiceOutStocks;
+select * from InvoiceChallanDeductions;
