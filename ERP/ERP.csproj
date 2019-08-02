@@ -246,6 +246,7 @@
     <Compile Include="Models\PODeductionModel.cs" />
     <Compile Include="Models\POProductModel.cs" />
     <Compile Include="Models\ProductDetailModel.cs" />
+    <Compile Include="Models\ProductDetailWithProductType.cs" />
     <Compile Include="Models\ProductIdModel.cs" />
     <Compile Include="Models\ProductQuantity.cs" />
     <Compile Include="Models\SuccessResponse.cs" />
@@ -335,6 +336,7 @@
     <Content Include="DB.edmx.diagram">
       <DependentUpon>DB.edmx</DependentUpon>
     </Content>
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />

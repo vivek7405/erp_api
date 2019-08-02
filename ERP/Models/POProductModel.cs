@@ -12,7 +12,7 @@ namespace ERP.Models
         [DataMember]
         public POProduct POProduct { get; set; }
         [DataMember]
-        public ProductDetail ProductDetail { get; set; }
+        public ProductDetailWithProductType ProductDetail { get; set; }
         [DataMember]
         public PODetail PODetail { get; set; }
         [DataMember]

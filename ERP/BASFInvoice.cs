@@ -21,7 +21,7 @@ namespace ERP
         }
     
         public int BASFInvoiceId { get; set; }
-        public Nullable<int> BASFInvoiceNo { get; set; }
+        public string BASFInvoiceNo { get; set; }
         public Nullable<System.DateTime> BASFInvoiceDate { get; set; }
         public Nullable<int> IsNg { get; set; }
         public Nullable<System.DateTime> CreateDate { get; set; }

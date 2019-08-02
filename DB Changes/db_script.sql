@@ -29,8 +29,7 @@
 --create table AccPODeductions (AccPODeductionId integer primary key identity, OutAccId integer FOREIGN KEY REFERENCES OutAccs(OutAccId), POProductId integer FOREIGN KEY REFERENCES POProducts(POProductId), OutQuantity integer, CreateDate datetime, EditDate datetime);
 --create table AssemblyPODeductions (AssemblyPODeductionId integer primary key identity, OutAssemblyId integer FOREIGN KEY REFERENCES OutAssemblys(OutAssemblyId), POProductId integer FOREIGN KEY REFERENCES POProducts(POProductId), OutQuantity integer, CreateDate datetime, EditDate datetime);
 
---create table BASFInvoices (BASFInvoiceId integer primary key identity, BASFInvoiceNo integer, BASFInvoiceDate datetime, IsNg integer, CreateDate datetime, EditDate datetime);
---CREATE UNIQUE INDEX unq_BASFInvoices_BASFInvoiceNo ON BASFInvoices(BASFInvoiceNo) WHERE BASFInvoiceNo IS NOT NULL;
+--create table BASFInvoices (BASFInvoiceId integer primary key identity, BASFInvoiceNo varchar(50) NOT NULL UNIQUE, BASFInvoiceDate datetime, IsNg integer, CreateDate datetime, EditDate datetime);
 --create table InvoiceOutStocks (InvoiceOutStockId integer primary key identity, BASFInvoiceId integer FOREIGN KEY REFERENCES BASFInvoices(BASFInvoiceId), OutputQuantity integer, CreateDate datetime, EditDate datetime);
 --create table InvoiceChallanDeductions (InvoiceChallanDeductionId integer primary key identity, InvoiceOutStockId integer FOREIGN KEY REFERENCES InvoiceOutStocks(InvoiceOutStockId), ChallanProductId integer FOREIGN KEY REFERENCES ChallanProducts(ChallanProductId), OutQuantity integer, CreateDate datetime, EditDate datetime);
 
@@ -45,6 +44,10 @@
 --insert into ProductTypes (ProductTypeName, ProductCategoryId) values ('PALLET', 3);
 
 
+
+--drop table InvoiceChallanDeductions;
+--drop table InvoiceOutStocks;
+--drop table BASFInvoices;
 
 --drop table PODeductions;
 --drop table AccPODeductions;
@@ -70,6 +73,10 @@
 --drop table ProductCategorys;
 
 
+
+--delete from InvoiceChallanDeductions;
+--delete from InvoiceOutStocks;
+--delete from BASFInvoices;
 
 --delete from PODeductions;
 --delete from AccPODeductions;

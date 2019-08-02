@@ -29,9 +29,12 @@ namespace ERP
         public virtual DbSet<AccPODeduction> AccPODeductions { get; set; }
         public virtual DbSet<AssemblyChallanDeduction> AssemblyChallanDeductions { get; set; }
         public virtual DbSet<AssemblyPODeduction> AssemblyPODeductions { get; set; }
+        public virtual DbSet<BASFInvoice> BASFInvoices { get; set; }
         public virtual DbSet<ChallanDeduction> ChallanDeductions { get; set; }
         public virtual DbSet<ChallanDetail> ChallanDetails { get; set; }
         public virtual DbSet<ChallanProduct> ChallanProducts { get; set; }
+        public virtual DbSet<InvoiceChallanDeduction> InvoiceChallanDeductions { get; set; }
+        public virtual DbSet<InvoiceOutStock> InvoiceOutStocks { get; set; }
         public virtual DbSet<OutAcc> OutAccs { get; set; }
         public virtual DbSet<OutAssembly> OutAssemblys { get; set; }
         public virtual DbSet<OutStock> OutStocks { get; set; }
@@ -43,8 +46,5 @@ namespace ERP
         public virtual DbSet<ProductMapping> ProductMappings { get; set; }
         public virtual DbSet<ProductType> ProductTypes { get; set; }
         public virtual DbSet<VendorChallan> VendorChallans { get; set; }
-        public virtual DbSet<BASFInvoice> BASFInvoices { get; set; }
-        public virtual DbSet<InvoiceChallanDeduction> InvoiceChallanDeductions { get; set; }
-        public virtual DbSet<InvoiceOutStock> InvoiceOutStocks { get; set; }
     }
 }

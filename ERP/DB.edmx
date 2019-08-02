@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="erpdbModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="erpdbModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="AccChallanDeductions">
           <Key>
             <PropertyRef Name="AccChallanDeductionId" />
@@ -54,7 +54,7 @@
             <PropertyRef Name="BASFInvoiceId" />
           </Key>
           <Property Name="BASFInvoiceId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="BASFInvoiceNo" Type="int" />
+          <Property Name="BASFInvoiceNo" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="BASFInvoiceDate" Type="datetime" />
           <Property Name="IsNg" Type="int" />
           <Property Name="CreateDate" Type="datetime" />
@@ -369,7 +369,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__InvoiceCh__Chall__26CFC035">
+        <Association Name="FK__InvoiceCh__Chall__30592A6F">
           <End Role="ChallanProducts" Type="Self.ChallanProducts" Multiplicity="0..1" />
           <End Role="InvoiceChallanDeductions" Type="Self.InvoiceChallanDeductions" Multiplicity="*" />
           <ReferentialConstraint>
@@ -381,7 +381,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__InvoiceCh__Invoi__25DB9BFC">
+        <Association Name="FK__InvoiceCh__Invoi__2F650636">
           <End Role="InvoiceOutStocks" Type="Self.InvoiceOutStocks" Multiplicity="0..1" />
           <End Role="InvoiceChallanDeductions" Type="Self.InvoiceChallanDeductions" Multiplicity="*" />
           <ReferentialConstraint>
@@ -393,7 +393,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK__InvoiceOu__BASFI__22FF2F51">
+        <Association Name="FK__InvoiceOu__BASFI__2C88998B">
           <End Role="BASFInvoices" Type="Self.BASFInvoices" Multiplicity="0..1" />
           <End Role="InvoiceOutStocks" Type="Self.InvoiceOutStocks" Multiplicity="*" />
           <ReferentialConstraint>
@@ -607,15 +607,15 @@
             <End Role="ProductDetails" EntitySet="ProductDetails" />
             <End Role="ChallanProducts" EntitySet="ChallanProducts" />
           </AssociationSet>
-          <AssociationSet Name="FK__InvoiceCh__Chall__26CFC035" Association="Self.FK__InvoiceCh__Chall__26CFC035">
+          <AssociationSet Name="FK__InvoiceCh__Chall__30592A6F" Association="Self.FK__InvoiceCh__Chall__30592A6F">
             <End Role="ChallanProducts" EntitySet="ChallanProducts" />
             <End Role="InvoiceChallanDeductions" EntitySet="InvoiceChallanDeductions" />
           </AssociationSet>
-          <AssociationSet Name="FK__InvoiceCh__Invoi__25DB9BFC" Association="Self.FK__InvoiceCh__Invoi__25DB9BFC">
+          <AssociationSet Name="FK__InvoiceCh__Invoi__2F650636" Association="Self.FK__InvoiceCh__Invoi__2F650636">
             <End Role="InvoiceOutStocks" EntitySet="InvoiceOutStocks" />
             <End Role="InvoiceChallanDeductions" EntitySet="InvoiceChallanDeductions" />
           </AssociationSet>
-          <AssociationSet Name="FK__InvoiceOu__BASFI__22FF2F51" Association="Self.FK__InvoiceOu__BASFI__22FF2F51">
+          <AssociationSet Name="FK__InvoiceOu__BASFI__2C88998B" Association="Self.FK__InvoiceOu__BASFI__2C88998B">
             <End Role="BASFInvoices" EntitySet="BASFInvoices" />
             <End Role="InvoiceOutStocks" EntitySet="InvoiceOutStocks" />
           </AssociationSet>
@@ -664,7 +664,8 @@
             <End Role="ProductTypes" EntitySet="ProductTypes" />
           </AssociationSet>
         </EntityContainer>
-      </Schema></edmx:StorageModels>
+      </Schema>
+    </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="erpdbModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -720,6 +721,18 @@
           <NavigationProperty Name="OutAssembly" Relationship="Self.FK__AssemblyP__OutAs__15A53433" FromRole="AssemblyPODeductions" ToRole="OutAssemblys" />
           <NavigationProperty Name="POProduct" Relationship="Self.FK__AssemblyP__POPro__1699586C" FromRole="AssemblyPODeductions" ToRole="POProducts" />
         </EntityType>
+        <EntityType Name="BASFInvoice">
+          <Key>
+            <PropertyRef Name="BASFInvoiceId" />
+          </Key>
+          <Property Name="BASFInvoiceId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="BASFInvoiceNo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="BASFInvoiceDate" Type="DateTime" Precision="3" />
+          <Property Name="IsNg" Type="Int32" />
+          <Property Name="CreateDate" Type="DateTime" Precision="3" />
+          <Property Name="EditDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="InvoiceOutStocks" Relationship="Self.FK__InvoiceOu__BASFI__2C88998B" FromRole="BASFInvoices" ToRole="InvoiceOutStocks" />
+        </EntityType>
         <EntityType Name="ChallanDeduction">
           <Key>
             <PropertyRef Name="ChallanDeductionId" />
@@ -759,7 +772,32 @@
           <NavigationProperty Name="ChallanDeductions" Relationship="Self.FK__ChallanDe__Chall__53D770D6" FromRole="ChallanProducts" ToRole="ChallanDeductions" />
           <NavigationProperty Name="ChallanDetail" Relationship="Self.FK__ChallanPr__Chall__477199F1" FromRole="ChallanProducts" ToRole="ChallanDetails" />
           <NavigationProperty Name="ProductDetail" Relationship="Self.FK__ChallanPr__Produ__4865BE2A" FromRole="ChallanProducts" ToRole="ProductDetails" />
-          <NavigationProperty Name="InvoiceChallanDeductions" Relationship="erpdbModel.FK__InvoiceCh__Chall__26CFC035" FromRole="ChallanProduct" ToRole="InvoiceChallanDeduction" />
+          <NavigationProperty Name="InvoiceChallanDeductions" Relationship="Self.FK__InvoiceCh__Chall__30592A6F" FromRole="ChallanProducts" ToRole="InvoiceChallanDeductions" />
+        </EntityType>
+        <EntityType Name="InvoiceChallanDeduction">
+          <Key>
+            <PropertyRef Name="InvoiceChallanDeductionId" />
+          </Key>
+          <Property Name="InvoiceChallanDeductionId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="InvoiceOutStockId" Type="Int32" />
+          <Property Name="ChallanProductId" Type="Int32" />
+          <Property Name="OutQuantity" Type="Int32" />
+          <Property Name="CreateDate" Type="DateTime" Precision="3" />
+          <Property Name="EditDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="ChallanProduct" Relationship="Self.FK__InvoiceCh__Chall__30592A6F" FromRole="InvoiceChallanDeductions" ToRole="ChallanProducts" />
+          <NavigationProperty Name="InvoiceOutStock" Relationship="Self.FK__InvoiceCh__Invoi__2F650636" FromRole="InvoiceChallanDeductions" ToRole="InvoiceOutStocks" />
+        </EntityType>
+        <EntityType Name="InvoiceOutStock">
+          <Key>
+            <PropertyRef Name="InvoiceOutStockId" />
+          </Key>
+          <Property Name="InvoiceOutStockId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="BASFInvoiceId" Type="Int32" />
+          <Property Name="OutputQuantity" Type="Int32" />
+          <Property Name="CreateDate" Type="DateTime" Precision="3" />
+          <Property Name="EditDate" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="BASFInvoice" Relationship="Self.FK__InvoiceOu__BASFI__2C88998B" FromRole="InvoiceOutStocks" ToRole="BASFInvoices" />
+          <NavigationProperty Name="InvoiceChallanDeductions" Relationship="Self.FK__InvoiceCh__Invoi__2F650636" FromRole="InvoiceOutStocks" ToRole="InvoiceChallanDeductions" />
         </EntityType>
         <EntityType Name="OutAcc">
           <Key>
@@ -900,8 +938,8 @@
           <Property Name="VendorChallanDate" Type="DateTime" Precision="3" />
           <Property Name="CreateDate" Type="DateTime" Precision="3" />
           <Property Name="EditDate" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="OutStocks" Relationship="Self.FK__OutStocks__Vendo__4D2A7347" FromRole="VendorChallans" ToRole="OutStocks" />
           <Property Name="IsNg" Type="Int32" />
+          <NavigationProperty Name="OutStocks" Relationship="Self.FK__OutStocks__Vendo__4D2A7347" FromRole="VendorChallans" ToRole="OutStocks" />
         </EntityType>
         <Association Name="FK__AccChalla__Chall__57A801BA">
           <End Role="ChallanProducts" Type="Self.ChallanProduct" Multiplicity="0..1" />
@@ -999,6 +1037,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK__InvoiceOu__BASFI__2C88998B">
+          <End Role="BASFInvoices" Type="Self.BASFInvoice" Multiplicity="0..1" />
+          <End Role="InvoiceOutStocks" Type="Self.InvoiceOutStock" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BASFInvoices">
+              <PropertyRef Name="BASFInvoiceId" />
+            </Principal>
+            <Dependent Role="InvoiceOutStocks">
+              <PropertyRef Name="BASFInvoiceId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__ChallanDe__Chall__53D770D6">
           <End Role="ChallanProducts" Type="Self.ChallanProduct" Multiplicity="0..1" />
           <End Role="ChallanDeductions" Type="Self.ChallanDeduction" Multiplicity="*" />
@@ -1044,6 +1094,30 @@
             </Principal>
             <Dependent Role="ChallanProducts">
               <PropertyRef Name="ProductId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__InvoiceCh__Chall__30592A6F">
+          <End Role="ChallanProducts" Type="Self.ChallanProduct" Multiplicity="0..1" />
+          <End Role="InvoiceChallanDeductions" Type="Self.InvoiceChallanDeduction" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ChallanProducts">
+              <PropertyRef Name="ChallanProductId" />
+            </Principal>
+            <Dependent Role="InvoiceChallanDeductions">
+              <PropertyRef Name="ChallanProductId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__InvoiceCh__Invoi__2F650636">
+          <End Role="InvoiceOutStocks" Type="Self.InvoiceOutStock" Multiplicity="0..1" />
+          <End Role="InvoiceChallanDeductions" Type="Self.InvoiceChallanDeduction" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="InvoiceOutStocks">
+              <PropertyRef Name="InvoiceOutStockId" />
+            </Principal>
+            <Dependent Role="InvoiceChallanDeductions">
+              <PropertyRef Name="InvoiceOutStockId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1184,9 +1258,12 @@
           <EntitySet Name="AccPODeductions" EntityType="Self.AccPODeduction" />
           <EntitySet Name="AssemblyChallanDeductions" EntityType="Self.AssemblyChallanDeduction" />
           <EntitySet Name="AssemblyPODeductions" EntityType="Self.AssemblyPODeduction" />
+          <EntitySet Name="BASFInvoices" EntityType="Self.BASFInvoice" />
           <EntitySet Name="ChallanDeductions" EntityType="Self.ChallanDeduction" />
           <EntitySet Name="ChallanDetails" EntityType="Self.ChallanDetail" />
           <EntitySet Name="ChallanProducts" EntityType="Self.ChallanProduct" />
+          <EntitySet Name="InvoiceChallanDeductions" EntityType="Self.InvoiceChallanDeduction" />
+          <EntitySet Name="InvoiceOutStocks" EntityType="Self.InvoiceOutStock" />
           <EntitySet Name="OutAccs" EntityType="Self.OutAcc" />
           <EntitySet Name="OutAssemblys" EntityType="Self.OutAssembly" />
           <EntitySet Name="OutStocks" EntityType="Self.OutStock" />
@@ -1230,6 +1307,10 @@
             <End Role="POProducts" EntitySet="POProducts" />
             <End Role="AssemblyPODeductions" EntitySet="AssemblyPODeductions" />
           </AssociationSet>
+          <AssociationSet Name="FK__InvoiceOu__BASFI__2C88998B" Association="Self.FK__InvoiceOu__BASFI__2C88998B">
+            <End Role="BASFInvoices" EntitySet="BASFInvoices" />
+            <End Role="InvoiceOutStocks" EntitySet="InvoiceOutStocks" />
+          </AssociationSet>
           <AssociationSet Name="FK__ChallanDe__Chall__53D770D6" Association="Self.FK__ChallanDe__Chall__53D770D6">
             <End Role="ChallanProducts" EntitySet="ChallanProducts" />
             <End Role="ChallanDeductions" EntitySet="ChallanDeductions" />
@@ -1245,6 +1326,14 @@
           <AssociationSet Name="FK__ChallanPr__Produ__4865BE2A" Association="Self.FK__ChallanPr__Produ__4865BE2A">
             <End Role="ProductDetails" EntitySet="ProductDetails" />
             <End Role="ChallanProducts" EntitySet="ChallanProducts" />
+          </AssociationSet>
+          <AssociationSet Name="FK__InvoiceCh__Chall__30592A6F" Association="Self.FK__InvoiceCh__Chall__30592A6F">
+            <End Role="ChallanProducts" EntitySet="ChallanProducts" />
+            <End Role="InvoiceChallanDeductions" EntitySet="InvoiceChallanDeductions" />
+          </AssociationSet>
+          <AssociationSet Name="FK__InvoiceCh__Invoi__2F650636" Association="Self.FK__InvoiceCh__Invoi__2F650636">
+            <End Role="InvoiceOutStocks" EntitySet="InvoiceOutStocks" />
+            <End Role="InvoiceChallanDeductions" EntitySet="InvoiceChallanDeductions" />
           </AssociationSet>
           <AssociationSet Name="FK__OutAccs__OutStoc__5006DFF2" Association="Self.FK__OutAccs__OutStoc__5006DFF2">
             <End Role="OutStocks" EntitySet="OutStocks" />
@@ -1290,95 +1379,7 @@
             <End Role="ProductDetails" EntitySet="ProductDetails" />
             <End Role="ProductMappings" EntitySet="ProductMappings" />
           </AssociationSet>
-          <EntitySet Name="BASFInvoices" EntityType="erpdbModel.BASFInvoice" />
-          <EntitySet Name="InvoiceChallanDeductions" EntityType="erpdbModel.InvoiceChallanDeduction" />
-          <EntitySet Name="InvoiceOutStocks" EntityType="erpdbModel.InvoiceOutStock" />
-          <AssociationSet Name="FK__InvoiceOu__BASFI__22FF2F51" Association="erpdbModel.FK__InvoiceOu__BASFI__22FF2F51">
-            <End Role="BASFInvoice" EntitySet="BASFInvoices" />
-            <End Role="InvoiceOutStock" EntitySet="InvoiceOutStocks" />
-          </AssociationSet>
-          <AssociationSet Name="FK__InvoiceCh__Chall__26CFC035" Association="erpdbModel.FK__InvoiceCh__Chall__26CFC035">
-            <End Role="ChallanProduct" EntitySet="ChallanProducts" />
-            <End Role="InvoiceChallanDeduction" EntitySet="InvoiceChallanDeductions" />
-          </AssociationSet>
-          <AssociationSet Name="FK__InvoiceCh__Invoi__25DB9BFC" Association="erpdbModel.FK__InvoiceCh__Invoi__25DB9BFC">
-            <End Role="InvoiceOutStock" EntitySet="InvoiceOutStocks" />
-            <End Role="InvoiceChallanDeduction" EntitySet="InvoiceChallanDeductions" />
-          </AssociationSet>
         </EntityContainer>
-        <EntityType Name="BASFInvoice">
-          <Key>
-            <PropertyRef Name="BASFInvoiceId" />
-          </Key>
-          <Property Name="BASFInvoiceId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="BASFInvoiceNo" Type="Int32" />
-          <Property Name="BASFInvoiceDate" Type="DateTime" Precision="3" />
-          <Property Name="IsNg" Type="Int32" />
-          <Property Name="CreateDate" Type="DateTime" Precision="3" />
-          <Property Name="EditDate" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="InvoiceOutStocks" Relationship="erpdbModel.FK__InvoiceOu__BASFI__22FF2F51" FromRole="BASFInvoice" ToRole="InvoiceOutStock" />
-        </EntityType>
-        <EntityType Name="InvoiceChallanDeduction">
-          <Key>
-            <PropertyRef Name="InvoiceChallanDeductionId" />
-          </Key>
-          <Property Name="InvoiceChallanDeductionId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="InvoiceOutStockId" Type="Int32" />
-          <Property Name="ChallanProductId" Type="Int32" />
-          <Property Name="OutQuantity" Type="Int32" />
-          <Property Name="CreateDate" Type="DateTime" Precision="3" />
-          <Property Name="EditDate" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="ChallanProduct" Relationship="erpdbModel.FK__InvoiceCh__Chall__26CFC035" FromRole="InvoiceChallanDeduction" ToRole="ChallanProduct" />
-          <NavigationProperty Name="InvoiceOutStock" Relationship="erpdbModel.FK__InvoiceCh__Invoi__25DB9BFC" FromRole="InvoiceChallanDeduction" ToRole="InvoiceOutStock" />
-        </EntityType>
-        <EntityType Name="InvoiceOutStock">
-          <Key>
-            <PropertyRef Name="InvoiceOutStockId" />
-          </Key>
-          <Property Name="InvoiceOutStockId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="BASFInvoiceId" Type="Int32" />
-          <Property Name="OutputQuantity" Type="Int32" />
-          <Property Name="CreateDate" Type="DateTime" Precision="3" />
-          <Property Name="EditDate" Type="DateTime" Precision="3" />
-          <NavigationProperty Name="BASFInvoice" Relationship="erpdbModel.FK__InvoiceOu__BASFI__22FF2F51" FromRole="InvoiceOutStock" ToRole="BASFInvoice" />
-          <NavigationProperty Name="InvoiceChallanDeductions" Relationship="erpdbModel.FK__InvoiceCh__Invoi__25DB9BFC" FromRole="InvoiceOutStock" ToRole="InvoiceChallanDeduction" />
-        </EntityType>
-        <Association Name="FK__InvoiceOu__BASFI__22FF2F51">
-          <End Type="erpdbModel.BASFInvoice" Role="BASFInvoice" Multiplicity="0..1" />
-          <End Type="erpdbModel.InvoiceOutStock" Role="InvoiceOutStock" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="BASFInvoice">
-              <PropertyRef Name="BASFInvoiceId" />
-            </Principal>
-            <Dependent Role="InvoiceOutStock">
-              <PropertyRef Name="BASFInvoiceId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__InvoiceCh__Chall__26CFC035">
-          <End Type="erpdbModel.ChallanProduct" Role="ChallanProduct" Multiplicity="0..1" />
-          <End Type="erpdbModel.InvoiceChallanDeduction" Role="InvoiceChallanDeduction" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="ChallanProduct">
-              <PropertyRef Name="ChallanProductId" />
-            </Principal>
-            <Dependent Role="InvoiceChallanDeduction">
-              <PropertyRef Name="ChallanProductId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK__InvoiceCh__Invoi__25DB9BFC">
-          <End Type="erpdbModel.InvoiceOutStock" Role="InvoiceOutStock" Multiplicity="0..1" />
-          <End Type="erpdbModel.InvoiceChallanDeduction" Role="InvoiceChallanDeduction" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="InvoiceOutStock">
-              <PropertyRef Name="InvoiceOutStockId" />
-            </Principal>
-            <Dependent Role="InvoiceChallanDeduction">
-              <PropertyRef Name="InvoiceOutStockId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1433,6 +1434,18 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="BASFInvoices">
+            <EntityTypeMapping TypeName="erpdbModel.BASFInvoice">
+              <MappingFragment StoreEntitySet="BASFInvoices">
+                <ScalarProperty Name="BASFInvoiceId" ColumnName="BASFInvoiceId" />
+                <ScalarProperty Name="BASFInvoiceNo" ColumnName="BASFInvoiceNo" />
+                <ScalarProperty Name="BASFInvoiceDate" ColumnName="BASFInvoiceDate" />
+                <ScalarProperty Name="IsNg" ColumnName="IsNg" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="EditDate" ColumnName="EditDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="ChallanDeductions">
             <EntityTypeMapping TypeName="erpdbModel.ChallanDeduction">
               <MappingFragment StoreEntitySet="ChallanDeductions">
@@ -1463,6 +1476,29 @@
                 <ScalarProperty Name="ChallanId" ColumnName="ChallanId" />
                 <ScalarProperty Name="ProductId" ColumnName="ProductId" />
                 <ScalarProperty Name="InputQuantity" ColumnName="InputQuantity" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="EditDate" ColumnName="EditDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="InvoiceChallanDeductions">
+            <EntityTypeMapping TypeName="erpdbModel.InvoiceChallanDeduction">
+              <MappingFragment StoreEntitySet="InvoiceChallanDeductions">
+                <ScalarProperty Name="InvoiceChallanDeductionId" ColumnName="InvoiceChallanDeductionId" />
+                <ScalarProperty Name="InvoiceOutStockId" ColumnName="InvoiceOutStockId" />
+                <ScalarProperty Name="ChallanProductId" ColumnName="ChallanProductId" />
+                <ScalarProperty Name="OutQuantity" ColumnName="OutQuantity" />
+                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+                <ScalarProperty Name="EditDate" ColumnName="EditDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="InvoiceOutStocks">
+            <EntityTypeMapping TypeName="erpdbModel.InvoiceOutStock">
+              <MappingFragment StoreEntitySet="InvoiceOutStocks">
+                <ScalarProperty Name="InvoiceOutStockId" ColumnName="InvoiceOutStockId" />
+                <ScalarProperty Name="BASFInvoiceId" ColumnName="BASFInvoiceId" />
+                <ScalarProperty Name="OutputQuantity" ColumnName="OutputQuantity" />
                 <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
                 <ScalarProperty Name="EditDate" ColumnName="EditDate" />
               </MappingFragment>
@@ -1583,46 +1619,11 @@
           <EntitySetMapping Name="VendorChallans">
             <EntityTypeMapping TypeName="erpdbModel.VendorChallan">
               <MappingFragment StoreEntitySet="VendorChallans">
-                <ScalarProperty Name="IsNg" ColumnName="IsNg" />
                 <ScalarProperty Name="VendorChallanNo" ColumnName="VendorChallanNo" />
                 <ScalarProperty Name="VendorChallanDate" ColumnName="VendorChallanDate" />
                 <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
                 <ScalarProperty Name="EditDate" ColumnName="EditDate" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="BASFInvoices">
-            <EntityTypeMapping TypeName="erpdbModel.BASFInvoice">
-              <MappingFragment StoreEntitySet="BASFInvoices">
-                <ScalarProperty Name="EditDate" ColumnName="EditDate" />
-                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
                 <ScalarProperty Name="IsNg" ColumnName="IsNg" />
-                <ScalarProperty Name="BASFInvoiceDate" ColumnName="BASFInvoiceDate" />
-                <ScalarProperty Name="BASFInvoiceNo" ColumnName="BASFInvoiceNo" />
-                <ScalarProperty Name="BASFInvoiceId" ColumnName="BASFInvoiceId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="InvoiceChallanDeductions">
-            <EntityTypeMapping TypeName="erpdbModel.InvoiceChallanDeduction">
-              <MappingFragment StoreEntitySet="InvoiceChallanDeductions">
-                <ScalarProperty Name="EditDate" ColumnName="EditDate" />
-                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
-                <ScalarProperty Name="OutQuantity" ColumnName="OutQuantity" />
-                <ScalarProperty Name="ChallanProductId" ColumnName="ChallanProductId" />
-                <ScalarProperty Name="InvoiceOutStockId" ColumnName="InvoiceOutStockId" />
-                <ScalarProperty Name="InvoiceChallanDeductionId" ColumnName="InvoiceChallanDeductionId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="InvoiceOutStocks">
-            <EntityTypeMapping TypeName="erpdbModel.InvoiceOutStock">
-              <MappingFragment StoreEntitySet="InvoiceOutStocks">
-                <ScalarProperty Name="EditDate" ColumnName="EditDate" />
-                <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
-                <ScalarProperty Name="OutputQuantity" ColumnName="OutputQuantity" />
-                <ScalarProperty Name="BASFInvoiceId" ColumnName="BASFInvoiceId" />
-                <ScalarProperty Name="InvoiceOutStockId" ColumnName="InvoiceOutStockId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

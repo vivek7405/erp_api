@@ -12,7 +12,7 @@ namespace ERP.Models
         [DataMember]
         public ChallanProduct ChallanProduct { get; set; }
         [DataMember]
-        public ProductDetail ProductDetail { get; set; }
+        public ProductDetailWithProductType ProductDetail { get; set; }
         [DataMember]
         public ChallanDetail ChallanDetail { get; set; }
         [DataMember]

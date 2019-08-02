@@ -533,7 +533,19 @@ namespace ERP.Controllers
                     {
                         ChallanProductModel challanProductModel = new ChallanProductModel();
                         challanProductModel.ChallanProduct = challanProduct;
-                        challanProductModel.ProductDetail = challanProduct.ProductDetail;
+                        challanProductModel.ProductDetail = new ProductDetailWithProductType();
+                        challanProductModel.ProductDetail.CreateDate = challanProduct.ProductDetail.CreateDate;
+                        challanProductModel.ProductDetail.EditDate = challanProduct.ProductDetail.EditDate;
+                        challanProductModel.ProductDetail.InputCode = challanProduct.ProductDetail.InputCode;
+                        challanProductModel.ProductDetail.InputMaterialDesc = challanProduct.ProductDetail.InputMaterialDesc;
+                        challanProductModel.ProductDetail.OutputCode = challanProduct.ProductDetail.OutputCode;
+                        challanProductModel.ProductDetail.OutputMaterialDesc = challanProduct.ProductDetail.OutputMaterialDesc;
+                        challanProductModel.ProductDetail.ProductId = challanProduct.ProductDetail.ProductId;
+                        challanProductModel.ProductDetail.ProductTypeId = challanProduct.ProductDetail.ProductTypeId;
+                        challanProductModel.ProductDetail.ProductTypeName = challanProduct.ProductDetail.ProductType.ProductTypeName;
+                        challanProductModel.ProductDetail.ProjectName = challanProduct.ProductDetail.ProjectName;
+                        challanProductModel.ProductDetail.SplitRatio = challanProduct.ProductDetail.SplitRatio;
+
                         challanProductModel.ChallanDetail = challanProduct.ChallanDetail;
                         challanProductModel.ChallanDeductions = challanProduct.ChallanDeductions;
                         challanProductModel.AccChallanDeductions = challanProduct.AccChallanDeductions;
@@ -585,7 +597,19 @@ namespace ERP.Controllers
                     {
                         POProductModel poProductModel = new POProductModel();
                         poProductModel.POProduct = poProduct;
-                        poProductModel.ProductDetail = poProduct.ProductDetail;
+                        poProductModel.ProductDetail = new ProductDetailWithProductType();
+                        poProductModel.ProductDetail.CreateDate = poProduct.ProductDetail.CreateDate;
+                        poProductModel.ProductDetail.EditDate = poProduct.ProductDetail.EditDate;
+                        poProductModel.ProductDetail.InputCode = poProduct.ProductDetail.InputCode;
+                        poProductModel.ProductDetail.InputMaterialDesc = poProduct.ProductDetail.InputMaterialDesc;
+                        poProductModel.ProductDetail.OutputCode = poProduct.ProductDetail.OutputCode;
+                        poProductModel.ProductDetail.OutputMaterialDesc = poProduct.ProductDetail.OutputMaterialDesc;
+                        poProductModel.ProductDetail.ProductId = poProduct.ProductDetail.ProductId;
+                        poProductModel.ProductDetail.ProductTypeId = poProduct.ProductDetail.ProductTypeId;
+                        poProductModel.ProductDetail.ProductTypeName = poProduct.ProductDetail.ProductType.ProductTypeName;
+                        poProductModel.ProductDetail.ProjectName = poProduct.ProductDetail.ProjectName;
+                        poProductModel.ProductDetail.SplitRatio = poProduct.ProductDetail.SplitRatio;
+
                         poProductModel.PODetail = poProduct.PODetail;
                         poProductModel.PODeductions = poProduct.PODeductions;
                         poProductModel.AccPODeductions = poProduct.AccPODeductions;
@@ -673,7 +697,7 @@ namespace ERP.Controllers
                         {
                             ProductQuantity productQnty = new ProductQuantity();
                             productQnty.ProductId = Convert.ToInt32(mainProduct.ProductId);
-                            productQnty.ProductName = mainProduct.InputMaterialDesc;
+                            productQnty.ProductName = mainProduct.ProjectName;
                             productQnty.SplitRatio = Convert.ToInt32(mainProduct.SplitRatio);
                             productQnty.RemainingQuantity = mainRemainingQuantity * productQnty.SplitRatio;
                             productQnty.RemainingQuantityPO = mainRemainingQuantityPO;
@@ -715,7 +739,7 @@ namespace ERP.Controllers
                         {
                             ProductQuantity productQnty = new ProductQuantity();
                             productQnty.ProductId = Convert.ToInt32(mainProduct.ProductId);
-                            productQnty.ProductName = mainProduct.InputMaterialDesc;
+                            productQnty.ProductName = mainProduct.ProjectName;
                             productQnty.SplitRatio = Convert.ToInt32(mainProduct.SplitRatio);
                             productQnty.RemainingQuantity = mainRemainingQuantity * productQnty.SplitRatio;
                             productQnts.Add(productQnty);
@@ -998,6 +1022,7 @@ namespace ERP.Controllers
                 try
                 {
                     BASFInvoice basfInvoice = new BASFInvoice();
+                    basfInvoice.BASFInvoiceNo = model.BASFInvoiceNo;
                     basfInvoice.BASFInvoiceDate = model.BASFInvoiceDate;
                     basfInvoice.IsNg = model.IsNg ? 1 : 0;
                     basfInvoice.CreateDate = DateTime.Now;
@@ -1944,6 +1969,52 @@ namespace ERP.Controllers
             }
         }
 
+        [HttpGet, Route("GetAllBASFInvoices")]
+        public IHttpActionResult GetAllBASFInvoices()
+        {
+            using (var context = new erpdbEntities())
+            {
+                try
+                {
+                    var basfInvoices = context.BASFInvoices.Where(x => x.IsNg == 0).OrderByDescending(x => new { x.BASFInvoiceDate, x.CreateDate, x.BASFInvoiceNo, x.BASFInvoiceId }).ToList();
+
+                    List<BASFInvoiceModel> modelList = new List<BASFInvoiceModel>();
+                    foreach (var basfInvoice in basfInvoices)
+                    {
+                        BASFInvoiceModel model = new BASFInvoiceModel();
+                        model.BASFInvoiceId = basfInvoice.BASFInvoiceId;
+                        model.BASFInvoiceNo = basfInvoice.BASFInvoiceNo;
+                        model.BASFInvoiceDate = basfInvoice.BASFInvoiceDate ?? new DateTime();
+                        model.CreateDate = basfInvoice.CreateDate ?? new DateTime();
+                        model.EditDate = basfInvoice.EditDate ?? new DateTime();
+
+                        List<InvoiceOutStockModel> outStockModelList = new List<InvoiceOutStockModel>();
+                        foreach (var outStock in basfInvoice.InvoiceOutStocks)
+                        {
+                            InvoiceOutStockModel outStockModel = new InvoiceOutStockModel();
+                            outStockModel.BASFInvoiceId = outStock.BASFInvoiceId ?? 0;
+                            outStockModel.InvoiceOutStockId = outStock.InvoiceOutStockId;
+                            outStockModel.OutputQuantity = outStock.OutputQuantity ?? 0;
+                            outStockModel.CreateDate = outStock.CreateDate ?? new DateTime();
+                            outStockModel.EditDate = outStock.EditDate ?? new DateTime();
+
+                            outStockModelList.Add(outStockModel);
+                        }
+
+                        model.InvoiceOutStocks = outStockModelList.ToArray();
+
+                        modelList.Add(model);
+                    }
+
+                    return Ok(modelList);
+                }
+                catch (Exception e)
+                {
+                    return InternalServerError();
+                }
+            }
+        }
+
         [HttpGet, Route("GetAllNgVendorChallans")]
         public IHttpActionResult GetAllNgVendorChallans()
         {
@@ -2033,6 +2104,22 @@ namespace ERP.Controllers
             }
         }
 
+        [HttpPost, Route("GetBASFInvoiceByBASFInvoiceId")]
+        public IHttpActionResult GetBASFInvoiceByBASFInvoiceId(VendorChallanNoModel vendorChallanNoModel)
+        {
+            using (var context = new erpdbEntities())
+            {
+                try
+                {
+                    return Ok(GetBASFInvoiceByBASFInvoiceIdPrivate(vendorChallanNoModel.VendorChallanNo));
+                }
+                catch (Exception e)
+                {
+                    return InternalServerError();
+                }
+            }
+        }
+
         [HttpPost, Route("PrintVendorChallanByVendorChallanNo")]
         public IHttpActionResult PrintVendorChallanByVendorChallanNo(VendorChallanNoModel vendorChallanNoModel)
         {
@@ -2044,14 +2131,34 @@ namespace ERP.Controllers
 
                     string html = "";
 
-                    html += "<html><div style=\"margin: 1%\"><table style=\"border: 1px solid\"><tr style=\"width: 100%\"><td style=\"width: 33%\"><b>Vibrant Challan No: </b>" + vendorChallan.VendorChallanNo + "</td><td style=\"width: 33%\"><b>Vibrant Challan Date: </b>" + vendorChallan.VendorChallanDate.ToShortDateString() + "</td>" + "<td style=\"width: 33%\"><b>Total Stock Out: </b>" + vendorChallan.OutStocks.Sum(x => x.OutputQuantity).ToString() + "</td></tr></table>";
+                    html += "<html><div style=\"margin: 1%\"><table style=\"border: 1px solid; width: 100%;\"><tr style=\"width: 100%\"><td style=\"width: 33%\"><b>Vibrant Challan No: </b>" + vendorChallan.VendorChallanNo + "</td><td style=\"width: 33%\"><b>Vibrant Challan Date: </b>" + vendorChallan.VendorChallanDate.ToShortDateString() + "</td>" + "<td style=\"width: 33%\"><b>Total Stock Out: </b>" + vendorChallan.OutStocks.Sum(x => x.OutputQuantity).ToString() + "</td></tr></table>";
 
-                    html += "<table style=\"border: 1px solid\">";
+                    html += "<br>";
+
+                    html += "<table style=\"border: 1px solid; border-collapse: collapse; width: 100%;\">";
+                    html += "<tr style=\"width: 100%\">";
+                    html += "<th style=\"border: 1px solid\">Project Name</th>";
+                    html += "<th style=\"border: 1px solid\">Output Code</th>";
+                    html += "<th style=\"border: 1px solid\">Output Material Description</th>";
+                    html += "<th style=\"border: 1px solid\">Output Quantity</th>";
+                    html += "<th style=\"border: 1px solid\">Input Code</th>";
+                    html += "<th style=\"border: 1px solid\">Input Material Description</th>";
+                    html += "<th style=\"border: 1px solid\">Input Quantity</th>";
+                    html += "<th style=\"border: 1px solid\">Part Type</th>";
+                    html += "<th style=\"border: 1px solid\">BASF Challan No</th>";
+                    html += "<th style=\"border: 1px solid\">Balance</th>";
+                    html += "<th style=\"border: 1px solid\">BASF PO Number</th>";
+                    html += "</tr>";
+
+                    int outStockIndex = 0;
                     foreach (var outStock in vendorChallan.OutStocks)
-                    {
-                        html += "<tr style=\"width: 100%\">";
+                    {                        
+                        var mainOutQnt = 0;
+                        int challanDeductionIndex = 0;
                         foreach (var challanDeduction in outStock.ChallanDeductions)
                         {
+                            html += "<tr style=\"width: 100%\">";
+
                             var projName = challanDeduction.ChallanProduct.ProductDetail.ProjectName;
                             html += "<td style=\"border: 1px solid\">" + projName + "</td>";
 
@@ -2070,10 +2177,11 @@ namespace ERP.Controllers
                             var inputMatDesc = challanDeduction.ChallanProduct.ProductDetail.InputMaterialDesc;
                             html += "<td style=\"border: 1px solid\">" + inputMatDesc + "</td>";
 
-                            var inputQnt = challanDeduction.ChallanProduct.ProductDetail.InputMaterialDesc;
+                            var inputQnt = challanDeduction.OutQuantity;
                             html += "<td style=\"border: 1px solid\">" + inputQnt + "</td>";
+                            mainOutQnt += Convert.ToInt32(inputQnt);
 
-                            var partType = challanDeduction.ChallanProduct.ProductDetail.ProductType.ProductTypeName;
+                            var partType = challanDeduction.ChallanProduct.ProductDetail.ProductTypeName;
                             html += "<td style=\"border: 1px solid\">" + partType + "</td>";
 
                             var basfChallanNo = challanDeduction.ChallanProduct.ChallanDetail.ChallanNo;
@@ -2081,21 +2189,167 @@ namespace ERP.Controllers
 
                             var balance = challanDeduction.ChallanProduct.RemainingQuantity;
                             html += "<td style=\"border: 1px solid\">" + balance + "</td>";
+
+                            if (challanDeductionIndex == 0)
+                            {
+                                var poNos = "<ul>";
+                                foreach (var poDeduction in outStock.PODeductions)
+                                {
+                                    var poNo = poDeduction.POProduct.PODetail.PONo;
+                                    poNos += "<li>" + poNo + "</li>";
+                                }
+
+                                poNos += "</ul>";
+
+                                var outAssemblyChallanDeductionsCount = 0;
+                                foreach (var outAssemb in outStock.OutAssemblys)
+                                {
+                                    outAssemblyChallanDeductionsCount += outAssemb.AssemblyChallanDeductions.Count() + 1;
+                                }                                
+
+                                var outAccChallanDeductionsCount = 0;
+                                foreach (var outAccec in outStock.OutAccs)
+                                {
+                                    outAccChallanDeductionsCount += outAccec.AccChallanDeductions.Count() + 1;
+                                }                                
+
+                                int rowSpanCount = outStock.ChallanDeductions.Count() + 1 + outAssemblyChallanDeductionsCount + outAccChallanDeductionsCount;                                
+
+                                html += "<td style=\"border: 1px solid\" rowspan=\"" + rowSpanCount + "\">" + poNos + "</td>";                                
+                            }
+
+                            html += "</tr>";
+
+                            challanDeductionIndex++;
                         }
 
-                        var poNos = "<ul>";
-                        foreach (var poDeduction in outStock.PODeductions)
+                        html += "<tr style=\"width: 100%\">";
+                        html += "<td style=\"border: 1px solid\"></td>";
+                        html += "<td style=\"border: 1px solid\"></td>";
+                        html += "<td style=\"border: 1px solid\"></td>";
+                        html += "<td style=\"border: 1px solid\"></td>";
+                        html += "<td style=\"border: 1px solid\"></td>";
+                        html += "<td style=\"border: 1px solid; font-weight: bold; font-style: italic; text-decoration: underline;\">SUBTOTAL</td>";
+                        html += "<td style=\"border: 1px solid; font-weight: bold; font-style: italic; text-decoration: underline;\">" + mainOutQnt + "</td>";
+                        html += "<td style=\"border: 1px solid\"></td>";
+                        html += "<td style=\"border: 1px solid\"></td>";
+                        html += "<td style=\"border: 1px solid\"></td>";
+                        html += "</tr>";
+                        
+                        foreach (var outAssembly in outStock.OutAssemblys)
                         {
-                            var poNo = poDeduction.POProduct.PODetail.PONo;
-                            poNos += "<li>" + poNo + "</li>";
+                            var assemblyQntSum = 0;
+                            foreach (var assemblyChallanDeduction in outAssembly.AssemblyChallanDeductions)
+                            {
+                                html += "<tr style=\"width: 100%\">";
+
+                                var projName = "";
+                                html += "<td style=\"border: 1px solid\">" + projName + "</td>";
+
+                                var outputCode = "";
+                                html += "<td style=\"border: 1px solid\">" + outputCode + "</td>";
+
+                                var outputMatDesc = "";
+                                html += "<td style=\"border: 1px solid\">" + outputMatDesc + "</td>";
+
+                                var outputQnt = "";
+                                html += "<td style=\"border: 1px solid\">" + outputQnt + "</td>";
+
+                                var inputCode = assemblyChallanDeduction.ChallanProduct.ProductDetail.InputCode;
+                                html += "<td style=\"border: 1px solid\">" + inputCode + "</td>";
+
+                                var inputMatDesc = assemblyChallanDeduction.ChallanProduct.ProductDetail.InputMaterialDesc;
+                                html += "<td style=\"border: 1px solid\">" + inputMatDesc + "</td>";
+
+                                var inputQnt = assemblyChallanDeduction.OutQuantity;
+                                html += "<td style=\"border: 1px solid\">" + inputQnt + "</td>";
+                                assemblyQntSum += Convert.ToInt32(inputQnt);
+
+                                var partType = assemblyChallanDeduction.ChallanProduct.ProductDetail.ProductTypeName;
+                                html += "<td style=\"border: 1px solid\">" + partType + "</td>";
+
+                                var basfChallanNo = assemblyChallanDeduction.ChallanProduct.ChallanDetail.ChallanNo;
+                                html += "<td style=\"border: 1px solid\">" + basfChallanNo + "</td>";
+
+                                var balance = assemblyChallanDeduction.ChallanProduct.RemainingQuantity;
+                                html += "<td style=\"border: 1px solid\">" + balance + "</td>";
+
+                                html += "</tr>";
+                            }
+
+                            html += "<tr style=\"width: 100%\">";
+                            html += "<td style=\"border: 1px solid\"></td>";
+                            html += "<td style=\"border: 1px solid\"></td>";
+                            html += "<td style=\"border: 1px solid\"></td>";
+                            html += "<td style=\"border: 1px solid\"></td>";
+                            html += "<td style=\"border: 1px solid\"></td>";
+                            html += "<td style=\"border: 1px solid; font-weight: bold; font-style: italic; text-decoration: underline;\">SUBTOTAL</td>";
+                            html += "<td style=\"border: 1px solid; font-weight: bold; font-style: italic; text-decoration: underline;\">" + assemblyQntSum + "</td>";
+                            html += "<td style=\"border: 1px solid\"></td>";
+                            html += "<td style=\"border: 1px solid\"></td>";
+                            html += "<td style=\"border: 1px solid\"></td>";
+                            html += "</tr>";
+                        }
+                        
+                        foreach (var outAcc in outStock.OutAccs)
+                        {
+                            var accQntSum = 0;
+                            foreach (var assemblyChallanDeduction in outAcc.AccChallanDeductions)
+                            {
+                                html += "<tr style=\"width: 100%\">";
+
+                                var projName = "";
+                                html += "<td style=\"border: 1px solid\">" + projName + "</td>";
+
+                                var outputCode = "";
+                                html += "<td style=\"border: 1px solid\">" + outputCode + "</td>";
+
+                                var outputMatDesc = "";
+                                html += "<td style=\"border: 1px solid\">" + outputMatDesc + "</td>";
+
+                                var outputQnt = "";
+                                html += "<td style=\"border: 1px solid\">" + outputQnt + "</td>";
+
+                                var inputCode = assemblyChallanDeduction.ChallanProduct.ProductDetail.InputCode;
+                                html += "<td style=\"border: 1px solid\">" + inputCode + "</td>";
+
+                                var inputMatDesc = assemblyChallanDeduction.ChallanProduct.ProductDetail.InputMaterialDesc;
+                                html += "<td style=\"border: 1px solid\">" + inputMatDesc + "</td>";
+
+                                var inputQnt = assemblyChallanDeduction.OutQuantity;
+                                html += "<td style=\"border: 1px solid\">" + inputQnt + "</td>";
+                                accQntSum += Convert.ToInt32(inputQnt);
+
+                                var partType = assemblyChallanDeduction.ChallanProduct.ProductDetail.ProductTypeName;
+                                html += "<td style=\"border: 1px solid\">" + partType + "</td>";
+
+                                var basfChallanNo = assemblyChallanDeduction.ChallanProduct.ChallanDetail.ChallanNo;
+                                html += "<td style=\"border: 1px solid\">" + basfChallanNo + "</td>";
+
+                                var balance = assemblyChallanDeduction.ChallanProduct.RemainingQuantity;
+                                html += "<td style=\"border: 1px solid\">" + balance + "</td>";
+
+                                html += "</tr>";
+                            }
+
+                            html += "<tr style=\"width: 100%\">";
+                            html += "<td style=\"border: 1px solid\"></td>";
+                            html += "<td style=\"border: 1px solid\"></td>";
+                            html += "<td style=\"border: 1px solid\"></td>";
+                            html += "<td style=\"border: 1px solid\"></td>";
+                            html += "<td style=\"border: 1px solid\"></td>";
+                            html += "<td style=\"border: 1px solid; font-weight: bold; font-style: italic; text-decoration: underline;\">SUBTOTAL</td>";
+                            html += "<td style=\"border: 1px solid; font-weight: bold; font-style: italic; text-decoration: underline;\">" + accQntSum + "</td>";
+                            html += "<td style=\"border: 1px solid\"></td>";
+                            html += "<td style=\"border: 1px solid\"></td>";
+                            html += "<td style=\"border: 1px solid\"></td>";
+                            html += "</tr>";
                         }
 
-                        poNos += "</ul>";
-
-                        html += "<td style=\"border: 1px solid\" rowspan=\"" + outStock.ChallanDeductions.Count() + "\">" + poNos + "</td>";
+                        outStockIndex++;
                     }
 
-                    html += "</div></html>";
+                    html += "</table></div></html>";
 
                     HtmlToPdf renderer = new HtmlToPdf();
                     renderer.PrintOptions.PrintHtmlBackgrounds = true;
@@ -2103,8 +2357,8 @@ namespace ERP.Controllers
                     renderer.PrintOptions.MarginBottom = 0;
                     renderer.PrintOptions.MarginLeft = 1;
                     renderer.PrintOptions.MarginRight = 2.5;
-                    renderer.PrintOptions.PaperSize = PdfPrintOptions.PdfPaperSize.A4;
-                    renderer.PrintOptions.PaperOrientation = PdfPrintOptions.PdfPaperOrientation.Landscape;
+                    renderer.PrintOptions.PaperSize = PdfPrintOptions.PdfPaperSize.A4;                    
+                    renderer.PrintOptions.PaperOrientation = PdfPrintOptions.PdfPaperOrientation.Portrait;
                     renderer.PrintOptions.RenderDelay = 500;
 
                     var doc = renderer.RenderHtmlAsPdf(html);
@@ -2154,7 +2408,19 @@ namespace ERP.Controllers
                             ChallanProductModel challanProductModel = new ChallanProductModel();
                             challanProductModel.ChallanDeductions = null;
                             challanProductModel.ChallanProduct = challanDeduction.ChallanProduct;
-                            challanProductModel.ProductDetail = challanDeduction.ChallanProduct.ProductDetail;
+                            challanProductModel.ProductDetail = new ProductDetailWithProductType();
+                            challanProductModel.ProductDetail.CreateDate = challanDeduction.ChallanProduct.ProductDetail.CreateDate;
+                            challanProductModel.ProductDetail.EditDate = challanDeduction.ChallanProduct.ProductDetail.EditDate;
+                            challanProductModel.ProductDetail.InputCode = challanDeduction.ChallanProduct.ProductDetail.InputCode;
+                            challanProductModel.ProductDetail.InputMaterialDesc = challanDeduction.ChallanProduct.ProductDetail.InputMaterialDesc;
+                            challanProductModel.ProductDetail.OutputCode = challanDeduction.ChallanProduct.ProductDetail.OutputCode;
+                            challanProductModel.ProductDetail.OutputMaterialDesc = challanDeduction.ChallanProduct.ProductDetail.OutputMaterialDesc;
+                            challanProductModel.ProductDetail.ProductId = challanDeduction.ChallanProduct.ProductDetail.ProductId;
+                            challanProductModel.ProductDetail.ProductTypeId = challanDeduction.ChallanProduct.ProductDetail.ProductTypeId;
+                            challanProductModel.ProductDetail.ProductTypeName = challanDeduction.ChallanProduct.ProductDetail.ProductType.ProductTypeName;
+                            challanProductModel.ProductDetail.ProjectName = challanDeduction.ChallanProduct.ProductDetail.ProjectName;
+                            challanProductModel.ProductDetail.SplitRatio = challanDeduction.ChallanProduct.ProductDetail.SplitRatio;
+
                             challanProductModel.ChallanDetail = challanDeduction.ChallanProduct.ChallanDetail;
 
                             var inputQuantity = challanProductModel.ChallanProduct.InputQuantity ?? 0;
@@ -2182,7 +2448,19 @@ namespace ERP.Controllers
                             POProductModel poProductModel = new POProductModel();
                             poProductModel.PODeductions = null;
                             poProductModel.POProduct = poDeduction.POProduct;
-                            poProductModel.ProductDetail = poDeduction.POProduct.ProductDetail;
+                            poProductModel.ProductDetail = new ProductDetailWithProductType();
+                            poProductModel.ProductDetail.CreateDate = poDeduction.POProduct.ProductDetail.CreateDate;
+                            poProductModel.ProductDetail.EditDate = poDeduction.POProduct.ProductDetail.EditDate;
+                            poProductModel.ProductDetail.InputCode = poDeduction.POProduct.ProductDetail.InputCode;
+                            poProductModel.ProductDetail.InputMaterialDesc = poDeduction.POProduct.ProductDetail.InputMaterialDesc;
+                            poProductModel.ProductDetail.OutputCode = poDeduction.POProduct.ProductDetail.OutputCode;
+                            poProductModel.ProductDetail.OutputMaterialDesc = poDeduction.POProduct.ProductDetail.OutputMaterialDesc;
+                            poProductModel.ProductDetail.ProductId = poDeduction.POProduct.ProductDetail.ProductId;
+                            poProductModel.ProductDetail.ProductTypeId = poDeduction.POProduct.ProductDetail.ProductTypeId;
+                            poProductModel.ProductDetail.ProductTypeName = poDeduction.POProduct.ProductDetail.ProductType.ProductTypeName;
+                            poProductModel.ProductDetail.ProjectName = poDeduction.POProduct.ProductDetail.ProjectName;
+                            poProductModel.ProductDetail.SplitRatio = poDeduction.POProduct.ProductDetail.SplitRatio;
+
                             poProductModel.PODetail = poDeduction.POProduct.PODetail;
 
                             var inputQuantity = poProductModel.POProduct.InputQuantity ?? 0;
@@ -2220,7 +2498,19 @@ namespace ERP.Controllers
                                 ChallanProductModel challanProductModel = new ChallanProductModel();
                                 challanProductModel.AccChallanDeductions = null;
                                 challanProductModel.ChallanProduct = accChallanDeduction.ChallanProduct;
-                                challanProductModel.ProductDetail = accChallanDeduction.ChallanProduct.ProductDetail;
+                                challanProductModel.ProductDetail = new ProductDetailWithProductType();
+                                challanProductModel.ProductDetail.CreateDate = accChallanDeduction.ChallanProduct.ProductDetail.CreateDate;
+                                challanProductModel.ProductDetail.EditDate = accChallanDeduction.ChallanProduct.ProductDetail.EditDate;
+                                challanProductModel.ProductDetail.InputCode = accChallanDeduction.ChallanProduct.ProductDetail.InputCode;
+                                challanProductModel.ProductDetail.InputMaterialDesc = accChallanDeduction.ChallanProduct.ProductDetail.InputMaterialDesc;
+                                challanProductModel.ProductDetail.OutputCode = accChallanDeduction.ChallanProduct.ProductDetail.OutputCode;
+                                challanProductModel.ProductDetail.OutputMaterialDesc = accChallanDeduction.ChallanProduct.ProductDetail.OutputMaterialDesc;
+                                challanProductModel.ProductDetail.ProductId = accChallanDeduction.ChallanProduct.ProductDetail.ProductId;
+                                challanProductModel.ProductDetail.ProductTypeId = accChallanDeduction.ChallanProduct.ProductDetail.ProductTypeId;
+                                challanProductModel.ProductDetail.ProductTypeName = accChallanDeduction.ChallanProduct.ProductDetail.ProductType.ProductTypeName;
+                                challanProductModel.ProductDetail.ProjectName = accChallanDeduction.ChallanProduct.ProductDetail.ProjectName;
+                                challanProductModel.ProductDetail.SplitRatio = accChallanDeduction.ChallanProduct.ProductDetail.SplitRatio;
+
                                 challanProductModel.ChallanDetail = accChallanDeduction.ChallanProduct.ChallanDetail;
 
                                 var inputQuantity = challanProductModel.ChallanProduct.InputQuantity ?? 0;
@@ -2248,7 +2538,19 @@ namespace ERP.Controllers
                                 POProductModel poProductModel = new POProductModel();
                                 poProductModel.AccPODeductions = null;
                                 poProductModel.POProduct = accPODeduction.POProduct;
-                                poProductModel.ProductDetail = accPODeduction.POProduct.ProductDetail;
+                                poProductModel.ProductDetail = new ProductDetailWithProductType();
+                                poProductModel.ProductDetail.CreateDate = accPODeduction.POProduct.ProductDetail.CreateDate;
+                                poProductModel.ProductDetail.EditDate = accPODeduction.POProduct.ProductDetail.EditDate;
+                                poProductModel.ProductDetail.InputCode = accPODeduction.POProduct.ProductDetail.InputCode;
+                                poProductModel.ProductDetail.InputMaterialDesc = accPODeduction.POProduct.ProductDetail.InputMaterialDesc;
+                                poProductModel.ProductDetail.OutputCode = accPODeduction.POProduct.ProductDetail.OutputCode;
+                                poProductModel.ProductDetail.OutputMaterialDesc = accPODeduction.POProduct.ProductDetail.OutputMaterialDesc;
+                                poProductModel.ProductDetail.ProductId = accPODeduction.POProduct.ProductDetail.ProductId;
+                                poProductModel.ProductDetail.ProductTypeId = accPODeduction.POProduct.ProductDetail.ProductTypeId;
+                                poProductModel.ProductDetail.ProductTypeName = accPODeduction.POProduct.ProductDetail.ProductType.ProductTypeName;
+                                poProductModel.ProductDetail.ProjectName = accPODeduction.POProduct.ProductDetail.ProjectName;
+                                poProductModel.ProductDetail.SplitRatio = accPODeduction.POProduct.ProductDetail.SplitRatio;
+
                                 poProductModel.PODetail = accPODeduction.POProduct.PODetail;
 
                                 var inputQuantity = poProductModel.POProduct.InputQuantity ?? 0;
@@ -2293,7 +2595,19 @@ namespace ERP.Controllers
                                 ChallanProductModel challanProductModel = new ChallanProductModel();
                                 challanProductModel.AssemblyChallanDeductions = null;
                                 challanProductModel.ChallanProduct = assemblyChallanDeduction.ChallanProduct;
-                                challanProductModel.ProductDetail = assemblyChallanDeduction.ChallanProduct.ProductDetail;
+                                challanProductModel.ProductDetail = new ProductDetailWithProductType();
+                                challanProductModel.ProductDetail.CreateDate = assemblyChallanDeduction.ChallanProduct.ProductDetail.CreateDate;
+                                challanProductModel.ProductDetail.EditDate = assemblyChallanDeduction.ChallanProduct.ProductDetail.EditDate;
+                                challanProductModel.ProductDetail.InputCode = assemblyChallanDeduction.ChallanProduct.ProductDetail.InputCode;
+                                challanProductModel.ProductDetail.InputMaterialDesc = assemblyChallanDeduction.ChallanProduct.ProductDetail.InputMaterialDesc;
+                                challanProductModel.ProductDetail.OutputCode = assemblyChallanDeduction.ChallanProduct.ProductDetail.OutputCode;
+                                challanProductModel.ProductDetail.OutputMaterialDesc = assemblyChallanDeduction.ChallanProduct.ProductDetail.OutputMaterialDesc;
+                                challanProductModel.ProductDetail.ProductId = assemblyChallanDeduction.ChallanProduct.ProductDetail.ProductId;
+                                challanProductModel.ProductDetail.ProductTypeId = assemblyChallanDeduction.ChallanProduct.ProductDetail.ProductTypeId;
+                                challanProductModel.ProductDetail.ProductTypeName = assemblyChallanDeduction.ChallanProduct.ProductDetail.ProductType.ProductTypeName;
+                                challanProductModel.ProductDetail.ProjectName = assemblyChallanDeduction.ChallanProduct.ProductDetail.ProjectName;
+                                challanProductModel.ProductDetail.SplitRatio = assemblyChallanDeduction.ChallanProduct.ProductDetail.SplitRatio;
+
                                 challanProductModel.ChallanDetail = assemblyChallanDeduction.ChallanProduct.ChallanDetail;
 
                                 var inputQuantity = challanProductModel.ChallanProduct.InputQuantity ?? 0;
@@ -2321,7 +2635,19 @@ namespace ERP.Controllers
                                 POProductModel poProductModel = new POProductModel();
                                 poProductModel.AssemblyPODeductions = null;
                                 poProductModel.POProduct = assemblyPODeduction.POProduct;
-                                poProductModel.ProductDetail = assemblyPODeduction.POProduct.ProductDetail;
+                                poProductModel.ProductDetail = new ProductDetailWithProductType();
+                                poProductModel.ProductDetail.CreateDate = assemblyPODeduction.POProduct.ProductDetail.CreateDate;
+                                poProductModel.ProductDetail.EditDate = assemblyPODeduction.POProduct.ProductDetail.EditDate;
+                                poProductModel.ProductDetail.InputCode = assemblyPODeduction.POProduct.ProductDetail.InputCode;
+                                poProductModel.ProductDetail.InputMaterialDesc = assemblyPODeduction.POProduct.ProductDetail.InputMaterialDesc;
+                                poProductModel.ProductDetail.OutputCode = assemblyPODeduction.POProduct.ProductDetail.OutputCode;
+                                poProductModel.ProductDetail.OutputMaterialDesc = assemblyPODeduction.POProduct.ProductDetail.OutputMaterialDesc;
+                                poProductModel.ProductDetail.ProductId = assemblyPODeduction.POProduct.ProductDetail.ProductId;
+                                poProductModel.ProductDetail.ProductTypeId = assemblyPODeduction.POProduct.ProductDetail.ProductTypeId;
+                                poProductModel.ProductDetail.ProductTypeName = assemblyPODeduction.POProduct.ProductDetail.ProductType.ProductTypeName;
+                                poProductModel.ProductDetail.ProjectName = assemblyPODeduction.POProduct.ProductDetail.ProjectName;
+                                poProductModel.ProductDetail.SplitRatio = assemblyPODeduction.POProduct.ProductDetail.SplitRatio;
+
                                 poProductModel.PODetail = assemblyPODeduction.POProduct.PODetail;
 
                                 var inputQuantity = poProductModel.POProduct.InputQuantity ?? 0;
@@ -2360,6 +2686,88 @@ namespace ERP.Controllers
             }
         }
 
+        private BASFInvoiceModel GetBASFInvoiceByBASFInvoiceIdPrivate(int basfInvoiceId)
+        {
+            using (var context = new erpdbEntities())
+            {
+                try
+                {
+                    var basfInvoice = context.BASFInvoices.Where(x => x.BASFInvoiceId == basfInvoiceId).FirstOrDefault();
+
+                    BASFInvoiceModel model = new BASFInvoiceModel();
+                    model.BASFInvoiceId = basfInvoice.BASFInvoiceId;
+                    model.BASFInvoiceNo = basfInvoice.BASFInvoiceNo;
+                    model.BASFInvoiceDate = basfInvoice.BASFInvoiceDate ?? new DateTime();
+                    model.CreateDate = basfInvoice.CreateDate ?? new DateTime();
+                    model.EditDate = basfInvoice.EditDate ?? new DateTime();
+
+                    List<InvoiceOutStockModel> outStockModelList = new List<InvoiceOutStockModel>();
+
+                    foreach (var outStock in basfInvoice.InvoiceOutStocks)
+                    {
+                        InvoiceOutStockModel outStockModel = new InvoiceOutStockModel();
+                        outStockModel.InvoiceOutStockId = outStock.InvoiceOutStockId;
+                        outStockModel.BASFInvoiceId = outStock.BASFInvoiceId ?? 0;
+                        outStockModel.OutputQuantity = outStock.OutputQuantity ?? 0;
+                        outStockModel.CreateDate = outStock.CreateDate ?? new DateTime();
+                        outStockModel.EditDate = outStock.EditDate ?? new DateTime();
+
+
+                        List<InvoiceChallanDeductionModel> challanDeductionModelList = new List<InvoiceChallanDeductionModel>();
+                        foreach (var challanDeduction in outStock.InvoiceChallanDeductions)
+                        {
+                            InvoiceChallanDeductionModel challanDeductionModel = new InvoiceChallanDeductionModel();
+                            challanDeductionModel.InvoiceChallanDeductionId = challanDeduction.InvoiceChallanDeductionId;
+
+                            ChallanProductModel challanProductModel = new ChallanProductModel();
+                            challanProductModel.ChallanDeductions = null;
+                            challanProductModel.ChallanProduct = challanDeduction.ChallanProduct;
+                            challanProductModel.ProductDetail = new ProductDetailWithProductType();
+                            challanProductModel.ProductDetail.CreateDate = challanDeduction.ChallanProduct.ProductDetail.CreateDate;
+                            challanProductModel.ProductDetail.EditDate = challanDeduction.ChallanProduct.ProductDetail.EditDate;
+                            challanProductModel.ProductDetail.InputCode = challanDeduction.ChallanProduct.ProductDetail.InputCode;
+                            challanProductModel.ProductDetail.InputMaterialDesc = challanDeduction.ChallanProduct.ProductDetail.InputMaterialDesc;
+                            challanProductModel.ProductDetail.OutputCode = challanDeduction.ChallanProduct.ProductDetail.OutputCode;
+                            challanProductModel.ProductDetail.OutputMaterialDesc = challanDeduction.ChallanProduct.ProductDetail.OutputMaterialDesc;
+                            challanProductModel.ProductDetail.ProductId = challanDeduction.ChallanProduct.ProductDetail.ProductId;
+                            challanProductModel.ProductDetail.ProductTypeId = challanDeduction.ChallanProduct.ProductDetail.ProductTypeId;
+                            challanProductModel.ProductDetail.ProductTypeName = challanDeduction.ChallanProduct.ProductDetail.ProductType.ProductTypeName;
+                            challanProductModel.ProductDetail.ProjectName = challanDeduction.ChallanProduct.ProductDetail.ProjectName;
+                            challanProductModel.ProductDetail.SplitRatio = challanDeduction.ChallanProduct.ProductDetail.SplitRatio;
+
+                            challanProductModel.ChallanDetail = challanDeduction.ChallanProduct.ChallanDetail;
+
+                            var inputQuantity = challanProductModel.ChallanProduct.InputQuantity ?? 0;
+                            var outQnt = challanDeduction.ChallanProduct.InvoiceChallanDeductions.Where(x => x.CreateDate <= challanDeduction.CreateDate).Sum(x => x.OutQuantity) ?? 0;
+                            var ngOutQnt = challanDeduction.ChallanProduct.ChallanDeductions.Where(x => x.CreateDate <= challanDeduction.CreateDate && x.OutStock.VendorChallan.IsNg == 1).Sum(x => x.OutQuantity) ?? 0;
+                            challanProductModel.RemainingQuantity = inputQuantity - outQnt - ngOutQnt;
+
+                            challanDeductionModel.ChallanProduct = challanProductModel;
+                            challanDeductionModel.ChallanProductId = challanDeduction.ChallanProductId ?? 0;
+                            challanDeductionModel.CreateDate = challanDeduction.CreateDate ?? new DateTime();
+                            challanDeductionModel.EditDate = challanDeduction.EditDate ?? new DateTime();
+                            challanDeductionModel.InvoiceOutStockId = challanDeduction.InvoiceOutStockId ?? 0;
+                            challanDeductionModel.OutQuantity = challanDeduction.OutQuantity ?? 0;
+
+                            challanDeductionModelList.Add(challanDeductionModel);
+                        }
+
+                        outStockModel.InvoiceChallanDeductions = challanDeductionModelList.ToArray();
+
+                        outStockModelList.Add(outStockModel);
+                    }
+
+                    model.InvoiceOutStocks = outStockModelList.ToArray();
+
+                    return model;
+                }
+                catch (Exception e)
+                {
+                    throw new Exception();
+                }
+            }
+        }
+
         [HttpPost, Route("GetBASFChallanByBASFChallanId")]
         public IHttpActionResult GetBASFChallanByBASFChallanId(VendorChallanNoModel vendorChallanNoModel)
         {
@@ -2376,7 +2784,19 @@ namespace ERP.Controllers
                     {
                         ChallanProductModel challanProductModel = new ChallanProductModel();
                         challanProductModel.ChallanProduct = challanProduct;
-                        challanProductModel.ProductDetail = challanProduct.ProductDetail;
+                        challanProductModel.ProductDetail = new ProductDetailWithProductType();
+                        challanProductModel.ProductDetail.CreateDate = challanProduct.ProductDetail.CreateDate;
+                        challanProductModel.ProductDetail.EditDate = challanProduct.ProductDetail.EditDate;
+                        challanProductModel.ProductDetail.InputCode = challanProduct.ProductDetail.InputCode;
+                        challanProductModel.ProductDetail.InputMaterialDesc = challanProduct.ProductDetail.InputMaterialDesc;
+                        challanProductModel.ProductDetail.OutputCode = challanProduct.ProductDetail.OutputCode;
+                        challanProductModel.ProductDetail.OutputMaterialDesc = challanProduct.ProductDetail.OutputMaterialDesc;
+                        challanProductModel.ProductDetail.ProductId = challanProduct.ProductDetail.ProductId;
+                        challanProductModel.ProductDetail.ProductTypeId = challanProduct.ProductDetail.ProductTypeId;
+                        challanProductModel.ProductDetail.ProductTypeName = challanProduct.ProductDetail.ProductType.ProductTypeName;
+                        challanProductModel.ProductDetail.ProjectName = challanProduct.ProductDetail.ProjectName;
+                        challanProductModel.ProductDetail.SplitRatio = challanProduct.ProductDetail.SplitRatio;
+
                         challanProductModel.ChallanDetail = challanProduct.ChallanDetail;
                         challanProductModel.ChallanDeductions = challanProduct.ChallanDeductions;
                         challanProductModel.AccChallanDeductions = challanProduct.AccChallanDeductions;
@@ -2425,7 +2845,19 @@ namespace ERP.Controllers
                     {
                         POProductModel poProductModel = new POProductModel();
                         poProductModel.POProduct = poProduct;
-                        poProductModel.ProductDetail = poProduct.ProductDetail;
+                        poProductModel.ProductDetail = new ProductDetailWithProductType();
+                        poProductModel.ProductDetail.CreateDate = poProduct.ProductDetail.CreateDate;
+                        poProductModel.ProductDetail.EditDate = poProduct.ProductDetail.EditDate;
+                        poProductModel.ProductDetail.InputCode = poProduct.ProductDetail.InputCode;
+                        poProductModel.ProductDetail.InputMaterialDesc = poProduct.ProductDetail.InputMaterialDesc;
+                        poProductModel.ProductDetail.OutputCode = poProduct.ProductDetail.OutputCode;
+                        poProductModel.ProductDetail.OutputMaterialDesc = poProduct.ProductDetail.OutputMaterialDesc;
+                        poProductModel.ProductDetail.ProductId = poProduct.ProductDetail.ProductId;
+                        poProductModel.ProductDetail.ProductTypeId = poProduct.ProductDetail.ProductTypeId;
+                        poProductModel.ProductDetail.ProductTypeName = poProduct.ProductDetail.ProductType.ProductTypeName;
+                        poProductModel.ProductDetail.ProjectName = poProduct.ProductDetail.ProjectName;
+                        poProductModel.ProductDetail.SplitRatio = poProduct.ProductDetail.SplitRatio;
+
                         poProductModel.PODetail = poProduct.PODetail;
                         poProductModel.PODeductions = poProduct.PODeductions;
                         poProductModel.AccPODeductions = poProduct.AccPODeductions;
@@ -2661,6 +3093,52 @@ namespace ERP.Controllers
             }
         }
 
+        [HttpPost, Route("DeleteBASFInvoiceByBASFInvoiceId")]
+        public IHttpActionResult DeleteBASFInvoiceByBASFInvoiceId(VendorChallanNoModel vendorChallanNoModel)
+        {
+            var basfInvoiceId = vendorChallanNoModel.VendorChallanNo;
+
+            SuccessResponse response = new SuccessResponse();
+
+            try
+            {
+                using (var context = new erpdbEntities())
+                {
+                    var basfInvoice = context.BASFInvoices.Where(x => x.BASFInvoiceId == basfInvoiceId).FirstOrDefault();
+
+                    if (basfInvoice != null)
+                    {
+                        var challanDeductions = context.InvoiceChallanDeductions.Where(x => x.InvoiceOutStock.BASFInvoiceId == basfInvoiceId).ToArray();
+                        if (challanDeductions != null)
+                            context.InvoiceChallanDeductions.RemoveRange(challanDeductions);
+
+
+
+                        var outStocks = context.InvoiceOutStocks.Where(x => x.BASFInvoiceId == basfInvoiceId).ToArray();
+                        if (outStocks != null)
+                            context.InvoiceOutStocks.RemoveRange(outStocks);
+
+
+                        context.BASFInvoices.Remove(basfInvoice);
+                    }
+
+                    context.SaveChanges();
+
+                    response.StatusCode = HttpStatusCode.OK;
+                    response.Message = "BASF Invoice deleted successfully.";
+
+                    return Ok(response);
+                }
+            }
+            catch (Exception e)
+            {
+                response.StatusCode = HttpStatusCode.InternalServerError;
+                response.Message = "Something went wrong!";
+
+                return InternalServerError(new Exception("Something went wrong!"));
+            }
+        }
+
         [HttpPost, Route("ForceDeleteProductByProductId")]
         public IHttpActionResult ForceDeleteProductByProductId(VendorChallanNoModel vendorChallanNoModel)
         {
@@ -2670,19 +3148,120 @@ namespace ERP.Controllers
 
             try
             {
-                List<AssemblyChallanDeduction> removeAssemblyChallanDeductions = new List<AssemblyChallanDeduction>();
-                List<AccChallanDeduction> removeAccChallanDeductions = new List<AccChallanDeduction>();
-                List<ChallanDeduction> removeChallanDeductions = new List<ChallanDeduction>();
+                List<ChallanProduct> removeChallanProducts = new List<ChallanProduct>();
+                List<ChallanDetail> removeChallanDetails = new List<ChallanDetail>();
 
-                List<AssemblyPODeduction> removeAssemblyPODeductions = new List<AssemblyPODeduction>();
-                List<AccPODeduction> removeAccPODeductions = new List<AccPODeduction>();
-                List<PODeduction> removePODeductions = new List<PODeduction>();
+                List<POProduct> removePOProducts = new List<POProduct>();
+                List<PODetail> removePODetails = new List<PODetail>();
 
-                List<OutAssembly> removeOutAssemblys = new List<OutAssembly>();
-                List<OutAcc> removeOutAccs = new List<OutAcc>();
-                List<OutStock> removeOutStocks = new List<OutStock>();
+                List<ProductMapping> removeProductMappings = new List<ProductMapping>();
 
-                List<VendorChallan> removeVendorChallans = new List<VendorChallan>();
+                using (var context = new erpdbEntities())
+                {
+                    var product = context.ProductDetails.Where(x => x.ProductId == productId).FirstOrDefault();
+
+                    if (product != null)
+                    {
+                        var challanProducts = context.ChallanProducts.Where(x => x.ProductId == productId).ToArray();
+                        if (challanProducts != null)
+                            removeChallanProducts.AddRange(challanProducts);
+
+                        foreach (var challanProduct in challanProducts)
+                        {
+                            var challanDetail = challanProduct.ChallanDetail;
+                            if (challanDetail != null)
+                                removeChallanDetails.Add(challanDetail);
+                        }
+
+                        var poProducts = context.POProducts.Where(x => x.ProductId == productId).ToArray();
+                        if (poProducts != null)
+                            removePOProducts.AddRange(poProducts);
+
+                        foreach (var poProduct in poProducts)
+                        {
+                            var poDetail = poProduct.PODetail;
+                            if (poDetail != null)
+                                removePODetails.Add(poDetail);
+                        }
+                    }
+                }
+
+                var distinctRemoveChallanDetails = removeChallanDetails.Distinct();
+                foreach (var basfChallan in distinctRemoveChallanDetails)
+                {
+                    using (var context = new erpdbEntities())
+                    {
+                        ForceDeleteBASFChallanByChallanId(new VendorChallanNoModel() { VendorChallanNo = basfChallan.ChallanId });
+                        context.SaveChanges();
+                    }
+                }
+
+                var distinctRemovePODetails = removePODetails.Distinct();
+                foreach (var basfPO in distinctRemovePODetails)
+                {
+                    using (var context = new erpdbEntities())
+                    {
+                        ForceDeleteBASFPOByPOId(new VendorChallanNoModel() { VendorChallanNo = basfPO.POId });
+                        context.SaveChanges();
+                    }
+                }
+
+                using (var context = new erpdbEntities())
+                {
+                    var product = context.ProductDetails.Where(x => x.ProductId == productId).FirstOrDefault();
+
+                    if (product != null)
+                    {
+                        var productMappings = context.ProductMappings.Where(x => x.ProductId == productId).ToArray();
+                        if (productMappings != null)
+                            removeProductMappings.AddRange(productMappings);
+
+                        context.ProductMappings.RemoveRange(removeProductMappings.Distinct());
+                        context.ProductDetails.Remove(product);
+
+                        context.SaveChanges();
+                    }
+                }
+
+                response.StatusCode = HttpStatusCode.OK;
+                response.Message = "Product and all its references deleted successfully.";
+
+                return Ok(response);
+            }
+            catch (Exception e)
+            {
+                response.StatusCode = HttpStatusCode.InternalServerError;
+                response.Message = "Something went wrong!";
+
+                return InternalServerError(new Exception("Something went wrong!"));
+            }
+        }
+
+        [HttpPost, Route("ForceDeleteProductByProductIdOld")]
+        public IHttpActionResult ForceDeleteProductByProductIdOld(VendorChallanNoModel vendorChallanNoModel)
+        {
+            var productId = vendorChallanNoModel.VendorChallanNo;
+
+            SuccessResponse response = new SuccessResponse();
+
+            try
+            {
+                //List<AssemblyChallanDeduction> removeAssemblyChallanDeductions = new List<AssemblyChallanDeduction>();
+                //List<AccChallanDeduction> removeAccChallanDeductions = new List<AccChallanDeduction>();
+                //List<ChallanDeduction> removeChallanDeductions = new List<ChallanDeduction>();
+                //List<InvoiceChallanDeduction> removeInvoiceChallanDeductions = new List<InvoiceChallanDeduction>();
+
+                //List<AssemblyPODeduction> removeAssemblyPODeductions = new List<AssemblyPODeduction>();
+                //List<AccPODeduction> removeAccPODeductions = new List<AccPODeduction>();
+                //List<PODeduction> removePODeductions = new List<PODeduction>();
+
+                //List<OutAssembly> removeOutAssemblys = new List<OutAssembly>();
+                //List<OutAcc> removeOutAccs = new List<OutAcc>();
+                //List<OutStock> removeOutStocks = new List<OutStock>();
+                //List<InvoiceOutStock> removeInvoiceOutStocks = new List<InvoiceOutStock>();
+
+                //List<VendorChallan> removeVendorChallans = new List<VendorChallan>();
+                //List<BASFInvoice> removeBASFInvoices = new List<BASFInvoice>();
 
                 List<ChallanProduct> removeChallanProducts = new List<ChallanProduct>();
                 List<ChallanDetail> removeChallanDetails = new List<ChallanDetail>();
@@ -2698,109 +3277,128 @@ namespace ERP.Controllers
 
                     if (product != null)
                     {
-                        var challanDeductions = context.ChallanDeductions.Where(x => x.ChallanProduct.ProductId == productId).ToArray();
-                        if (challanDeductions != null)
-                            removeChallanDeductions.AddRange(challanDeductions);
-                        //context.ChallanDeductions.RemoveRange(challanDeductions);
+                        //var challanDeductions = context.ChallanDeductions.Where(x => x.ChallanProduct.ProductId == productId).ToArray();
+                        //if (challanDeductions != null)
+                        //    removeChallanDeductions.AddRange(challanDeductions);
+                        ////context.ChallanDeductions.RemoveRange(challanDeductions);
 
-                        foreach (var challanDeduction in challanDeductions)
-                        {
-                            var assemblyChallanDeductions = context.AssemblyChallanDeductions.Where(x => x.OutAssembly.OutStockId == challanDeduction.OutStockId).ToArray();
-                            if (assemblyChallanDeductions != null)
-                                removeAssemblyChallanDeductions.AddRange(assemblyChallanDeductions);
-                            //context.AssemblyChallanDeductions.RemoveRange(assemblyChallanDeductions);
-                        }
-
-                        foreach (var challanDeduction in challanDeductions)
-                        {
-                            var accChallanDeductions = context.AccChallanDeductions.Where(x => x.OutAcc.OutStockId == challanDeduction.OutStockId).ToArray();
-                            if (accChallanDeductions != null)
-                                removeAccChallanDeductions.AddRange(accChallanDeductions);
-                            //context.AccChallanDeductions.RemoveRange(accChallanDeductions);
-                        }
+                        //var invoiceChallanDeductions = context.InvoiceChallanDeductions.Where(x => x.ChallanProduct.ProductId == productId).ToArray();
+                        //if (invoiceChallanDeductions != null)
+                        //    removeInvoiceChallanDeductions.AddRange(invoiceChallanDeductions);
 
 
+                        //foreach (var challanDeduction in challanDeductions)
+                        //{
+                        //    var assemblyChallanDeductions = context.AssemblyChallanDeductions.Where(x => x.OutAssembly.OutStockId == challanDeduction.OutStockId).ToArray();
+                        //    if (assemblyChallanDeductions != null)
+                        //        removeAssemblyChallanDeductions.AddRange(assemblyChallanDeductions);
+                        //    //context.AssemblyChallanDeductions.RemoveRange(assemblyChallanDeductions);
+                        //}
 
-                        var poDeductions = context.PODeductions.Where(x => x.POProduct.ProductId == productId).ToArray();
-                        if (poDeductions != null)
-                            removePODeductions.AddRange(poDeductions);
-                        //context.PODeductions.RemoveRange(poDeductions);
-
-                        foreach (var poDeduction in poDeductions)
-                        {
-                            var assemblyPODeductions = context.AssemblyPODeductions.Where(x => x.OutAssembly.OutStockId == poDeduction.OutStockId).ToArray();
-                            if (assemblyPODeductions != null)
-                                removeAssemblyPODeductions.AddRange(assemblyPODeductions);
-                            //context.AssemblyPODeductions.RemoveRange(assemblyPODeductions);
-                        }
-
-                        foreach (var poDeduction in poDeductions)
-                        {
-                            var accPODeductions = context.AccPODeductions.Where(x => x.OutAcc.OutStockId == poDeduction.OutStockId).ToArray();
-                            if (accPODeductions != null)
-                                removeAccPODeductions.AddRange(accPODeductions);
-                            //context.AccPODeductions.RemoveRange(accPODeductions);
-                        }
+                        //foreach (var challanDeduction in challanDeductions)
+                        //{
+                        //    var accChallanDeductions = context.AccChallanDeductions.Where(x => x.OutAcc.OutStockId == challanDeduction.OutStockId).ToArray();
+                        //    if (accChallanDeductions != null)
+                        //        removeAccChallanDeductions.AddRange(accChallanDeductions);
+                        //    //context.AccChallanDeductions.RemoveRange(accChallanDeductions);
+                        //}
 
 
 
-                        foreach (var assemblyChallanDeduction in removeAssemblyChallanDeductions)
-                        {
-                            var outAssembly = context.OutAssemblys.Where(x => x.OutAssemblyId == assemblyChallanDeduction.OutAssemblyId).FirstOrDefault();
-                            if (outAssembly != null)
-                                removeOutAssemblys.Add(outAssembly);
-                            //context.OutAssemblys.Remove(outAssembly);
-                        }
+                        //var poDeductions = context.PODeductions.Where(x => x.POProduct.ProductId == productId).ToArray();
+                        //if (poDeductions != null)
+                        //    removePODeductions.AddRange(poDeductions);
+                        ////context.PODeductions.RemoveRange(poDeductions);
 
-                        foreach (var accChallanDeduction in removeAccChallanDeductions)
-                        {
-                            var outAcc = context.OutAccs.Where(x => x.OutAccId == accChallanDeduction.OutAccId).FirstOrDefault();
-                            if (outAcc != null)
-                                removeOutAccs.Add(outAcc);
-                            //context.OutAccs.Remove(outAcc);
-                        }
+                        //foreach (var poDeduction in poDeductions)
+                        //{
+                        //    var assemblyPODeductions = context.AssemblyPODeductions.Where(x => x.OutAssembly.OutStockId == poDeduction.OutStockId).ToArray();
+                        //    if (assemblyPODeductions != null)
+                        //        removeAssemblyPODeductions.AddRange(assemblyPODeductions);
+                        //    //context.AssemblyPODeductions.RemoveRange(assemblyPODeductions);
+                        //}
 
-                        foreach (var challanDeduction in challanDeductions)
-                        {
-                            var outStock = context.OutStocks.Where(x => x.OutStockId == challanDeduction.OutStockId).FirstOrDefault();
-                            if (outStock != null)
-                                removeOutStocks.Add(outStock);
-                            //context.OutStocks.Remove(outStock);
-                        }
+                        //foreach (var poDeduction in poDeductions)
+                        //{
+                        //    var accPODeductions = context.AccPODeductions.Where(x => x.OutAcc.OutStockId == poDeduction.OutStockId).ToArray();
+                        //    if (accPODeductions != null)
+                        //        removeAccPODeductions.AddRange(accPODeductions);
+                        //    //context.AccPODeductions.RemoveRange(accPODeductions);
+                        //}
 
 
 
-                        foreach (var assemblyPODeduction in removeAssemblyPODeductions)
-                        {
-                            var outAssembly = context.OutAssemblys.Where(x => x.OutAssemblyId == assemblyPODeduction.OutAssemblyId).FirstOrDefault();
-                            if (outAssembly != null)
-                                removeOutAssemblys.Add(outAssembly);
-                            //context.OutAssemblys.Remove(outAssembly);
-                        }
+                        //foreach (var assemblyChallanDeduction in removeAssemblyChallanDeductions)
+                        //{
+                        //    var outAssembly = context.OutAssemblys.Where(x => x.OutAssemblyId == assemblyChallanDeduction.OutAssemblyId).FirstOrDefault();
+                        //    if (outAssembly != null)
+                        //        removeOutAssemblys.Add(outAssembly);
+                        //    //context.OutAssemblys.Remove(outAssembly);
+                        //}
 
-                        foreach (var accPODeduction in removeAccPODeductions)
-                        {
-                            var outAcc = context.OutAccs.Where(x => x.OutAccId == accPODeduction.OutAccId).FirstOrDefault();
-                            if (outAcc != null)
-                                removeOutAccs.Add(outAcc);
-                            //context.OutAccs.Remove(outAcc);
-                        }
+                        //foreach (var accChallanDeduction in removeAccChallanDeductions)
+                        //{
+                        //    var outAcc = context.OutAccs.Where(x => x.OutAccId == accChallanDeduction.OutAccId).FirstOrDefault();
+                        //    if (outAcc != null)
+                        //        removeOutAccs.Add(outAcc);
+                        //    //context.OutAccs.Remove(outAcc);
+                        //}
 
-                        foreach (var poDeduction in poDeductions)
-                        {
-                            var outStock = context.OutStocks.Where(x => x.OutStockId == poDeduction.OutStockId).FirstOrDefault();
-                            if (outStock != null)
-                                removeOutStocks.Add(outStock);
-                            //context.OutStocks.Remove(outStock);
-                        }
+                        //foreach (var challanDeduction in challanDeductions)
+                        //{
+                        //    var outStock = context.OutStocks.Where(x => x.OutStockId == challanDeduction.OutStockId).FirstOrDefault();
+                        //    if (outStock != null)
+                        //        removeOutStocks.Add(outStock);
+                        //    //context.OutStocks.Remove(outStock);
+                        //}
+
+                        //foreach (var invoiceChallanDeduction in invoiceChallanDeductions)
+                        //{
+                        //    var invoiceOutStock = context.InvoiceOutStocks.Where(x => x.InvoiceOutStockId == invoiceChallanDeduction.InvoiceOutStockId).FirstOrDefault();
+                        //    if (invoiceOutStock != null)
+                        //        removeInvoiceOutStocks.Add(invoiceOutStock);
+                        //    //context.OutStocks.Remove(outStock);
+                        //}
 
 
 
-                        foreach (var outStock in removeOutStocks)
-                        {
-                            var vendorChallan = context.VendorChallans.Where(x => x.VendorChallanNo == outStock.VendorChallanNo).ToArray();
-                            removeVendorChallans.AddRange(vendorChallan);
-                        }
+                        //foreach (var assemblyPODeduction in removeAssemblyPODeductions)
+                        //{
+                        //    var outAssembly = context.OutAssemblys.Where(x => x.OutAssemblyId == assemblyPODeduction.OutAssemblyId).FirstOrDefault();
+                        //    if (outAssembly != null)
+                        //        removeOutAssemblys.Add(outAssembly);
+                        //    //context.OutAssemblys.Remove(outAssembly);
+                        //}
+
+                        //foreach (var accPODeduction in removeAccPODeductions)
+                        //{
+                        //    var outAcc = context.OutAccs.Where(x => x.OutAccId == accPODeduction.OutAccId).FirstOrDefault();
+                        //    if (outAcc != null)
+                        //        removeOutAccs.Add(outAcc);
+                        //    //context.OutAccs.Remove(outAcc);
+                        //}
+
+                        //foreach (var poDeduction in poDeductions)
+                        //{
+                        //    var outStock = context.OutStocks.Where(x => x.OutStockId == poDeduction.OutStockId).FirstOrDefault();
+                        //    if (outStock != null)
+                        //        removeOutStocks.Add(outStock);
+                        //    //context.OutStocks.Remove(outStock);
+                        //}
+
+
+
+                        //foreach (var outStock in removeOutStocks)
+                        //{
+                        //    var vendorChallan = context.VendorChallans.Where(x => x.VendorChallanNo == outStock.VendorChallanNo).ToArray();
+                        //    removeVendorChallans.AddRange(vendorChallan);
+                        //}
+
+                        //foreach (var invoiceOutStock in removeInvoiceOutStocks)
+                        //{
+                        //    var basfInvoice = context.BASFInvoices.Where(x => x.BASFInvoiceId == invoiceOutStock.BASFInvoiceId).ToArray();
+                        //    removeBASFInvoices.AddRange(basfInvoice);
+                        //}
 
 
 
@@ -2829,9 +3427,35 @@ namespace ERP.Controllers
                                 removePODetails.Add(poDetail);
                             //context.PODetails.Remove(poDetail);
                         }
+                    }
+                }
 
+                var distinctRemoveChallanDetails = removeChallanDetails.Distinct();
+                foreach (var basfChallan in distinctRemoveChallanDetails)
+                {
+                    using (var context = new erpdbEntities())
+                    {
+                        ForceDeleteBASFChallanByChallanId(new VendorChallanNoModel() { VendorChallanNo = basfChallan.ChallanId });
+                        context.SaveChanges();
+                    }
+                }
 
+                var distinctRemovePODetails = removePODetails.Distinct();
+                foreach (var basfPO in distinctRemovePODetails)
+                {
+                    using (var context = new erpdbEntities())
+                    {
+                        ForceDeleteBASFPOByPOId(new VendorChallanNoModel() { VendorChallanNo = basfPO.POId });
+                        context.SaveChanges();
+                    }
+                }
 
+                using (var context = new erpdbEntities())
+                {
+                    var product = context.ProductDetails.Where(x => x.ProductId == productId).FirstOrDefault();
+
+                    if (product != null)
+                    {
                         var productMappings = context.ProductMappings.Where(x => x.ProductId == productId).ToArray();
                         if (productMappings != null)
                             removeProductMappings.AddRange(productMappings);
@@ -2839,38 +3463,37 @@ namespace ERP.Controllers
 
 
 
-                        context.AssemblyChallanDeductions.RemoveRange(removeAssemblyChallanDeductions.Distinct());
-                        context.AccChallanDeductions.RemoveRange(removeAccChallanDeductions.Distinct());
-                        context.ChallanDeductions.RemoveRange(removeChallanDeductions.Distinct());
+                        //context.AssemblyChallanDeductions.RemoveRange(removeAssemblyChallanDeductions.Distinct());
+                        //context.AccChallanDeductions.RemoveRange(removeAccChallanDeductions.Distinct());
+                        //context.ChallanDeductions.RemoveRange(removeChallanDeductions.Distinct());
 
-                        context.AssemblyPODeductions.RemoveRange(removeAssemblyPODeductions.Distinct());
-                        context.AccPODeductions.RemoveRange(removeAccPODeductions.Distinct());
-                        context.PODeductions.RemoveRange(removePODeductions.Distinct());
+                        //context.AssemblyPODeductions.RemoveRange(removeAssemblyPODeductions.Distinct());
+                        //context.AccPODeductions.RemoveRange(removeAccPODeductions.Distinct());
+                        //context.PODeductions.RemoveRange(removePODeductions.Distinct());
 
-                        context.OutAssemblys.RemoveRange(removeOutAssemblys.Distinct());
-                        context.OutAccs.RemoveRange(removeOutAccs.Distinct());
-                        context.OutStocks.RemoveRange(removeOutStocks.Distinct());
+                        //context.OutAssemblys.RemoveRange(removeOutAssemblys.Distinct());
+                        //context.OutAccs.RemoveRange(removeOutAccs.Distinct());
+                        //context.OutStocks.RemoveRange(removeOutStocks.Distinct());
 
-                        context.VendorChallans.RemoveRange(removeVendorChallans.Distinct());
+                        //context.VendorChallans.RemoveRange(removeVendorChallans.Distinct());
 
-                        context.ChallanProducts.RemoveRange(removeChallanProducts.Distinct());
-                        context.ChallanDetails.RemoveRange(removeChallanDetails.Distinct());
+                        //context.ChallanProducts.RemoveRange(removeChallanProducts.Distinct());
+                        //context.ChallanDetails.RemoveRange(removeChallanDetails.Distinct());
 
-                        context.POProducts.RemoveRange(removePOProducts.Distinct());
-                        context.PODetails.RemoveRange(removePODetails.Distinct());
+                        //context.POProducts.RemoveRange(removePOProducts.Distinct());
+                        //context.PODetails.RemoveRange(removePODetails.Distinct());
 
                         context.ProductMappings.RemoveRange(removeProductMappings.Distinct());
-
                         context.ProductDetails.Remove(product);
+
+                        context.SaveChanges();
                     }
-
-                    context.SaveChanges();
-
-                    response.StatusCode = HttpStatusCode.OK;
-                    response.Message = "Product and all its references deleted successfully.";
-
-                    return Ok(response);
                 }
+
+                response.StatusCode = HttpStatusCode.OK;
+                response.Message = "Product and all its references deleted successfully.";
+
+                return Ok(response);
             }
             catch (Exception e)
             {
@@ -2891,8 +3514,13 @@ namespace ERP.Controllers
             try
             {
                 List<OutStock> removeOutStocks = new List<OutStock>();
+                List<InvoiceOutStock> removeInvoiceOutStocks = new List<InvoiceOutStock>();
+
+                List<OutAssembly> removeOutAssemblys = new List<OutAssembly>();
+                List<OutAcc> removeOutAccs = new List<OutAcc>();
 
                 List<VendorChallan> removeVendorChallans = new List<VendorChallan>();
+                List<BASFInvoice> removeBASFInvoices = new List<BASFInvoice>();
 
                 List<ChallanProduct> removeChallanProducts = new List<ChallanProduct>();
 
@@ -2912,23 +3540,52 @@ namespace ERP.Controllers
                         }
 
 
-
                         foreach (var outStock in removeOutStocks)
                         {
                             var vendorChallan = context.VendorChallans.Where(x => x.VendorChallanNo == outStock.VendorChallanNo).ToArray();
                             removeVendorChallans.AddRange(vendorChallan);
                         }
 
-                        var distinctVendorChallans = removeVendorChallans.Distinct();
-                        foreach (var vendorChallan in distinctVendorChallans)
+
+
+                        var invoiceChallanDeductions = context.InvoiceChallanDeductions.Where(x => x.ChallanProduct.ChallanId == challanId).ToArray();
+
+                        foreach (var invoiceChallanDeduction in invoiceChallanDeductions)
                         {
-                            DeleteVendorChallanByVendorChallanNo(new VendorChallanNoModel() { VendorChallanNo = vendorChallan.VendorChallanNo });
+                            var invoiceOutStock = context.InvoiceOutStocks.Where(x => x.InvoiceOutStockId == invoiceChallanDeduction.InvoiceOutStockId).FirstOrDefault();
+                            if (invoiceOutStock != null)
+                                removeInvoiceOutStocks.Add(invoiceOutStock);
                         }
 
+                        foreach (var invoiceOutStock in removeInvoiceOutStocks)
+                        {
+                            var basfInvoice = context.BASFInvoices.Where(x => x.BASFInvoiceId == invoiceOutStock.BASFInvoiceId).ToArray();
+                            removeBASFInvoices.AddRange(basfInvoice);
+                        }
                     }
-
-                    context.SaveChanges();
                 }
+
+
+                var distinctVendorChallans = removeVendorChallans.Distinct();
+                foreach (var vendorChallan in distinctVendorChallans)
+                {
+                    using (var context = new erpdbEntities())
+                    {
+                        DeleteVendorChallanByVendorChallanNo(new VendorChallanNoModel() { VendorChallanNo = vendorChallan.VendorChallanNo });
+                        context.SaveChanges();
+                    }
+                }
+
+                var distinctBASFInvoices = removeBASFInvoices.Distinct();
+                foreach (var basfInvoice in distinctBASFInvoices)
+                {
+                    using (var context = new erpdbEntities())
+                    {
+                        DeleteBASFInvoiceByBASFInvoiceId(new VendorChallanNoModel() { VendorChallanNo = basfInvoice.BASFInvoiceId });
+                        context.SaveChanges();
+                    }
+                }
+
 
                 using (var context = new erpdbEntities())
                 {
@@ -2974,6 +3631,8 @@ namespace ERP.Controllers
             try
             {
                 List<OutStock> removeOutStocks = new List<OutStock>();
+                List<OutAssembly> removeOutAssemblys = new List<OutAssembly>();
+                List<OutAcc> removeOutAccs = new List<OutAcc>();
 
                 List<VendorChallan> removeVendorChallans = new List<VendorChallan>();
 

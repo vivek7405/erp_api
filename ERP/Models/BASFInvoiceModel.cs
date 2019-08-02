@@ -12,7 +12,7 @@ namespace ERP.Models
         [DataMember]
         public int BASFInvoiceId { get; set; }
         [DataMember]
-        public int BASFInvoiceNo { get; set; }
+        public string BASFInvoiceNo { get; set; }
         [DataMember]
         public DateTime BASFInvoiceDate { get; set; }
         [DataMember]
