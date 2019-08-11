@@ -4,10 +4,10 @@
 --create table ProductTypes (ProductTypeId integer primary key identity, ProductTypeName varchar(50), ProductCategoryId integer FOREIGN KEY REFERENCES ProductCategorys(ProductCategoryId));
 
 --create table ProductDetails (ProductId integer primary key identity, ProductTypeId integer FOREIGN KEY REFERENCES ProductTypes(ProductTypeId), InputCode varchar(50), InputMaterialDesc varchar(1000), OutputCode varchar(50), OutputMaterialDesc varchar(1000), ProjectName varchar(1000), SplitRatio integer, CreateDate datetime, EditDate datetime);
---CREATE UNIQUE INDEX unq_proddet_inputcode ON ProductDetails(InputCode) WHERE InputCode IS NOT NULL;
---CREATE UNIQUE INDEX unq_proddet_outputcode ON ProductDetails(OutputCode) WHERE OutputCode IS NOT NULL;
---CREATE UNIQUE INDEX unq_proddet_inputmatdesc ON ProductDetails(InputMaterialDesc) WHERE InputMaterialDesc IS NOT NULL;
---CREATE UNIQUE INDEX unq_proddet_outputmatdesc ON ProductDetails(OutputMaterialDesc) WHERE OutputMaterialDesc IS NOT NULL;
+----CREATE UNIQUE INDEX unq_proddet_inputcode ON ProductDetails(InputCode) WHERE InputCode IS NOT NULL;
+----CREATE UNIQUE INDEX unq_proddet_outputcode ON ProductDetails(OutputCode) WHERE OutputCode IS NOT NULL;
+----CREATE UNIQUE INDEX unq_proddet_inputmatdesc ON ProductDetails(InputMaterialDesc) WHERE InputMaterialDesc IS NOT NULL;
+----CREATE UNIQUE INDEX unq_proddet_outputmatdesc ON ProductDetails(OutputMaterialDesc) WHERE OutputMaterialDesc IS NOT NULL;
 
 --create table ProductMappings (ProductMappingId integer primary key identity, ProductId integer FOREIGN KEY REFERENCES ProductDetails(ProductId), MappingProductId integer FOREIGN KEY REFERENCES ProductDetails(ProductId), CreateDate datetime, EditDate datetime);
 --CREATE UNIQUE INDEX unq_prodmap ON ProductMappings(ProductId, MappingProductId);
@@ -68,9 +68,11 @@
 --drop table POProducts;
 --drop table PODetails;
 
+--drop table ProductMappings;
 --drop table ProductDetails;
---drop table ProductTypes;
---drop table ProductCategorys;
+
+----drop table ProductTypes;
+----drop table ProductCategorys;
 
 
 

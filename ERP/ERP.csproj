@@ -228,6 +228,7 @@
     <Compile Include="Models\AssemblyChallanDeductionModel.cs" />
     <Compile Include="Models\AssemblyPODeductionModel.cs" />
     <Compile Include="Models\BASFChallanDeduction.cs" />
+    <Compile Include="Models\BASFChallanPOWhereUsedModel.cs" />
     <Compile Include="Models\BASFChallanSelection.cs" />
     <Compile Include="Models\BASFInvoiceModel.cs" />
     <Compile Include="Models\BASFPODeduction.cs" />
@@ -236,6 +237,8 @@
     <Compile Include="Models\ChallanDetailMod.cs" />
     <Compile Include="Models\ChallanDetailModel.cs" />
     <Compile Include="Models\ChallanProductModel.cs" />
+    <Compile Include="Models\CloseChallanReportModel.cs" />
+    <Compile Include="Models\FGAndSemiStockReportModel.cs" />
     <Compile Include="Models\FileResult.cs" />
     <Compile Include="Models\InputCodeModel.cs" />
     <Compile Include="Models\InvoiceChallanDeductionModel.cs" />

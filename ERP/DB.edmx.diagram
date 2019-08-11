@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="df80c55ad52a44c488e8d3f8a607f45d" Name="Diagram1">
+      <Diagram DiagramId="737aba0a4fe94e12b45bcd4c1e844f35" Name="Diagram1">
         <EntityTypeShape EntityType="erpdbModel.AccChallanDeduction" Width="1.5" PointX="12.75" PointY="13.625" IsExpanded="true" />
         <EntityTypeShape EntityType="erpdbModel.AccPODeduction" Width="1.5" PointX="15.75" PointY="13.625" IsExpanded="true" />
         <EntityTypeShape EntityType="erpdbModel.AssemblyChallanDeduction" Width="1.5" PointX="9.75" PointY="9.625" IsExpanded="true" />
@@ -26,32 +26,32 @@
         <EntityTypeShape EntityType="erpdbModel.ProductMapping" Width="1.5" PointX="7.5" PointY="21.625" IsExpanded="true" />
         <EntityTypeShape EntityType="erpdbModel.ProductType" Width="1.5" PointX="3" PointY="13.875" IsExpanded="true" />
         <EntityTypeShape EntityType="erpdbModel.VendorChallan" Width="1.5" PointX="3" PointY="5.75" IsExpanded="true" />
-        <AssociationConnector Association="erpdbModel.FK__AccChalla__Chall__57A801BA" ManuallyRouted="false" />
-        <AssociationConnector Association="erpdbModel.FK__AccChalla__OutAc__56B3DD81" ManuallyRouted="false" />
-        <AssociationConnector Association="erpdbModel.FK__AccPODedu__OutAc__11D4A34F" ManuallyRouted="false" />
-        <AssociationConnector Association="erpdbModel.FK__AccPODedu__POPro__12C8C788" ManuallyRouted="false" />
-        <AssociationConnector Association="erpdbModel.FK__AssemblyC__Chall__61316BF4" ManuallyRouted="false" />
-        <AssociationConnector Association="erpdbModel.FK__AssemblyC__OutAs__603D47BB" ManuallyRouted="false" />
-        <AssociationConnector Association="erpdbModel.FK__AssemblyP__OutAs__15A53433" ManuallyRouted="false" />
-        <AssociationConnector Association="erpdbModel.FK__AssemblyP__POPro__1699586C" ManuallyRouted="false" />
-        <AssociationConnector Association="erpdbModel.FK__InvoiceOu__BASFI__2C88998B" ManuallyRouted="false" />
-        <AssociationConnector Association="erpdbModel.FK__ChallanDe__Chall__53D770D6" ManuallyRouted="false" />
-        <AssociationConnector Association="erpdbModel.FK__ChallanDe__OutSt__52E34C9D" ManuallyRouted="false" />
-        <AssociationConnector Association="erpdbModel.FK__ChallanPr__Chall__477199F1" ManuallyRouted="false" />
-        <AssociationConnector Association="erpdbModel.FK__ChallanPr__Produ__4865BE2A" ManuallyRouted="false" />
-        <AssociationConnector Association="erpdbModel.FK__InvoiceCh__Chall__30592A6F" ManuallyRouted="false" />
-        <AssociationConnector Association="erpdbModel.FK__InvoiceCh__Invoi__2F650636" ManuallyRouted="false" />
-        <AssociationConnector Association="erpdbModel.FK__OutAccs__OutStoc__5006DFF2" ManuallyRouted="false" />
-        <AssociationConnector Association="erpdbModel.FK__OutAssemb__OutSt__5D60DB10" ManuallyRouted="false" />
-        <AssociationConnector Association="erpdbModel.FK__OutStocks__Vendo__4D2A7347" ManuallyRouted="false" />
-        <AssociationConnector Association="erpdbModel.FK__PODeducti__OutSt__0E04126B" ManuallyRouted="false" />
-        <AssociationConnector Association="erpdbModel.FK__PODeducti__POPro__0EF836A4" ManuallyRouted="false" />
-        <AssociationConnector Association="erpdbModel.FK__POProducts__POId__6ABAD62E" ManuallyRouted="false" />
-        <AssociationConnector Association="erpdbModel.FK__POProduct__Produ__6BAEFA67" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__AccChalla__Chall__5772F790" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__AccChalla__OutAc__567ED357" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__AccPODedu__OutAc__61F08603" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__AccPODedu__POPro__62E4AA3C" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__AssemblyC__Chall__5B438874" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__AssemblyC__OutAs__5A4F643B" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__AssemblyP__OutAs__65C116E7" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__AssemblyP__POPro__66B53B20" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__InvoiceOu__BASFI__6C6E1476" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__ChallanDe__Chall__53A266AC" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__ChallanDe__OutSt__52AE4273" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__ChallanPr__Chall__3DB3258D" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__ChallanPr__Produ__3EA749C6" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__InvoiceCh__Chall__703EA55A" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__InvoiceCh__Invoi__6F4A8121" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__OutAccs__OutStoc__4CF5691D" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__OutAssemb__OutSt__4FD1D5C8" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__OutStocks__Vendo__4A18FC72" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__PODeducti__OutSt__5E1FF51F" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__PODeducti__POPro__5F141958" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__POProducts__POId__4460231C" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__POProduct__Produ__45544755" ManuallyRouted="false" />
         <AssociationConnector Association="erpdbModel.FK__ProductTy__Produ__0D44F85C" ManuallyRouted="false" />
-        <AssociationConnector Association="erpdbModel.FK__ProductDe__Produ__41B8C09B" ManuallyRouted="false" />
-        <AssociationConnector Association="erpdbModel.FK__ProductMa__Mappi__6501FCD8" ManuallyRouted="false" />
-        <AssociationConnector Association="erpdbModel.FK__ProductMa__Produ__640DD89F" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__ProductDe__Produ__3429BB53" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__ProductMa__Mappi__37FA4C37" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__ProductMa__Produ__370627FE" ManuallyRouted="false" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
