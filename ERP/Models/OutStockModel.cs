@@ -28,5 +28,6 @@ namespace ERP.Models
         public OutAccModel[] OutAccs { get; set; }
         [DataMember]
         public OutAssemblyModel[] OutAssemblys { get; set; }
+        public int MainQntSum { get; set; }
     }
 }

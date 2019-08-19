@@ -15,5 +15,6 @@ namespace ERP.Models
         public string Description { get; set; }
         [DataMember]
         public string Quantity { get; set; }
+        public int Qnt { get; set; }
     }
 }

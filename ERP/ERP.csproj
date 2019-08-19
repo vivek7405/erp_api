@@ -253,6 +253,7 @@
     <Compile Include="Models\ProductIdModel.cs" />
     <Compile Include="Models\ProductQuantity.cs" />
     <Compile Include="Models\SuccessResponse.cs" />
+    <Compile Include="Models\VendorChallanGridModel.cs" />
     <Compile Include="Models\VendorChallanModel.cs" />
     <Compile Include="Models\VendorChallanNoModel.cs" />
     <Compile Include="Models\ViewChallanDetailModel.cs" />

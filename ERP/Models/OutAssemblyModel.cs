@@ -27,5 +27,6 @@ namespace ERP.Models
         public AssemblyChallanDeductionModel[] AssemblyChallanDeductions { get; set; }
         [DataMember]
         public AssemblyPODeductionModel[] AssemblyPODeductions { get; set; }
+        public int AssemblyQntSum { get; set; }
     }
 }

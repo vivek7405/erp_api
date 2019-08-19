@@ -2104,6 +2104,188 @@ namespace ERP.Controllers
             }
         }
 
+        [HttpPost, Route("GetVendorChallanGridByVendorChallanNo")]
+        public IHttpActionResult GetVendorChallanGridByVendorChallanNo(VendorChallanNoModel vendorChallanNoModel)
+        {
+            using (var context = new erpdbEntities())
+            {
+                try
+                {
+                    return Ok(GetVendorChallanGridByVendorChallanNoPrivate(vendorChallanNoModel.VendorChallanNo));
+                }
+                catch (Exception e)
+                {
+                    return InternalServerError();
+                }
+            }
+        }
+
+        private List<VendorChallanGridModel> GetVendorChallanGridByVendorChallanNoPrivate(int vendorChallanNo)
+        {
+            using (var context = new erpdbEntities())
+            {
+                try
+                {
+                    VendorChallanModel model = GetVendorChallanByVendorChallanNoPrivate(vendorChallanNo);
+
+                    List<VendorChallanGridModel> list = new List<VendorChallanGridModel>();
+
+                    foreach (var outStock in model.OutStocks)
+                    {
+                        foreach (var challanDeduction in outStock.ChallanDeductions)
+                        {
+                            outStock.MainQntSum += challanDeduction.OutQuantity;
+                        }
+
+                        foreach (var outAssembly in outStock.OutAssemblys)
+                        {
+                            foreach (var assemblyChallanDeduction in outAssembly.AssemblyChallanDeductions)
+                            {
+                                outAssembly.AssemblyQntSum += assemblyChallanDeduction.OutQuantity;
+                            }
+                        }
+
+                        foreach (var outAcc in outStock.OutAccs)
+                        {
+                            foreach (var accChallanDeduction in outAcc.AccChallanDeductions)
+                            {
+                                outAcc.AccQntSum += accChallanDeduction.OutQuantity;
+                            }
+                        }
+                    }
+
+                    foreach (var outStock in model.OutStocks)
+                    {
+                        int index = 0;
+                        foreach (var challanDeduction in outStock.ChallanDeductions)
+                        {
+                            VendorChallanGridModel item = new VendorChallanGridModel();
+
+                            if (index == 0)
+                            {
+                                item.ProjectName = challanDeduction.ChallanProduct.ProductDetail.ProjectName;
+                                item.OutputCode = challanDeduction.ChallanProduct.ProductDetail.OutputCode;
+                                item.OutputMaterialDesc = challanDeduction.ChallanProduct.ProductDetail.OutputMaterialDesc;
+                                item.OutputQuantity = outStock.OutputQuantity.ToString();
+
+                                if (outStock.PODeductions != null && outStock.PODeductions.Length > 0)
+                                {
+                                    //item.BASFPONumber = "<ul>";
+                                    int cnt = 0;
+                                    foreach (var poDeduction in outStock.PODeductions)
+                                    {
+                                        //item.BASFPONumber += "<li>" + poDeduction.POProduct.PODetail.PONo + "</li>";
+                                        if (cnt == outStock.PODeductions.Length - 1)
+                                            item.BASFPONumber += poDeduction.POProduct.PODetail.PONo;
+                                        else
+                                            item.BASFPONumber += poDeduction.POProduct.PODetail.PONo + "\n";
+                                        cnt++;
+                                    }
+                                    //item.BASFPONumber += "</ul>";
+                                }
+                                else
+                                {
+                                    item.BASFPONumber = "NA";
+                                }
+                            }
+
+                            item.InputCode = challanDeduction.ChallanProduct.ProductDetail.InputCode;
+                            item.InputMaterialDesc = challanDeduction.ChallanProduct.ProductDetail.InputMaterialDesc;
+                            item.InputQuantity = challanDeduction.OutQuantity.ToString();
+                            item.PartType = challanDeduction.ChallanProduct.ProductDetail.ProductTypeName;
+                            item.BASFChallanNo = challanDeduction.ChallanProduct.ChallanDetail.ChallanNo;
+                            item.Balance = challanDeduction.ChallanProduct.RemainingQuantity.ToString();
+
+                            int challanDedLen = outStock.ChallanDeductions.Length + 1;    //+1 for SUBTOTAL row
+
+                            int assembChallanDedLen = 0;
+                            foreach (var outAssembly in outStock.OutAssemblys)
+                            {
+                                assembChallanDedLen += outAssembly.AssemblyChallanDeductions.Length;
+                            }
+                            assembChallanDedLen = assembChallanDedLen == 0 ? 0 : assembChallanDedLen + 1;
+
+
+                            int accChallanDedLen = 0;
+                            foreach (var outAcc in outStock.OutAccs)
+                            {
+                                accChallanDedLen += outAcc.AccChallanDeductions.Length;
+                            }
+                            accChallanDedLen = accChallanDedLen == 0 ? 0 : accChallanDedLen + 1;
+
+                            if (index == 0)
+                                item.RowSpan = challanDedLen + assembChallanDedLen + accChallanDedLen;
+
+                            list.Add(item);
+
+                            index++;
+                        }
+
+                        VendorChallanGridModel item2 = new VendorChallanGridModel();
+                        item2.InputMaterialDesc = "SUBTOTAL";
+                        item2.InputQuantity = outStock.MainQntSum.ToString();
+                        list.Add(item2);
+
+                        foreach (var outAssembly in outStock.OutAssemblys)
+                        {
+                            foreach (var assemblyChallanDeduction in outAssembly.AssemblyChallanDeductions)
+                            {
+                                VendorChallanGridModel item = new VendorChallanGridModel();
+
+                                item.InputCode = assemblyChallanDeduction.ChallanProduct.ProductDetail.InputCode;
+                                item.InputMaterialDesc = assemblyChallanDeduction.ChallanProduct.ProductDetail.InputMaterialDesc;
+                                item.InputQuantity = assemblyChallanDeduction.OutQuantity.ToString();
+                                item.PartType = assemblyChallanDeduction.ChallanProduct.ProductDetail.ProductTypeName;
+                                item.BASFChallanNo = assemblyChallanDeduction.ChallanProduct.ChallanDetail.ChallanNo;
+                                item.Balance = assemblyChallanDeduction.ChallanProduct.RemainingQuantity.ToString();
+
+                                list.Add(item);
+                            }
+
+                            if (outAssembly.AssemblyQntSum > 0)
+                            {
+                                VendorChallanGridModel item3 = new VendorChallanGridModel();
+                                item3.InputMaterialDesc = "SUBTOTAL";
+                                item3.InputQuantity = outAssembly.AssemblyQntSum.ToString();
+                                list.Add(item3);
+                            }
+                        }
+
+                        foreach (var outAcc in outStock.OutAccs)
+                        {
+                            foreach (var accChallanDeductions in outAcc.AccChallanDeductions)
+                            {
+                                VendorChallanGridModel item = new VendorChallanGridModel();
+
+                                item.InputCode = accChallanDeductions.ChallanProduct.ProductDetail.InputCode;
+                                item.InputMaterialDesc = accChallanDeductions.ChallanProduct.ProductDetail.InputMaterialDesc;
+                                item.InputQuantity = accChallanDeductions.OutQuantity.ToString();
+                                item.PartType = accChallanDeductions.ChallanProduct.ProductDetail.ProductTypeName;
+                                item.BASFChallanNo = accChallanDeductions.ChallanProduct.ChallanDetail.ChallanNo;
+                                item.Balance = accChallanDeductions.ChallanProduct.RemainingQuantity.ToString();
+
+                                list.Add(item);
+                            }
+
+                            if (outAcc.AccQntSum > 0)
+                            {
+                                VendorChallanGridModel item3 = new VendorChallanGridModel();
+                                item3.InputMaterialDesc = "SUBTOTAL";
+                                item3.InputQuantity = outAcc.AccQntSum.ToString();
+                                list.Add(item3);
+                            }
+                        }
+                    }
+
+                    return list;
+                }
+                catch (Exception e)
+                {
+                    throw new Exception();
+                }
+            }
+        }
+
         [HttpPost, Route("GetBASFInvoiceByBASFInvoiceId")]
         public IHttpActionResult GetBASFInvoiceByBASFInvoiceId(VendorChallanNoModel vendorChallanNoModel)
         {
@@ -4089,22 +4271,38 @@ namespace ERP.Controllers
 
                                 model.Code = challanProduct.ProductDetail.OutputCode;
                                 model.Description = challanProduct.ProductDetail.OutputMaterialDesc;
-                                int remainingQty = Convert.ToInt32(challanProduct.InputQuantity);
+                                //int remainingQty = Convert.ToInt32(challanProduct.InputQuantity);
 
-                                if (challanProduct.ChallanDeductions != null && challanProduct.ChallanDeductions.Count > 0)
-                                    remainingQty = Convert.ToInt32(challanProduct.InputQuantity) - Convert.ToInt32(challanProduct.ChallanDeductions.Sum(x => x.OutQuantity));
+                                //if (challanProduct.ChallanDeductions != null && challanProduct.ChallanDeductions.Count > 0)
+                                //    remainingQty = Convert.ToInt32(challanProduct.InputQuantity) - Convert.ToInt32(challanProduct.ChallanDeductions.Sum(x => x.OutQuantity));
 
-                                if (remainingQty == 0)
-                                {
-                                    model.Quantity = Convert.ToInt32(challanProduct.ChallanDeductions.Sum(k => k.OutStock.OutputQuantity)).ToString();
-                                    modelList.Add(model);
-                                }
+                                //if (remainingQty == 0)
+                                //{
+                                model.Quantity = challanProduct.ChallanDeductions.Sum(k => k.OutStock.OutputQuantity).Value.ToString();
+                                int invoiceQuantity = challanProduct.InvoiceChallanDeductions.Sum(k => k.InvoiceOutStock.OutputQuantity).Value;
+
+                                model.Quantity = Convert.ToString(Convert.ToInt32(model.Quantity) - invoiceQuantity);
+                                model.Qnt = Convert.ToInt32(model.Quantity);
+
+                                modelList.Add(model);
+                                //}
                             }
                         }
                     }
 
-                    modelList = modelList.OrderBy(x => x.Description).ToList();
-                    return Ok(modelList);
+                    var grpBy = modelList.GroupBy(x => new { x.Code, x.Description }).Select(g => new { key = g.Key, sum = g.Sum(p => p.Qnt) });
+
+                    List<FGAndSemiStockReportModel> mdlList = new List<FGAndSemiStockReportModel>();
+                    foreach (var grp in grpBy)
+                    {
+                        FGAndSemiStockReportModel mdl = new FGAndSemiStockReportModel();
+                        mdl.Code = grp.key.Code;
+                        mdl.Description = grp.key.Description;
+                        mdl.Quantity = grp.sum.ToString();
+                        mdlList.Add(mdl);
+                    }
+
+                    return Ok(mdlList);
                 }
             }
             catch (Exception e)
@@ -4144,13 +4342,27 @@ namespace ERP.Controllers
                             if (remainingQty != 0)
                             {
                                 model.Quantity = remainingQty.ToString();
+                                model.Qnt = remainingQty;
                                 modelList.Add(model);
                             }
                         }
                     }
 
                     modelList = modelList.OrderBy(x => x.Description).ToList();
-                    return Ok(modelList);
+
+                    var grpBy = modelList.GroupBy(x => new { x.Code, x.Description }).Select(g => new { key = g.Key, sum = g.Sum(p => p.Qnt) });
+
+                    List<FGAndSemiStockReportModel> mdlList = new List<FGAndSemiStockReportModel>();
+                    foreach (var grp in grpBy)
+                    {
+                        FGAndSemiStockReportModel mdl = new FGAndSemiStockReportModel();
+                        mdl.Code = grp.key.Code;
+                        mdl.Description = grp.key.Description;
+                        mdl.Quantity = grp.sum.ToString();
+                        mdlList.Add(mdl);
+                    }
+
+                    return Ok(mdlList);
                 }
             }
             catch (Exception e)

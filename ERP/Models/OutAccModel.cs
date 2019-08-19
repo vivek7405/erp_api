@@ -27,5 +27,6 @@ namespace ERP.Models
         public AccChallanDeductionModel[] AccChallanDeductions { get; set; }
         [DataMember]
         public AccPODeductionModel[] AccPODeductions { get; set; }
+        public int AccQntSum { get; set; }
     }
 }
