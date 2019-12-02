@@ -755,6 +755,81 @@ namespace ERP.Controllers
             }
         }
 
+        [HttpGet, Route("GetMainProductFGQuantityBASFInvoice")]
+        public IHttpActionResult GetMainProductFGQuantityBASFInvoice()
+        {
+            try
+            {
+                List<FGAndSemiStockReportModel> modelList = new List<FGAndSemiStockReportModel>();
+
+                using (var context = new erpdbEntities())
+                {
+                    var challanDetails = context.ChallanDetails.OrderBy(x => new { x.ChallanDate, x.ChallanNo }).ToList();
+
+                    foreach (var challanDetail in challanDetails)
+                    {
+                        foreach (var challanProduct in challanDetail.ChallanProducts)
+                        {
+                            int main = Convert.ToInt32(EProductCategorys.Main);
+
+                            if (challanProduct.ProductDetail.ProductType.ProductCategoryId == main && challanProduct.ChallanDeductions != null)
+                            {
+                                FGAndSemiStockReportModel model = new FGAndSemiStockReportModel();
+
+                                model.Code = challanProduct.ProductDetail.OutputCode;
+                                model.Description = challanProduct.ProductDetail.OutputMaterialDesc;
+                                //int remainingQty = Convert.ToInt32(challanProduct.InputQuantity);
+
+                                //if (challanProduct.ChallanDeductions != null && challanProduct.ChallanDeductions.Count > 0)
+                                //    remainingQty = Convert.ToInt32(challanProduct.InputQuantity) - Convert.ToInt32(challanProduct.ChallanDeductions.Sum(x => x.OutQuantity));
+
+                                //if (remainingQty == 0)
+                                //{
+                                model.Quantity = challanProduct.ChallanDeductions.Where(x => x.OutStock.VendorChallan.IsNg == 0).Sum(k => k.OutStock.OutputQuantity).Value.ToString();
+                                int invoiceQuantity = challanProduct.InvoiceChallanDeductions.Sum(k => k.InvoiceOutStock.OutputQuantity).Value;
+
+                                model.Quantity = Convert.ToString(Convert.ToInt32(model.Quantity) - invoiceQuantity);
+                                model.Qnt = Convert.ToInt32(model.Quantity);
+
+                                modelList.Add(model);
+                                //}
+                            }
+                        }
+                    }
+
+                    var grpBy = modelList.GroupBy(x => new { x.Code, x.Description }).Select(g => new { key = g.Key, sum = g.Sum(p => p.Qnt) });
+
+                    List<ProductQuantity> productQnts = new List<ProductQuantity>();
+
+                    List<FGAndSemiStockReportModel> mdlList = new List<FGAndSemiStockReportModel>();
+                    foreach (var grp in grpBy)
+                    {
+                        FGAndSemiStockReportModel mdl = new FGAndSemiStockReportModel();
+                        mdl.Code = grp.key.Code;
+                        mdl.Description = grp.key.Description;
+                        //mdl.Quantity = grp.sum.ToString();
+                        //mdlList.Add(mdl);
+
+                        if (grp.sum > 0)   //grp.sum = FG Quantity
+                        {
+                            ProductQuantity productQnty = new ProductQuantity();
+                            productQnty.ProductId = Convert.ToInt32(mdl.Code);
+                            productQnty.ProductName = mdl.Description;
+                            //productQnty.SplitRatio = Convert.ToInt32(mainProduct.SplitRatio);
+                            productQnty.RemainingQuantity = grp.sum;
+                            productQnts.Add(productQnty);
+                        }
+                    }                    
+
+                    return Ok(productQnts);
+                }
+            }
+            catch (Exception e)
+            {
+                return InternalServerError(new Exception("Something went wrong."));
+            }
+        }
+
         [HttpGet, Route("GetAccProductRemainingQuantity")]
         public IHttpActionResult GetAccProductRemainingQuantity()
         {
