@@ -813,13 +813,14 @@ namespace ERP.Controllers
                         if (grp.sum > 0)   //grp.sum = FG Quantity
                         {
                             ProductQuantity productQnty = new ProductQuantity();
-                            productQnty.ProductId = Convert.ToInt32(mdl.Code);
-                            productQnty.ProductName = mdl.Description;
-                            //productQnty.SplitRatio = Convert.ToInt32(mainProduct.SplitRatio);
+                            ProductDetail product = context.ProductDetails.Where(x => x.OutputCode.Equals(mdl.Code) && x.OutputMaterialDesc.Equals(mdl.Description)).FirstOrDefault();
+                            productQnty.ProductId = product.ProductId;
+                            productQnty.ProductName = mdl.Code;
+                            productQnty.SplitRatio = Convert.ToInt32(product.SplitRatio);
                             productQnty.RemainingQuantity = grp.sum;
                             productQnts.Add(productQnty);
                         }
-                    }                    
+                    }
 
                     return Ok(productQnts);
                 }
