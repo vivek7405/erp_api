@@ -778,21 +778,14 @@ namespace ERP.Controllers
 
                                 model.Code = challanProduct.ProductDetail.OutputCode;
                                 model.Description = challanProduct.ProductDetail.OutputMaterialDesc;
-                                //int remainingQty = Convert.ToInt32(challanProduct.InputQuantity);
 
-                                //if (challanProduct.ChallanDeductions != null && challanProduct.ChallanDeductions.Count > 0)
-                                //    remainingQty = Convert.ToInt32(challanProduct.InputQuantity) - Convert.ToInt32(challanProduct.ChallanDeductions.Sum(x => x.OutQuantity));
-
-                                //if (remainingQty == 0)
-                                //{
-                                model.Quantity = challanProduct.ChallanDeductions.Where(x => x.OutStock.VendorChallan.IsNg == 0).Sum(k => k.OutStock.OutputQuantity).Value.ToString();
-                                int invoiceQuantity = challanProduct.InvoiceChallanDeductions.Sum(k => k.InvoiceOutStock.OutputQuantity).Value;
+                                model.Quantity = challanProduct.ChallanDeductions.Where(x => x.OutStock.VendorChallan.IsNg == 0).Sum(k => k.OutQuantity).Value.ToString();
+                                int invoiceQuantity = challanProduct.InvoiceChallanDeductions.Sum(k => k.OutQuantity).Value;
 
                                 model.Quantity = Convert.ToString(Convert.ToInt32(model.Quantity) - invoiceQuantity);
-                                model.Qnt = Convert.ToInt32(model.Quantity);
+                                model.Qnt = Convert.ToInt32(model.Quantity) * Convert.ToInt32(challanProduct.ProductDetail.SplitRatio);
 
                                 modelList.Add(model);
-                                //}
                             }
                         }
                     }
@@ -4362,21 +4355,17 @@ namespace ERP.Controllers
 
                                 model.Code = challanProduct.ProductDetail.OutputCode;
                                 model.Description = challanProduct.ProductDetail.OutputMaterialDesc;
-                                //int remainingQty = Convert.ToInt32(challanProduct.InputQuantity);
 
-                                //if (challanProduct.ChallanDeductions != null && challanProduct.ChallanDeductions.Count > 0)
-                                //    remainingQty = Convert.ToInt32(challanProduct.InputQuantity) - Convert.ToInt32(challanProduct.ChallanDeductions.Sum(x => x.OutQuantity));
+                                //model.Quantity = challanProduct.ChallanDeductions.Where(x => x.OutStock.VendorChallan.IsNg == 0).Sum(k => k.OutStock.OutputQuantity).Value.ToString();
+                                //int invoiceQuantity = challanProduct.InvoiceChallanDeductions.Sum(k => k.InvoiceOutStock.OutputQuantity).Value;
 
-                                //if (remainingQty == 0)
-                                //{
-                                model.Quantity = challanProduct.ChallanDeductions.Where(x => x.OutStock.VendorChallan.IsNg == 0).Sum(k => k.OutStock.OutputQuantity).Value.ToString();
-                                int invoiceQuantity = challanProduct.InvoiceChallanDeductions.Sum(k => k.InvoiceOutStock.OutputQuantity).Value;
+                                model.Quantity = challanProduct.ChallanDeductions.Where(x => x.OutStock.VendorChallan.IsNg == 0).Sum(k => k.OutQuantity).Value.ToString();
+                                int invoiceQuantity = challanProduct.InvoiceChallanDeductions.Sum(k => k.OutQuantity).Value;
 
                                 model.Quantity = Convert.ToString(Convert.ToInt32(model.Quantity) - invoiceQuantity);
-                                model.Qnt = Convert.ToInt32(model.Quantity);
+                                model.Qnt = Convert.ToInt32(model.Quantity) * Convert.ToInt32(challanProduct.ProductDetail.SplitRatio);
 
                                 modelList.Add(model);
-                                //}
                             }
                         }
                     }
