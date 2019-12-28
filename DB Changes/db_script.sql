@@ -18,7 +18,8 @@
 --create table PODetails (POId integer primary key identity, PONo varchar(50) NOT NULL UNIQUE, PODate datetime, CreateDate datetime, EditDate datetime);
 --create table POProducts (POProductId integer primary key identity, POId integer FOREIGN KEY REFERENCES PODetails(POId), ProductId integer FOREIGN KEY REFERENCES ProductDetails(ProductId), InputQuantity integer, CreateDate datetime, EditDate datetime);
 
---create table VendorChallans (VendorChallanNo integer primary key identity, VendorChallanDate datetime, IsNg integer, CreateDate datetime, EditDate datetime);
+--create table VendorChallans (VendorChallanNo integer primary key identity, VendorChallanDate datetime, IsNg integer, CreateDate datetime, EditDate datetime, VendorChallanNumber varchar(50));
+--CREATE UNIQUE INDEX unq_vndchln_vndchlnnum ON VendorChallans(VendorChallanNumber) WHERE VendorChallanNumber IS NOT NULL;
 --create table OutStocks (OutStockId integer primary key identity, VendorChallanNo integer FOREIGN KEY REFERENCES VendorChallans(VendorChallanNo), OutputQuantity integer, CreateDate datetime, EditDate datetime);
 --create table OutAccs (OutAccId integer primary key identity, OutStockId integer FOREIGN KEY REFERENCES OutStocks(OutStockId), OutputQuantity integer, CreateDate datetime, EditDate datetime);
 --create table OutAssemblys (OutAssemblyId integer primary key identity, OutStockId integer FOREIGN KEY REFERENCES OutStocks(OutStockId), OutputQuantity integer, CreateDate datetime, EditDate datetime);
@@ -103,17 +104,17 @@
 --delete from ProductDetails;
 
 
+--<connectionStrings>
+--    <add name="erpdbEntities" connectionString="metadata=res://*/DB.csdl|res://*/DB.ssdl|res://*/DB.msl;provider=System.Data.SqlClient;provider connection string=&quot;data source=localhost;initial catalog=erpdb;persist security info=True;user id=user;password=admin;MultipleActiveResultSets=True;App=EntityFramework&quot;" providerName="System.Data.EntityClient" />
+--</connectionStrings>
+
+
 
 select * from ProductCategorys;
 select * from ProductTypes;
 
 select * from ProductDetails;
 select * from ProductMappings;
-
---update ProductDetails set InputMaterialDesc = 'Split Product', OutputMaterialDesc = 'Split Product' where ProductId = 12;
-
---INSERT INTO ProductMappings (ProductId, MappingProductId, CreateDate, EditDate) values (1, 9, GETDATE(), GETDATE());
---INSERT INTO ProductMappings (ProductId, MappingProductId, CreateDate, EditDate) values (1, 11, GETDATE(), GETDATE());
 
 select * from VendorChallans;
 select * from OutStocks;

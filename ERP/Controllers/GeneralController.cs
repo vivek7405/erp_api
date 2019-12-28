@@ -938,6 +938,7 @@ namespace ERP.Controllers
                 try
                 {
                     VendorChallan vendorChallan = new VendorChallan();
+                    vendorChallan.VendorChallanNumber = model.VendorChallanNumber;
                     vendorChallan.VendorChallanDate = model.VendorChallanDate;
                     vendorChallan.IsNg = model.IsNg ? 1 : 0;
                     vendorChallan.CreateDate = DateTime.Now;
@@ -1980,6 +1981,7 @@ namespace ERP.Controllers
                     {
                         VendorChallanModel model = new VendorChallanModel();
                         model.VendorChallanNo = vendorChallan.VendorChallanNo;
+                        model.VendorChallanNumber = vendorChallan.VendorChallanNumber;
                         model.VendorChallanDate = vendorChallan.VendorChallanDate ?? new DateTime();
                         model.CreateDate = vendorChallan.CreateDate ?? new DateTime();
                         model.EditDate = vendorChallan.EditDate ?? new DateTime();
@@ -2098,6 +2100,7 @@ namespace ERP.Controllers
                     {
                         VendorChallanModel model = new VendorChallanModel();
                         model.VendorChallanNo = vendorChallan.VendorChallanNo;
+                        model.VendorChallanNumber = vendorChallan.VendorChallanNumber;
                         model.VendorChallanDate = vendorChallan.VendorChallanDate ?? new DateTime();
                         model.CreateDate = vendorChallan.CreateDate ?? new DateTime();
                         model.EditDate = vendorChallan.EditDate ?? new DateTime();
@@ -2355,6 +2358,82 @@ namespace ERP.Controllers
             }
         }
 
+        [HttpPost, Route("GetBASFInvoiceGridByBASFInvoiceId")]
+        public IHttpActionResult GetBASFInvoiceGridByBASFInvoiceId(VendorChallanNoModel vendorChallanNoModel)
+        {
+            using (var context = new erpdbEntities())
+            {
+                try
+                {
+                    return Ok(GetBASFInvoiceGridByBASFInvoiceIdPrivate(vendorChallanNoModel.VendorChallanNo));
+                }
+                catch (Exception e)
+                {
+                    return InternalServerError();
+                }
+            }
+        }
+
+        private List<VendorChallanGridModel> GetBASFInvoiceGridByBASFInvoiceIdPrivate(int basfInvoiceId)
+        {
+            using (var context = new erpdbEntities())
+            {
+                try
+                {
+                    BASFInvoiceModel model = GetBASFInvoiceByBASFInvoiceIdPrivate(basfInvoiceId);
+
+                    List<VendorChallanGridModel> list = new List<VendorChallanGridModel>();
+
+                    foreach (var invoiceOutStock in model.InvoiceOutStocks)
+                    {
+                        foreach (var challanDeduction in invoiceOutStock.InvoiceChallanDeductions)
+                        {
+                            invoiceOutStock.MainQntSum += challanDeduction.OutQuantity;
+                        }
+                    }
+
+                    foreach (var invoiceOutStock in model.InvoiceOutStocks)
+                    {
+                        int index = 0;
+                        foreach (var invoiceChallanDeduction in invoiceOutStock.InvoiceChallanDeductions)
+                        {
+                            VendorChallanGridModel item = new VendorChallanGridModel();
+
+                            if (index == 0)
+                            {
+                                item.ProjectName = invoiceChallanDeduction.ChallanProduct.ProductDetail.ProjectName;
+                                item.OutputCode = invoiceChallanDeduction.ChallanProduct.ProductDetail.OutputCode;
+                                item.OutputMaterialDesc = invoiceChallanDeduction.ChallanProduct.ProductDetail.OutputMaterialDesc;
+                                item.OutputQuantity = invoiceOutStock.OutputQuantity.ToString();                                
+                            }
+
+                            item.InputCode = invoiceChallanDeduction.ChallanProduct.ProductDetail.InputCode;
+                            item.InputMaterialDesc = invoiceChallanDeduction.ChallanProduct.ProductDetail.InputMaterialDesc;
+                            item.InputQuantity = invoiceChallanDeduction.OutQuantity.ToString();
+                            item.PartType = invoiceChallanDeduction.ChallanProduct.ProductDetail.ProductTypeName;
+                            item.BASFChallanNo = invoiceChallanDeduction.ChallanProduct.ChallanDetail.ChallanNo;
+                            item.Balance = invoiceChallanDeduction.ChallanProduct.RemainingQuantity.ToString();                                                        
+
+                            list.Add(item);
+
+                            index++;
+                        }
+
+                        VendorChallanGridModel item2 = new VendorChallanGridModel();
+                        item2.InputMaterialDesc = "SUBTOTAL";
+                        item2.InputQuantity = invoiceOutStock.MainQntSum.ToString();
+                        list.Add(item2);
+                    }
+
+                    return list;
+                }
+                catch (Exception e)
+                {
+                    throw new Exception();
+                }
+            }
+        }
+
         [HttpPost, Route("GetBASFInvoiceByBASFInvoiceId")]
         public IHttpActionResult GetBASFInvoiceByBASFInvoiceId(VendorChallanNoModel vendorChallanNoModel)
         {
@@ -2382,7 +2461,7 @@ namespace ERP.Controllers
 
                     string html = "";
 
-                    html += "<html><div style=\"margin: 1%\"><table style=\"border: 1px solid; width: 100%;\"><tr style=\"width: 100%\"><td style=\"width: 33%\"><b>Vibrant Challan No: </b>" + vendorChallan.VendorChallanNo + "</td><td style=\"width: 33%\"><b>Vibrant Challan Date: </b>" + vendorChallan.VendorChallanDate.ToShortDateString() + "</td>" + "<td style=\"width: 33%\"><b>Total Stock Out: </b>" + vendorChallan.OutStocks.Sum(x => x.OutputQuantity).ToString() + "</td></tr></table>";
+                    html += "<html><div style=\"margin: 1%\"><table style=\"border: 1px solid; width: 100%;\"><tr style=\"width: 100%\"><td style=\"width: 33%\"><b>Vibrant Challan No: </b>" + vendorChallan.VendorChallanNumber + "</td><td style=\"width: 33%\"><b>Vibrant Challan Date: </b>" + vendorChallan.VendorChallanDate.ToShortDateString() + "</td>" + "<td style=\"width: 33%\"><b>Total Stock Out: </b>" + vendorChallan.OutStocks.Sum(x => x.OutputQuantity).ToString() + "</td></tr></table>";
 
                     html += "<br>";
 
@@ -2666,6 +2745,7 @@ namespace ERP.Controllers
 
                     VendorChallanModel model = new VendorChallanModel();
                     model.VendorChallanNo = vendorChallan.VendorChallanNo;
+                    model.VendorChallanNumber = vendorChallan.VendorChallanNumber;
                     model.VendorChallanDate = vendorChallan.VendorChallanDate ?? new DateTime();
                     model.CreateDate = vendorChallan.CreateDate ?? new DateTime();
                     model.EditDate = vendorChallan.EditDate ?? new DateTime();
@@ -4002,48 +4082,179 @@ namespace ERP.Controllers
                 {
                     var challanDetail = context.ChallanDetails.Where(x => x.ChallanId == challanId).FirstOrDefault();
 
+                    var main = Convert.ToInt32(EProductCategorys.Main);
+                    var assembly = Convert.ToInt32(EProductCategorys.Assembly);
+                    var acc = Convert.ToInt32(EProductCategorys.Accessories);
+
                     foreach (var challanProduct in challanDetail.ChallanProducts)
                     {
-                        var challanDeductions = context.ChallanDeductions.Where(x => x.ChallanProduct.ChallanProductId == challanProduct.ChallanProductId).ToList();
+                        BASFChallanPOWhereUsedModel model = new BASFChallanPOWhereUsedModel();
 
-                        int challanDeductionIndex = 0;
-                        if (challanDeductions.Count > 0)
+                        if (challanProduct.ProductDetail.ProductType.ProductCategoryId == main && challanProduct.ChallanDeductions != null && challanProduct.ChallanDeductions.Count > 0)
                         {
-                            foreach (var challanDeduction in challanDeductions)
+                            var challanDeductions = context.ChallanDeductions.Where(x => x.ChallanProduct.ChallanProductId == challanProduct.ChallanProductId).ToList();
+
+                            if (challanDeductions.Count > 0)
                             {
-                                BASFChallanPOWhereUsedModel model = new BASFChallanPOWhereUsedModel();
-
-                                if (challanDeductionIndex == 0)
+                                int challanDeductionIndex = 0;
+                                foreach (var challanDeduction in challanDeductions)
                                 {
-                                    model.InputCode = challanProduct.ProductDetail.InputCode;
-                                    model.InputMaterialDesc = challanProduct.ProductDetail.InputMaterialDesc;
-                                    model.InputQuantity = Convert.ToString(challanProduct.InputQuantity);
-                                    model.RemainingQuantity = model.InputQuantity;
+                                    model = new BASFChallanPOWhereUsedModel();
 
-                                    if (challanProduct.ChallanDeductions != null && challanProduct.ChallanDeductions.Count > 0)
+                                    if (challanDeductionIndex == 0)
+                                    {
+                                        model.InputCode = challanProduct.ProductDetail.InputCode;
+                                        model.InputMaterialDesc = challanProduct.ProductDetail.InputMaterialDesc;
+                                        model.InputQuantity = Convert.ToString(challanProduct.InputQuantity);
                                         model.RemainingQuantity = Convert.ToString(challanProduct.InputQuantity - challanProduct.ChallanDeductions.Sum(x => x.OutQuantity));
-                                    else if (challanProduct.AccChallanDeductions != null && challanProduct.AccChallanDeductions.Count > 0)
-                                        model.RemainingQuantity = Convert.ToString(challanProduct.InputQuantity - challanProduct.AccChallanDeductions.Sum(x => x.OutQuantity));
-                                    else if (challanProduct.AssemblyChallanDeductions != null && challanProduct.AssemblyChallanDeductions.Count > 0)
-                                        model.RemainingQuantity = Convert.ToString(challanProduct.InputQuantity - challanProduct.AssemblyChallanDeductions.Sum(x => x.OutQuantity));
+                                        model.TotalUsed = Convert.ToString(Convert.ToInt32(model.InputQuantity) - Convert.ToInt32(model.RemainingQuantity));
+                                    }
 
-                                    model.TotalUsed = Convert.ToString(Convert.ToInt32(model.InputQuantity) - Convert.ToInt32(model.RemainingQuantity));
+                                    model.ChallanNo = challanDetail.ChallanNo;
+
+                                    int vendorChallanNo = Convert.ToInt32(challanDeduction.OutStock.VendorChallanNo);
+                                    model.VendorChallanNo = context.VendorChallans.Where(x => x.VendorChallanNo == vendorChallanNo).Select(x => x.VendorChallanNumber).FirstOrDefault();
+                                    var PUChallanDeductions = challanDeduction.OutStock.ChallanDeductions.ToList();
+                                    model.OutputCode = PUChallanDeductions.Count > 0 ? PUChallanDeductions[0].ChallanProduct.ProductDetail.OutputCode : "NA";
+                                    model.VendorChallanDate = challanDeduction.OutStock.VendorChallan.VendorChallanDate.Value.ToShortDateString();
+                                    model.VendorChallanOutQnt = Convert.ToString(challanDeduction.OutQuantity);
+
+                                    modelList.Add(model);
+
+                                    challanDeductionIndex++;
                                 }
+                            }
+                            else
+                            {
+                                model = new BASFChallanPOWhereUsedModel();
+
+                                model.InputCode = challanProduct.ProductDetail.InputCode;
+                                model.InputMaterialDesc = challanProduct.ProductDetail.InputMaterialDesc;
+                                model.InputQuantity = Convert.ToString(challanProduct.InputQuantity);
+                                model.RemainingQuantity = model.InputQuantity;
+                                model.TotalUsed = "0";
 
                                 model.ChallanNo = challanDetail.ChallanNo;
 
-                                model.VendorChallanNo = Convert.ToString(challanDeduction.OutStock.VendorChallanNo);
-                                model.VendorChallanDate = challanDeduction.OutStock.VendorChallan.VendorChallanDate.Value.ToShortDateString();
-                                model.VendorChallanOutQnt = Convert.ToString(challanDeduction.OutQuantity);
+                                model.VendorChallanNo = "NA";
+                                model.OutputCode = "NA";
+                                model.VendorChallanDate = "NA";
+                                model.VendorChallanOutQnt = "NA";
 
                                 modelList.Add(model);
+                            }
+                        }
+                        else if (challanProduct.ProductDetail.ProductType.ProductCategoryId == assembly && challanProduct.AssemblyChallanDeductions != null && challanProduct.AssemblyChallanDeductions.Count > 0)
+                        {
+                            var assemblyChallanDeductions = context.AssemblyChallanDeductions.Where(x => x.ChallanProduct.ChallanProductId == challanProduct.ChallanProductId).ToList();
 
-                                challanDeductionIndex++;
+                            if (assemblyChallanDeductions.Count > 0)
+                            {
+                                int challanDeductionIndex = 0;
+                                foreach (var assemblyChallanDeduction in assemblyChallanDeductions)
+                                {
+                                    model = new BASFChallanPOWhereUsedModel();
+
+                                    if (challanDeductionIndex == 0)
+                                    {
+                                        model.InputCode = challanProduct.ProductDetail.InputCode;
+                                        model.InputMaterialDesc = challanProduct.ProductDetail.InputMaterialDesc;
+                                        model.InputQuantity = Convert.ToString(challanProduct.InputQuantity);
+                                        model.RemainingQuantity = Convert.ToString(challanProduct.InputQuantity - challanProduct.AssemblyChallanDeductions.Sum(x => x.OutQuantity));
+                                        model.TotalUsed = Convert.ToString(Convert.ToInt32(model.InputQuantity) - Convert.ToInt32(model.RemainingQuantity));
+                                    }
+
+                                    model.ChallanNo = challanDetail.ChallanNo;
+
+                                    int vendorChallanNo = Convert.ToInt32(assemblyChallanDeduction.OutAssembly.OutStock.VendorChallanNo);
+                                    model.VendorChallanNo = context.VendorChallans.Where(x => x.VendorChallanNo == vendorChallanNo).Select(x => x.VendorChallanNumber).FirstOrDefault();
+                                    var PUChallanDeductions = assemblyChallanDeduction.OutAssembly.OutStock.ChallanDeductions.ToList();
+                                    model.OutputCode = PUChallanDeductions.Count > 0 ? PUChallanDeductions[0].ChallanProduct.ProductDetail.OutputCode : "NA";
+                                    model.VendorChallanDate = assemblyChallanDeduction.OutAssembly.OutStock.VendorChallan.VendorChallanDate.Value.ToShortDateString();
+                                    model.VendorChallanOutQnt = Convert.ToString(assemblyChallanDeduction.OutQuantity);
+
+                                    modelList.Add(model);
+
+                                    challanDeductionIndex++;
+                                }
+                            }
+                            else
+                            {
+                                model = new BASFChallanPOWhereUsedModel();
+
+                                model.InputCode = challanProduct.ProductDetail.InputCode;
+                                model.InputMaterialDesc = challanProduct.ProductDetail.InputMaterialDesc;
+                                model.InputQuantity = Convert.ToString(challanProduct.InputQuantity);
+                                model.RemainingQuantity = model.InputQuantity;
+                                model.TotalUsed = "0";
+
+                                model.ChallanNo = challanDetail.ChallanNo;
+
+                                model.VendorChallanNo = "NA";
+                                model.OutputCode = "NA";
+                                model.VendorChallanDate = "NA";
+                                model.VendorChallanOutQnt = "NA";
+
+                                modelList.Add(model);
+                            }
+                        }
+                        else if (challanProduct.ProductDetail.ProductType.ProductCategoryId == acc && challanProduct.AccChallanDeductions != null && challanProduct.AccChallanDeductions.Count > 0)
+                        {
+                            var accChallanDeductions = context.AccChallanDeductions.Where(x => x.ChallanProduct.ChallanProductId == challanProduct.ChallanProductId).ToList();
+
+                            if (accChallanDeductions.Count > 0)
+                            {
+                                int challanDeductionIndex = 0;
+                                foreach (var accChallanDeduction in accChallanDeductions)
+                                {
+                                    model = new BASFChallanPOWhereUsedModel();
+
+                                    if (challanDeductionIndex == 0)
+                                    {
+                                        model.InputCode = challanProduct.ProductDetail.InputCode;
+                                        model.InputMaterialDesc = challanProduct.ProductDetail.InputMaterialDesc;
+                                        model.InputQuantity = Convert.ToString(challanProduct.InputQuantity);
+                                        model.RemainingQuantity = Convert.ToString(challanProduct.InputQuantity - challanProduct.AccChallanDeductions.Sum(x => x.OutQuantity));
+                                        model.TotalUsed = Convert.ToString(Convert.ToInt32(model.InputQuantity) - Convert.ToInt32(model.RemainingQuantity));
+                                    }
+
+                                    model.ChallanNo = challanDetail.ChallanNo;
+
+                                    int vendorChallanNo = Convert.ToInt32(accChallanDeduction.OutAcc.OutStock.VendorChallanNo);
+                                    model.VendorChallanNo = context.VendorChallans.Where(x => x.VendorChallanNo == vendorChallanNo).Select(x => x.VendorChallanNumber).FirstOrDefault();
+                                    var PUChallanDeductions = accChallanDeduction.OutAcc.OutStock.ChallanDeductions.ToList();                                    
+                                    model.OutputCode = PUChallanDeductions.Count > 0 ? PUChallanDeductions[0].ChallanProduct.ProductDetail.OutputCode : "NA";
+                                    model.VendorChallanDate = accChallanDeduction.OutAcc.OutStock.VendorChallan.VendorChallanDate.Value.ToShortDateString();
+                                    model.VendorChallanOutQnt = Convert.ToString(accChallanDeduction.OutQuantity);
+
+                                    modelList.Add(model);
+
+                                    challanDeductionIndex++;
+                                }
+                            }
+                            else
+                            {
+                                model = new BASFChallanPOWhereUsedModel();
+
+                                model.InputCode = challanProduct.ProductDetail.InputCode;
+                                model.InputMaterialDesc = challanProduct.ProductDetail.InputMaterialDesc;
+                                model.InputQuantity = Convert.ToString(challanProduct.InputQuantity);
+                                model.RemainingQuantity = model.InputQuantity;
+                                model.TotalUsed = "0";
+
+                                model.ChallanNo = challanDetail.ChallanNo;
+
+                                model.VendorChallanNo = "NA";
+                                model.OutputCode = "NA";
+                                model.VendorChallanDate = "NA";
+                                model.VendorChallanOutQnt = "NA";
+
+                                modelList.Add(model);
                             }
                         }
                         else
                         {
-                            BASFChallanPOWhereUsedModel model = new BASFChallanPOWhereUsedModel();
+                            model = new BASFChallanPOWhereUsedModel();
 
                             model.InputCode = challanProduct.ProductDetail.InputCode;
                             model.InputMaterialDesc = challanProduct.ProductDetail.InputMaterialDesc;
@@ -4054,15 +4265,16 @@ namespace ERP.Controllers
                             model.ChallanNo = challanDetail.ChallanNo;
 
                             model.VendorChallanNo = "NA";
+                            model.OutputCode = "NA";
                             model.VendorChallanDate = "NA";
                             model.VendorChallanOutQnt = "NA";
 
                             modelList.Add(model);
-                        }
+                        }                        
                     }
-                }
 
-                return Ok(modelList);
+                    return Ok(modelList);
+                }
             }
             catch (Exception e)
             {
@@ -4083,48 +4295,179 @@ namespace ERP.Controllers
                 {
                     var poDetail = context.PODetails.Where(x => x.POId == poId).FirstOrDefault();
 
+                    var main = Convert.ToInt32(EProductCategorys.Main);
+                    var assembly = Convert.ToInt32(EProductCategorys.Assembly);
+                    var acc = Convert.ToInt32(EProductCategorys.Accessories);
+
                     foreach (var poProduct in poDetail.POProducts)
                     {
-                        var poDeductions = context.PODeductions.Where(x => x.POProduct.POProductId == poProduct.POProductId).ToList();
+                        BASFChallanPOWhereUsedModel model = new BASFChallanPOWhereUsedModel();
 
-                        int poDeductionIndex = 0;
-                        if (poDeductions.Count > 0)
+                        if (poProduct.ProductDetail.ProductType.ProductCategoryId == main && poProduct.PODeductions != null && poProduct.PODeductions.Count > 0)
                         {
-                            foreach (var poDeduction in poDeductions)
+                            var poDeductions = context.PODeductions.Where(x => x.POProduct.POProductId == poProduct.POProductId).ToList();
+
+                            if (poDeductions.Count > 0)
                             {
-                                BASFChallanPOWhereUsedModel model = new BASFChallanPOWhereUsedModel();
-
-                                if (poDeductionIndex == 0)
+                                int poDeductionIndex = 0;
+                                foreach (var poDeduction in poDeductions)
                                 {
-                                    model.InputCode = poProduct.ProductDetail.InputCode;
-                                    model.InputMaterialDesc = poProduct.ProductDetail.InputMaterialDesc;
-                                    model.InputQuantity = Convert.ToString(poProduct.InputQuantity);
-                                    model.RemainingQuantity = model.InputQuantity;
+                                    model = new BASFChallanPOWhereUsedModel();
 
-                                    if (poProduct.PODeductions != null && poProduct.PODeductions.Count > 0)
+                                    if (poDeductionIndex == 0)
+                                    {
+                                        model.InputCode = poProduct.ProductDetail.InputCode;
+                                        model.InputMaterialDesc = poProduct.ProductDetail.InputMaterialDesc;
+                                        model.InputQuantity = Convert.ToString(poProduct.InputQuantity);
                                         model.RemainingQuantity = Convert.ToString(poProduct.InputQuantity - poProduct.PODeductions.Sum(x => x.OutQuantity));
-                                    else if (poProduct.AccPODeductions != null && poProduct.AccPODeductions.Count > 0)
-                                        model.RemainingQuantity = Convert.ToString(poProduct.InputQuantity - poProduct.AccPODeductions.Sum(x => x.OutQuantity));
-                                    else if (poProduct.AssemblyPODeductions != null && poProduct.AssemblyPODeductions.Count > 0)
-                                        model.RemainingQuantity = Convert.ToString(poProduct.InputQuantity - poProduct.AssemblyPODeductions.Sum(x => x.OutQuantity));
+                                        model.TotalUsed = Convert.ToString(Convert.ToInt32(model.InputQuantity) - Convert.ToInt32(model.RemainingQuantity));
+                                    }
 
-                                    model.TotalUsed = Convert.ToString(Convert.ToInt32(model.InputQuantity) - Convert.ToInt32(model.RemainingQuantity));
+                                    model.ChallanNo = poDetail.PONo;                                    
+
+                                    int vendorChallanNo = Convert.ToInt32(poDeduction.OutStock.VendorChallanNo);
+                                    model.VendorChallanNo = context.VendorChallans.Where(x => x.VendorChallanNo == vendorChallanNo).Select(x => x.VendorChallanNumber).FirstOrDefault();
+                                    var PUPODeductions = poDeduction.OutStock.PODeductions.ToList();
+                                    model.OutputCode = PUPODeductions.Count > 0 ? PUPODeductions[0].POProduct.ProductDetail.OutputCode : "NA";
+                                    model.VendorChallanDate = poDeduction.OutStock.VendorChallan.VendorChallanDate.Value.ToShortDateString();
+                                    model.VendorChallanOutQnt = Convert.ToString(poDeduction.OutQuantity);
+
+                                    modelList.Add(model);
+
+                                    poDeductionIndex++;
                                 }
+                            }
+                            else
+                            {
+                                model = new BASFChallanPOWhereUsedModel();
+
+                                model.InputCode = poProduct.ProductDetail.InputCode;
+                                model.InputMaterialDesc = poProduct.ProductDetail.InputMaterialDesc;
+                                model.InputQuantity = Convert.ToString(poProduct.InputQuantity);
+                                model.RemainingQuantity = model.InputQuantity;
+                                model.TotalUsed = "0";
 
                                 model.ChallanNo = poDetail.PONo;
 
-                                model.VendorChallanNo = Convert.ToString(poDeduction.OutStock.VendorChallanNo);
-                                model.VendorChallanDate = poDeduction.OutStock.VendorChallan.VendorChallanDate.Value.ToShortDateString();
-                                model.VendorChallanOutQnt = Convert.ToString(poDeduction.OutQuantity);
+                                model.VendorChallanNo = "NA";
+                                model.OutputCode = "NA";
+                                model.VendorChallanDate = "NA";
+                                model.VendorChallanOutQnt = "NA";
 
                                 modelList.Add(model);
+                            }
+                        }
+                        else if (poProduct.ProductDetail.ProductType.ProductCategoryId == assembly && poProduct.AssemblyPODeductions != null && poProduct.AssemblyPODeductions.Count > 0)
+                        {
+                            var assemblyPODeductions = context.AssemblyPODeductions.Where(x => x.POProduct.POProductId == poProduct.POProductId).ToList();
 
-                                poDeductionIndex++;
+                            if (assemblyPODeductions.Count > 0)
+                            {
+                                int poDeductionIndex = 0;
+                                foreach (var assemblyPODeduction in assemblyPODeductions)
+                                {
+                                    model = new BASFChallanPOWhereUsedModel();
+
+                                    if (poDeductionIndex == 0)
+                                    {
+                                        model.InputCode = poProduct.ProductDetail.InputCode;
+                                        model.InputMaterialDesc = poProduct.ProductDetail.InputMaterialDesc;
+                                        model.InputQuantity = Convert.ToString(poProduct.InputQuantity);
+                                        model.RemainingQuantity = Convert.ToString(poProduct.InputQuantity - poProduct.AssemblyPODeductions.Sum(x => x.OutQuantity));
+                                        model.TotalUsed = Convert.ToString(Convert.ToInt32(model.InputQuantity) - Convert.ToInt32(model.RemainingQuantity));
+                                    }
+
+                                    model.ChallanNo = poDetail.PONo;
+
+                                    int vendorChallanNo = Convert.ToInt32(assemblyPODeduction.OutAssembly.OutStock.VendorChallanNo);
+                                    model.VendorChallanNo = context.VendorChallans.Where(x => x.VendorChallanNo == vendorChallanNo).Select(x => x.VendorChallanNumber).FirstOrDefault();
+                                    var PUPODeductions = assemblyPODeduction.OutAssembly.OutStock.PODeductions.ToList();
+                                    model.OutputCode = PUPODeductions.Count > 0 ? PUPODeductions[0].POProduct.ProductDetail.OutputCode : "NA";
+                                    model.VendorChallanDate = assemblyPODeduction.OutAssembly.OutStock.VendorChallan.VendorChallanDate.Value.ToShortDateString();
+                                    model.VendorChallanOutQnt = Convert.ToString(assemblyPODeduction.OutQuantity);
+
+                                    modelList.Add(model);
+
+                                    poDeductionIndex++;
+                                }
+                            }
+                            else
+                            {
+                                model = new BASFChallanPOWhereUsedModel();
+
+                                model.InputCode = poProduct.ProductDetail.InputCode;
+                                model.InputMaterialDesc = poProduct.ProductDetail.InputMaterialDesc;
+                                model.InputQuantity = Convert.ToString(poProduct.InputQuantity);
+                                model.RemainingQuantity = model.InputQuantity;
+                                model.TotalUsed = "0";
+
+                                model.ChallanNo = poDetail.PONo;
+
+                                model.VendorChallanNo = "NA";
+                                model.OutputCode = "NA";
+                                model.VendorChallanDate = "NA";
+                                model.VendorChallanOutQnt = "NA";
+
+                                modelList.Add(model);
+                            }
+                        }
+                        else if (poProduct.ProductDetail.ProductType.ProductCategoryId == acc && poProduct.AccPODeductions != null && poProduct.AccPODeductions.Count > 0)
+                        {
+                            var accPODeductions = context.AccPODeductions.Where(x => x.POProduct.POProductId == poProduct.POProductId).ToList();
+
+                            if (accPODeductions.Count > 0)
+                            {
+                                int poDeductionIndex = 0;
+                                foreach (var accPODeduction in accPODeductions)
+                                {
+                                    model = new BASFChallanPOWhereUsedModel();
+
+                                    if (poDeductionIndex == 0)
+                                    {
+                                        model.InputCode = poProduct.ProductDetail.InputCode;
+                                        model.InputMaterialDesc = poProduct.ProductDetail.InputMaterialDesc;
+                                        model.InputQuantity = Convert.ToString(poProduct.InputQuantity);
+                                        model.RemainingQuantity = Convert.ToString(poProduct.InputQuantity - poProduct.AccPODeductions.Sum(x => x.OutQuantity));
+                                        model.TotalUsed = Convert.ToString(Convert.ToInt32(model.InputQuantity) - Convert.ToInt32(model.RemainingQuantity));
+                                    }
+
+                                    model.ChallanNo = poDetail.PONo;
+
+                                    int vendorChallanNo = Convert.ToInt32(accPODeduction.OutAcc.OutStock.VendorChallanNo);
+                                    model.VendorChallanNo = context.VendorChallans.Where(x => x.VendorChallanNo == vendorChallanNo).Select(x => x.VendorChallanNumber).FirstOrDefault();
+                                    var PUPODeductions = accPODeduction.OutAcc.OutStock.PODeductions.ToList();
+                                    model.OutputCode = PUPODeductions.Count > 0 ? PUPODeductions[0].POProduct.ProductDetail.OutputCode : "NA";
+                                    model.VendorChallanDate = accPODeduction.OutAcc.OutStock.VendorChallan.VendorChallanDate.Value.ToShortDateString();
+                                    model.VendorChallanOutQnt = Convert.ToString(accPODeduction.OutQuantity);
+
+                                    modelList.Add(model);
+
+                                    poDeductionIndex++;
+                                }
+                            }
+                            else
+                            {
+                                model = new BASFChallanPOWhereUsedModel();
+
+                                model.InputCode = poProduct.ProductDetail.InputCode;
+                                model.InputMaterialDesc = poProduct.ProductDetail.InputMaterialDesc;
+                                model.InputQuantity = Convert.ToString(poProduct.InputQuantity);
+                                model.RemainingQuantity = model.InputQuantity;
+                                model.TotalUsed = "0";
+
+                                model.ChallanNo = poDetail.PONo;
+
+                                model.VendorChallanNo = "NA";
+                                model.OutputCode = "NA";
+                                model.VendorChallanDate = "NA";
+                                model.VendorChallanOutQnt = "NA";
+
+                                modelList.Add(model);
                             }
                         }
                         else
                         {
-                            BASFChallanPOWhereUsedModel model = new BASFChallanPOWhereUsedModel();
+                            model = new BASFChallanPOWhereUsedModel();
 
                             model.InputCode = poProduct.ProductDetail.InputCode;
                             model.InputMaterialDesc = poProduct.ProductDetail.InputMaterialDesc;
@@ -4135,15 +4478,16 @@ namespace ERP.Controllers
                             model.ChallanNo = poDetail.PONo;
 
                             model.VendorChallanNo = "NA";
+                            model.OutputCode = "NA";
                             model.VendorChallanDate = "NA";
                             model.VendorChallanOutQnt = "NA";
 
                             modelList.Add(model);
                         }
                     }
-                }
 
-                return Ok(modelList);
+                    return Ok(modelList);
+                }
             }
             catch (Exception e)
             {
@@ -4164,44 +4508,70 @@ namespace ERP.Controllers
                 {
                     var challanDetail = context.ChallanDetails.Where(x => x.ChallanId == challanId).FirstOrDefault();
 
+                    var main = Convert.ToInt32(EProductCategorys.Main);
+                    var assembly = Convert.ToInt32(EProductCategorys.Assembly);
+                    var acc = Convert.ToInt32(EProductCategorys.Accessories);
+
                     foreach (var challanProduct in challanDetail.ChallanProducts)
                     {
-                        var challanDeductions = context.InvoiceChallanDeductions.Where(x => x.ChallanProduct.ChallanProductId == challanProduct.ChallanProductId).ToList();
+                        BASFChallanPOWhereUsedModel model = new BASFChallanPOWhereUsedModel();
 
-                        int challanDeductionIndex = 0;
-                        if (challanDeductions.Count > 0)
+                        if (challanProduct.ProductDetail.ProductType.ProductCategoryId == main && challanProduct.InvoiceChallanDeductions != null && challanProduct.InvoiceChallanDeductions.Count > 0)
                         {
-                            foreach (var challanDeduction in challanDeductions)
+                            var invoiceChallanDeductions = context.InvoiceChallanDeductions.Where(x => x.ChallanProduct.ChallanProductId == challanProduct.ChallanProductId).ToList();
+
+                            if (invoiceChallanDeductions.Count > 0)
                             {
-                                BASFChallanPOWhereUsedModel model = new BASFChallanPOWhereUsedModel();
-
-                                if (challanDeductionIndex == 0)
+                                int invoiceChallanDeductionIndex = 0;
+                                foreach (var invoiceChallanDeduction in invoiceChallanDeductions)
                                 {
-                                    model.InputCode = challanProduct.ProductDetail.InputCode;
-                                    model.InputMaterialDesc = challanProduct.ProductDetail.InputMaterialDesc;
-                                    model.InputQuantity = Convert.ToString(challanProduct.InputQuantity);
-                                    model.RemainingQuantity = model.InputQuantity;
+                                    model = new BASFChallanPOWhereUsedModel();
 
-                                    if (challanProduct.InvoiceChallanDeductions != null && challanProduct.InvoiceChallanDeductions.Count > 0)
+                                    if (invoiceChallanDeductionIndex == 0)
+                                    {
+                                        model.InputCode = challanProduct.ProductDetail.InputCode;
+                                        model.InputMaterialDesc = challanProduct.ProductDetail.InputMaterialDesc;
+                                        model.InputQuantity = Convert.ToString(challanProduct.InputQuantity);
                                         model.RemainingQuantity = Convert.ToString(challanProduct.InputQuantity - challanProduct.InvoiceChallanDeductions.Sum(x => x.OutQuantity));
+                                        model.TotalUsed = Convert.ToString(Convert.ToInt32(model.InputQuantity) - Convert.ToInt32(model.RemainingQuantity));
+                                    }
 
-                                    model.TotalUsed = Convert.ToString(Convert.ToInt32(model.InputQuantity) - Convert.ToInt32(model.RemainingQuantity));
+                                    model.ChallanNo = challanDetail.ChallanNo;
+                                    
+                                    model.BASFInvoiceNo = context.BASFInvoices.Where(x => x.BASFInvoiceNo == invoiceChallanDeduction.InvoiceOutStock.BASFInvoice.BASFInvoiceNo).Select(x => x.BASFInvoiceNo).FirstOrDefault();
+                                    var PUChallanDeductions = invoiceChallanDeduction.InvoiceOutStock.InvoiceChallanDeductions.ToList();
+                                    model.OutputCode = PUChallanDeductions.Count > 0 ? PUChallanDeductions[0].ChallanProduct.ProductDetail.OutputCode : "NA";
+                                    model.BASFInvoiceDate = invoiceChallanDeduction.InvoiceOutStock.BASFInvoice.BASFInvoiceDate.Value.ToShortDateString();
+                                    model.BASFInvoiceOutQnt = Convert.ToString(invoiceChallanDeduction.OutQuantity);
+
+                                    modelList.Add(model);
+
+                                    invoiceChallanDeductionIndex++;
                                 }
+                            }
+                            else
+                            {
+                                model = new BASFChallanPOWhereUsedModel();
+
+                                model.InputCode = challanProduct.ProductDetail.InputCode;
+                                model.InputMaterialDesc = challanProduct.ProductDetail.InputMaterialDesc;
+                                model.InputQuantity = Convert.ToString(challanProduct.InputQuantity);
+                                model.RemainingQuantity = model.InputQuantity;
+                                model.TotalUsed = "0";
 
                                 model.ChallanNo = challanDetail.ChallanNo;
 
-                                model.VendorChallanNo = Convert.ToString(challanDeduction.InvoiceOutStock.BASFInvoice.BASFInvoiceNo);
-                                model.VendorChallanDate = challanDeduction.InvoiceOutStock.BASFInvoice.BASFInvoiceDate.Value.ToShortDateString();
-                                model.VendorChallanOutQnt = Convert.ToString(challanDeduction.OutQuantity);
+                                model.BASFInvoiceNo = "NA";
+                                model.OutputCode = "NA";
+                                model.BASFInvoiceDate = "NA";
+                                model.BASFInvoiceOutQnt = "NA";
 
                                 modelList.Add(model);
-
-                                challanDeductionIndex++;
                             }
-                        }
+                        }                        
                         else
                         {
-                            BASFChallanPOWhereUsedModel model = new BASFChallanPOWhereUsedModel();
+                            model = new BASFChallanPOWhereUsedModel();
 
                             model.InputCode = challanProduct.ProductDetail.InputCode;
                             model.InputMaterialDesc = challanProduct.ProductDetail.InputMaterialDesc;
@@ -4211,22 +4581,100 @@ namespace ERP.Controllers
 
                             model.ChallanNo = challanDetail.ChallanNo;
 
-                            model.VendorChallanNo = "NA";
-                            model.VendorChallanDate = "NA";
-                            model.VendorChallanOutQnt = "NA";
+                            model.BASFInvoiceNo = "NA";
+                            model.OutputCode = "NA";
+                            model.BASFInvoiceDate = "NA";
+                            model.BASFInvoiceOutQnt = "NA";
 
                             modelList.Add(model);
                         }
                     }
-                }
 
-                return Ok(modelList);
+                    return Ok(modelList);
+                }
             }
             catch (Exception e)
             {
                 return InternalServerError();
             }
         }
+
+        //[HttpPost, Route("GetBASFChallanWhereUsedInBASFInvoicesReport")]
+        //public IHttpActionResult GetBASFChallanWhereUsedInBASFInvoicesReport(VendorChallanNoModel vendorChallanNoModel)
+        //{
+        //    int challanId = vendorChallanNoModel.VendorChallanNo;
+
+        //    try
+        //    {
+        //        List<BASFChallanPOWhereUsedModel> modelList = new List<BASFChallanPOWhereUsedModel>();
+
+        //        using (var context = new erpdbEntities())
+        //        {
+        //            var challanDetail = context.ChallanDetails.Where(x => x.ChallanId == challanId).FirstOrDefault();
+
+        //            foreach (var challanProduct in challanDetail.ChallanProducts)
+        //            {
+        //                var challanDeductions = context.InvoiceChallanDeductions.Where(x => x.ChallanProduct.ChallanProductId == challanProduct.ChallanProductId).ToList();
+
+        //                int challanDeductionIndex = 0;
+        //                if (challanDeductions.Count > 0)
+        //                {
+        //                    foreach (var challanDeduction in challanDeductions)
+        //                    {
+        //                        BASFChallanPOWhereUsedModel model = new BASFChallanPOWhereUsedModel();
+
+        //                        if (challanDeductionIndex == 0)
+        //                        {
+        //                            model.InputCode = challanProduct.ProductDetail.InputCode;
+        //                            model.InputMaterialDesc = challanProduct.ProductDetail.InputMaterialDesc;
+        //                            model.InputQuantity = Convert.ToString(challanProduct.InputQuantity);
+        //                            model.RemainingQuantity = model.InputQuantity;
+
+        //                            if (challanProduct.InvoiceChallanDeductions != null && challanProduct.InvoiceChallanDeductions.Count > 0)
+        //                                model.RemainingQuantity = Convert.ToString(challanProduct.InputQuantity - challanProduct.InvoiceChallanDeductions.Sum(x => x.OutQuantity));
+
+        //                            model.TotalUsed = Convert.ToString(Convert.ToInt32(model.InputQuantity) - Convert.ToInt32(model.RemainingQuantity));
+        //                        }
+
+        //                        model.ChallanNo = challanDetail.ChallanNo;
+
+        //                        model.VendorChallanNo = Convert.ToString(challanDeduction.InvoiceOutStock.BASFInvoice.BASFInvoiceNo);
+        //                        model.VendorChallanDate = challanDeduction.InvoiceOutStock.BASFInvoice.BASFInvoiceDate.Value.ToShortDateString();
+        //                        model.VendorChallanOutQnt = Convert.ToString(challanDeduction.OutQuantity);
+
+        //                        modelList.Add(model);
+
+        //                        challanDeductionIndex++;
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    BASFChallanPOWhereUsedModel model = new BASFChallanPOWhereUsedModel();
+
+        //                    model.InputCode = challanProduct.ProductDetail.InputCode;
+        //                    model.InputMaterialDesc = challanProduct.ProductDetail.InputMaterialDesc;
+        //                    model.InputQuantity = Convert.ToString(challanProduct.InputQuantity);
+        //                    model.RemainingQuantity = model.InputQuantity;
+        //                    model.TotalUsed = "0";
+
+        //                    model.ChallanNo = challanDetail.ChallanNo;
+
+        //                    model.VendorChallanNo = "NA";
+        //                    model.VendorChallanDate = "NA";
+        //                    model.VendorChallanOutQnt = "NA";
+
+        //                    modelList.Add(model);
+        //                }
+        //            }
+        //        }
+
+        //        return Ok(modelList);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return InternalServerError();
+        //    }
+        //}
 
         [HttpGet, Route("GetCloseChallanReport")]
         public IHttpActionResult GetCloseChallanReport()
@@ -4245,6 +4693,7 @@ namespace ERP.Controllers
                         {
                             CloseChallanReportModel model = new CloseChallanReportModel();
 
+                            model.ChallanId = challanDetail.ChallanId;
                             model.ChallanNo = challanDetail.ChallanNo;
                             model.ChallanDate = challanDetail.ChallanDate.Value.ToShortDateString();
                             model.InputCode = challanProduct.ProductDetail.InputCode;
@@ -4260,15 +4709,16 @@ namespace ERP.Controllers
                                 //model.OutputQuantity = Convert.ToString(challanProduct.ChallanDeductions.Select(p => p.OutStock).Distinct().Sum(k => k.OutputQuantity));
                                 model.OutputQuantity = Convert.ToString(challanProduct.ChallanDeductions.Sum(x => x.OutQuantity));
                                 var vendorChallanNos = challanProduct.ChallanDeductions.OrderBy(k => k.OutStock.VendorChallanNo).Select(x => x.OutStock.VendorChallanNo).ToList();
+                                var vendorChallanNumbers = context.VendorChallans.Where(x => vendorChallanNos.Contains(x.VendorChallanNo)).Select(x => x.VendorChallanNumber).ToList();
 
                                 model.VendorChallanNo = "";
                                 int index = 0;
-                                foreach (int vendorChallanNo in vendorChallanNos)
+                                foreach (string vendorChallanNumber in vendorChallanNumbers)
                                 {
-                                    if (index != vendorChallanNos.Count - 1)
-                                        model.VendorChallanNo += vendorChallanNo.ToString() + ", ";
+                                    if (index != vendorChallanNumbers.Count - 1)
+                                        model.VendorChallanNo += vendorChallanNumber + ", ";
                                     else
-                                        model.VendorChallanNo += vendorChallanNo.ToString();
+                                        model.VendorChallanNo += vendorChallanNumber;
 
                                     index++;
                                 }
@@ -4282,15 +4732,16 @@ namespace ERP.Controllers
                                 //model.OutputQuantity = Convert.ToString(challanProduct.AssemblyChallanDeductions.Select(p => p.OutAssembly).Distinct().Sum(k => k.OutputQuantity));
                                 model.OutputQuantity = Convert.ToString(challanProduct.AssemblyChallanDeductions.Sum(x => x.OutQuantity));
                                 var vendorChallanNos = challanProduct.AssemblyChallanDeductions.OrderBy(k => k.OutAssembly.OutStock.VendorChallanNo).Select(x => x.OutAssembly.OutStock.VendorChallanNo).ToList();
+                                var vendorChallanNumbers = context.VendorChallans.Where(x => vendorChallanNos.Contains(x.VendorChallanNo)).Select(x => x.VendorChallanNumber).ToList();
 
                                 model.VendorChallanNo = "";
                                 int index = 0;
-                                foreach (int vendorChallanNo in vendorChallanNos)
+                                foreach (string vendorChallanNumber in vendorChallanNumbers)
                                 {
-                                    if (index != vendorChallanNos.Count - 1)
-                                        model.VendorChallanNo += vendorChallanNo.ToString() + ", ";
+                                    if (index != vendorChallanNumbers.Count - 1)
+                                        model.VendorChallanNo += vendorChallanNumber + ", ";
                                     else
-                                        model.VendorChallanNo += vendorChallanNo.ToString();
+                                        model.VendorChallanNo += vendorChallanNumber;
 
                                     index++;
                                 }
@@ -4304,13 +4755,16 @@ namespace ERP.Controllers
                                 //model.OutputQuantity = Convert.ToString(challanProduct.AccChallanDeductions.Select(p => p.OutAcc).Distinct().Sum(k => k.OutputQuantity));
                                 model.OutputQuantity = Convert.ToString(challanProduct.AccChallanDeductions.Sum(x => x.OutQuantity));
                                 var vendorChallanNos = challanProduct.AccChallanDeductions.OrderBy(k => k.OutAcc.OutStock.VendorChallanNo).Select(x => x.OutAcc.OutStock.VendorChallanNo).ToList();
+                                var vendorChallanNumbers = context.VendorChallans.Where(x => vendorChallanNos.Contains(x.VendorChallanNo)).Select(x => x.VendorChallanNumber).ToList();
 
                                 model.VendorChallanNo = "";
                                 int index = 0;
-                                foreach (int vendorChallanNo in vendorChallanNos)
+                                foreach (string vendorChallanNumber in vendorChallanNumbers)
                                 {
-                                    if (index != vendorChallanNos.Count - 1)
-                                        model.VendorChallanNo += vendorChallanNo.ToString() + ", ";
+                                    if (index != vendorChallanNumbers.Count - 1)
+                                        model.VendorChallanNo += vendorChallanNumber + ", ";
+                                    else
+                                        model.VendorChallanNo += vendorChallanNumber;
 
                                     index++;
                                 }

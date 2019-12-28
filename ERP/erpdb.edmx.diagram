@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="307de36c83a445708c1bd7b8410ca3d8" Name="Diagram1">
+        <EntityTypeShape EntityType="erpdbModel.AccChallanDeduction" Width="1.5" PointX="12.75" PointY="13.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="erpdbModel.AccPODeduction" Width="1.5" PointX="15.75" PointY="13.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="erpdbModel.AssemblyChallanDeduction" Width="1.5" PointX="9.75" PointY="9.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="erpdbModel.AssemblyPODeduction" Width="1.5" PointX="12.75" PointY="17.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="erpdbModel.BASFInvoice" Width="1.5" PointX="8.25" PointY="1.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="erpdbModel.ChallanDeduction" Width="1.5" PointX="9.75" PointY="17.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="erpdbModel.ChallanDetail" Width="1.5" PointX="5.25" PointY="9.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="erpdbModel.ChallanProduct" Width="1.5" PointX="7.5" PointY="13.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="erpdbModel.InvoiceChallanDeduction" Width="1.5" PointX="12.75" PointY="9.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="erpdbModel.InvoiceOutStock" Width="1.5" PointX="10.5" PointY="1.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="erpdbModel.OutAcc" Width="1.5" PointX="10.5" PointY="5.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="erpdbModel.OutAssembly" Width="1.5" PointX="7.5" PointY="5.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="erpdbModel.OutStock" Width="1.5" PointX="5.25" PointY="5.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="erpdbModel.PODeduction" Width="1.5" PointX="15.75" PointY="9.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="erpdbModel.PODetail" Width="1.5" PointX="8.25" PointY="24.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="erpdbModel.POProduct" Width="1.5" PointX="10.5" PointY="13.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="erpdbModel.ProductCategory" Width="1.5" PointX="0.75" PointY="14" IsExpanded="true" />
+        <EntityTypeShape EntityType="erpdbModel.ProductDetail" Width="1.5" PointX="5.25" PointY="12.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="erpdbModel.ProductMapping" Width="1.5" PointX="7.5" PointY="21.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="erpdbModel.ProductType" Width="1.5" PointX="3" PointY="13.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="erpdbModel.VendorChallan" Width="1.5" PointX="3" PointY="5.625" IsExpanded="true" />
+        <AssociationConnector Association="erpdbModel.FK__AccChalla__Chall__45F365D3" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__AccChalla__OutAc__44FF419A" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__AccPODedu__OutAc__5629CD9C" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__AccPODedu__POPro__571DF1D5" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__AssemblyC__Chall__4BAC3F29" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__AssemblyC__OutAs__4AB81AF0" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__AssemblyP__OutAs__5BE2A6F2" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__AssemblyP__POPro__5CD6CB2B" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__InvoiceOu__BASFI__68487DD7" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__ChallanDe__Chall__403A8C7D" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__ChallanDe__OutSt__3F466844" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__ChallanPr__Chall__1B0907CE" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__ChallanPr__Produ__1BFD2C07" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__InvoiceCh__Chall__6E01572D" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__InvoiceCh__Invoi__6D0D32F4" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__OutAccs__OutStoc__35BCFE0A" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__OutAssemb__OutSt__3A81B327" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__OutStocks__Vendo__30F848ED" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__PODeducti__OutSt__5070F446" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__PODeducti__POPro__5165187F" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__POProducts__POId__276EDEB3" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__POProduct__Produ__286302EC" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__ProductTy__Produ__0519C6AF" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__ProductDe__Produ__09DE7BCC" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__ProductMa__Mappi__0F975522" ManuallyRouted="false" />
+        <AssociationConnector Association="erpdbModel.FK__ProductMa__Produ__0EA330E9" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

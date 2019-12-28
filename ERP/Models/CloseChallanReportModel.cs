@@ -10,6 +10,8 @@ namespace ERP.Models
     public class CloseChallanReportModel
     {
         [DataMember]
+        public int ChallanId { get; set; }
+        [DataMember]
         public string ChallanNo { get; set; }
         [DataMember]
         public string ChallanDate { get; set; }

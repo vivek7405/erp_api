@@ -57,6 +57,7 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.Entity" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Security" />
     <Reference Include="System.Web.Cors, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -140,10 +141,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccChallanDeduction.cs">
-      <DependentUpon>DB.tt</DependentUpon>
+      <DependentUpon>erpdb.tt</DependentUpon>
     </Compile>
     <Compile Include="AccPODeduction.cs">
-      <DependentUpon>DB.tt</DependentUpon>
+      <DependentUpon>erpdb.tt</DependentUpon>
     </Compile>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
@@ -178,50 +179,50 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="AssemblyChallanDeduction.cs">
-      <DependentUpon>DB.tt</DependentUpon>
+      <DependentUpon>erpdb.tt</DependentUpon>
     </Compile>
     <Compile Include="AssemblyPODeduction.cs">
-      <DependentUpon>DB.tt</DependentUpon>
+      <DependentUpon>erpdb.tt</DependentUpon>
     </Compile>
     <Compile Include="BASFInvoice.cs">
-      <DependentUpon>DB.tt</DependentUpon>
+      <DependentUpon>erpdb.tt</DependentUpon>
     </Compile>
     <Compile Include="ChallanDeduction.cs">
-      <DependentUpon>DB.tt</DependentUpon>
+      <DependentUpon>erpdb.tt</DependentUpon>
     </Compile>
     <Compile Include="ChallanDetail.cs">
-      <DependentUpon>DB.tt</DependentUpon>
+      <DependentUpon>erpdb.tt</DependentUpon>
     </Compile>
     <Compile Include="ChallanProduct.cs">
-      <DependentUpon>DB.tt</DependentUpon>
+      <DependentUpon>erpdb.tt</DependentUpon>
     </Compile>
     <Compile Include="Controllers\GeneralController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
-    <Compile Include="DB.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>DB.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DB.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>DB.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DB.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>DB.edmx</DependentUpon>
-    </Compile>
     <Compile Include="Enums\EProductCategory.cs" />
+    <Compile Include="erpdb.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>erpdb.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="erpdb.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>erpdb.tt</DependentUpon>
+    </Compile>
+    <Compile Include="erpdb.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>erpdb.edmx</DependentUpon>
+    </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="InvoiceChallanDeduction.cs">
-      <DependentUpon>DB.tt</DependentUpon>
+      <DependentUpon>erpdb.tt</DependentUpon>
     </Compile>
     <Compile Include="InvoiceOutStock.cs">
-      <DependentUpon>DB.tt</DependentUpon>
+      <DependentUpon>erpdb.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\AccChallanDeductionModel.cs" />
     <Compile Include="Models\AccPODeductionModel.cs" />
@@ -259,38 +260,38 @@
     <Compile Include="Models\ViewChallanDetailModel.cs" />
     <Compile Include="Models\ViewPODetailModel.cs" />
     <Compile Include="OutAcc.cs">
-      <DependentUpon>DB.tt</DependentUpon>
+      <DependentUpon>erpdb.tt</DependentUpon>
     </Compile>
     <Compile Include="OutAssembly.cs">
-      <DependentUpon>DB.tt</DependentUpon>
+      <DependentUpon>erpdb.tt</DependentUpon>
     </Compile>
     <Compile Include="OutStock.cs">
-      <DependentUpon>DB.tt</DependentUpon>
+      <DependentUpon>erpdb.tt</DependentUpon>
     </Compile>
     <Compile Include="PODeduction.cs">
-      <DependentUpon>DB.tt</DependentUpon>
+      <DependentUpon>erpdb.tt</DependentUpon>
     </Compile>
     <Compile Include="PODetail.cs">
-      <DependentUpon>DB.tt</DependentUpon>
+      <DependentUpon>erpdb.tt</DependentUpon>
     </Compile>
     <Compile Include="POProduct.cs">
-      <DependentUpon>DB.tt</DependentUpon>
+      <DependentUpon>erpdb.tt</DependentUpon>
     </Compile>
     <Compile Include="ProductCategory.cs">
-      <DependentUpon>DB.tt</DependentUpon>
+      <DependentUpon>erpdb.tt</DependentUpon>
     </Compile>
     <Compile Include="ProductDetail.cs">
-      <DependentUpon>DB.tt</DependentUpon>
+      <DependentUpon>erpdb.tt</DependentUpon>
     </Compile>
     <Compile Include="ProductMapping.cs">
-      <DependentUpon>DB.tt</DependentUpon>
+      <DependentUpon>erpdb.tt</DependentUpon>
     </Compile>
     <Compile Include="ProductType.cs">
-      <DependentUpon>DB.tt</DependentUpon>
+      <DependentUpon>erpdb.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VendorChallan.cs">
-      <DependentUpon>DB.tt</DependentUpon>
+      <DependentUpon>erpdb.tt</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -299,15 +300,15 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
-    <Content Include="DB.Context.tt">
+    <Content Include="erpdb.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>DB.edmx</DependentUpon>
-      <LastGenOutput>DB.Context.cs</LastGenOutput>
+      <DependentUpon>erpdb.edmx</DependentUpon>
+      <LastGenOutput>erpdb.Context.cs</LastGenOutput>
     </Content>
-    <Content Include="DB.tt">
+    <Content Include="erpdb.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>DB.edmx</DependentUpon>
-      <LastGenOutput>DB.cs</LastGenOutput>
+      <DependentUpon>erpdb.edmx</DependentUpon>
+      <LastGenOutput>erpdb.cs</LastGenOutput>
     </Content>
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
@@ -333,12 +334,12 @@
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\CollectionModelDescription.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ApiGroup.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\Api.cshtml" />
-    <EntityDeploy Include="DB.edmx">
+    <EntityDeploy Include="erpdb.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>DB.Designer.cs</LastGenOutput>
+      <LastGenOutput>erpdb.Designer.cs</LastGenOutput>
     </EntityDeploy>
-    <Content Include="DB.edmx.diagram">
-      <DependentUpon>DB.edmx</DependentUpon>
+    <Content Include="erpdb.edmx.diagram">
+      <DependentUpon>erpdb.edmx</DependentUpon>
     </Content>
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />

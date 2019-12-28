@@ -24,6 +24,7 @@ namespace ERP.Models
         [DataMember]
         public int SplitRatio { get; set; }
         [DataMember]
-        public InvoiceChallanDeductionModel[] InvoiceChallanDeductions { get; set; }        
+        public InvoiceChallanDeductionModel[] InvoiceChallanDeductions { get; set; }
+        public int MainQntSum { get; set; }
     }
 }

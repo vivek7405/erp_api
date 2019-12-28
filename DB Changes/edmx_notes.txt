@@ -1,0 +1,3 @@
+ProductDetail Entity  -->  ProductMapping Entity
+ProductMappings       -->  ProductId, ProductDetail
+ProductMappings1      -->  MappingProductId, ProductDetail1

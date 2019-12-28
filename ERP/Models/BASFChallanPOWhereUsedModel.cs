@@ -22,13 +22,15 @@ namespace ERP.Models
         [DataMember]
         public string TotalUsed { get; set; }
         [DataMember]
-        public string VendorChallanNo { get; set; }
+        public string VendorChallanNo { get; set; }        
         [DataMember]
         public string VendorChallanDate { get; set; }
         [DataMember]
         public string VendorChallanOutQnt { get; set; }
         [DataMember]
         public string BASFInvoiceNo { get; set; }
+        [DataMember]
+        public string OutputCode { get; set; }
         [DataMember]
         public string BASFInvoiceDate { get; set; }
         [DataMember]
